@@ -4,13 +4,14 @@ varying vec2 vUv;
 
 uniform vec2 uContainerResolution;
 uniform vec2 uImageResolution;
-uniform vec2 uOffset;
 
 /* object-fit:cover UV mapping.
-   Mirrors J0SUKE's ratio approach; uOffset.y biases the crop window
-   so that the image's 32%-from-top mark sits at canvas center,
-   matching the CSS background-position:center 32%. */
-vec2 coverUvs(vec2 imageRes, vec2 containerRes, vec2 offset) {
+   For the image UVs, the vertical bias matches CSS background-position:center 32%:
+     uOffsetY = (0.5 - 0.32) * (1.0 - ratioY)  =  0.18 * (1.0 - ratioY)
+   This is derived from: image's 32% mark aligns with container's 32% mark.
+   The heightCropFactor (1 - ratioY) scales the offset by how much vertical
+   cropping is happening, so it collapses to zero when there is no crop. */
+vec2 coverUvs(vec2 imageRes, vec2 containerRes, bool applyPositionBias) {
     float imageAspectX = imageRes.x / imageRes.y;
     float imageAspectY = imageRes.y / imageRes.x;
     float containerAspectX = containerRes.x / containerRes.y;
@@ -21,29 +22,23 @@ vec2 coverUvs(vec2 imageRes, vec2 containerRes, vec2 offset) {
         min(containerAspectY / imageAspectY, 1.0)
     );
 
+    float offsetY = applyPositionBias ? 0.18 * (1.0 - ratio.y) : 0.0;
+
     return vec2(
         vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
-        vUv.y * ratio.y + (1.0 - ratio.y) * 0.5 + offset.y
+        vUv.y * ratio.y + (1.0 - ratio.y) * 0.5 + offsetY
     );
 }
 
 void main() {
-    /* Image UVs — cover fit + vertical position bias */
-    vec2 imageUvs = coverUvs(uImageResolution, uContainerResolution, uOffset);
-
-    /* GPGPU grid UVs — cover fit into square, no position bias.
-       Keeps displacement circles round regardless of canvas aspect. */
-    vec2 gridUvs = coverUvs(vec2(1.0, 1.0), uContainerResolution, vec2(0.0));
+    vec2 imageUvs = coverUvs(uImageResolution, uContainerResolution, true);
+    vec2 gridUvs  = coverUvs(vec2(1.0, 1.0),  uContainerResolution, false);
 
     vec4 displacement = texture2D(uGrid, gridUvs);
 
-    /* Displace image UVs by GPGPU field */
     vec2 displacedUvs = imageUvs - displacement.rg * 0.01;
 
-    /* Chromatic aberration — per-channel UV shifts scaled by displacement strength */
-    float displacementStrength = length(displacement.rg);
-    displacementStrength = clamp(displacementStrength, 0.0, 2.0);
-
+    float displacementStrength = clamp(length(displacement.rg), 0.0, 2.0);
     vec2 shift = displacement.rg * 0.001;
 
     vec2 redUvs   = displacedUvs + shift * (1.0 + displacementStrength * 0.25);

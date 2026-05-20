@@ -33,7 +33,6 @@ export class PlaneMesh {
         uGrid: new THREE.Uniform(null as unknown as THREE.Texture),
         uContainerResolution: new THREE.Uniform(new THREE.Vector2(canvasWidth, canvasHeight)),
         uImageResolution: new THREE.Uniform(new THREE.Vector2(imageWidth, imageHeight)),
-        uOffset: new THREE.Uniform(new THREE.Vector2(0.0, 0.18)),
       },
     });
 
