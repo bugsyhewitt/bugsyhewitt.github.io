@@ -131,5 +131,9 @@ import { initHeroFX } from './hero-fx';
 
 const heroGL = document.getElementById('heroGL') as HTMLCanvasElement | null;
 if (heroGL) {
-  initHeroFX(heroGL, { imageSrc: '/hero.jpg' });
+  try {
+    initHeroFX(heroGL, { imageSrc: '/hero.jpg' });
+  } catch (e) {
+    console.warn('[hero-fx] init threw, ignoring:', e);
+  }
 }
