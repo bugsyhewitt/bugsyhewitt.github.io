@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bugsy Hewitt — Digital Necromancer</title>
+<meta name="description" content="Bugsy Hewitt — Digital Necromancer. Bug bounty hunter and offensive security researcher." />
+<meta name="theme-color" content="#09090a" />
+<link rel="icon" type="image/png" href="logo.png" />
+<meta property="og:title" content="Bugsy Hewitt — Digital Necromancer" />
+<meta property="og:description" content="Bug bounty hunter and offensive security researcher." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://bugsyhewitt.github.io" />
+
+<!--
+  ==========================================================================
+  THINGS TO REPLACE  ·  search this file for the word  SWAP
+  --------------------------------------------------------------------------
+  · hero.jpg / sigils.jpg / logo.png  — ship these alongside index.html
+  · SWAP-REPO  — 5 project "Inspect" links → your real GitHub repo URLs
+  · SWAP-COPY  — graverobber / possession / exhumed / unearth blurbs are
+                 still placeholder; rewrite them in your own voice
+  ==========================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --void:#09090a;
+  --coffin:#0e0e10;
+  --paper:#f7f7f7;
+  --ink:#161412;
+  --ink-soft:#56524b;
+  --bone:#e9e6dd;
+  --ash:#8c8c85;
+  --ash-dim:#5d5d58;
+  --hair:#1f1f21;
+  --hair-bright:#2e2e31;
+  --blood:#9c3636;
+  --display:'Bebas Neue','Arial Narrow',Impact,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:90px;-webkit-text-size-adjust:100%;}
+body{
+  background:var(--void);color:var(--bone);
+  font-family:var(--mono);font-size:15px;line-height:1.7;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none;}
+::selection{background:var(--blood);color:var(--bone);}
+img{display:block;max-width:100%;}
+
+/* ---------- atmosphere ---------- */
+.grain,.vignette{position:fixed;inset:0;pointer-events:none;}
+.grain{z-index:95;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.vignette{z-index:94;box-shadow:inset 0 0 200px rgba(0,0,0,.55);}
+
+/* ---------- side spine ---------- */
+.spine{
+  position:fixed;left:0;top:0;bottom:0;width:46px;z-index:60;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  border-right:1px solid var(--hair);background:var(--void);
+  transform:translateX(-100%);transition:transform .6s var(--ease);
+}
+.spine.show{transform:translateX(0);}
+.spine span{
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font-size:10px;letter-spacing:4px;color:var(--ash-dim);text-transform:uppercase;
+}
+.spine .sdot{width:5px;height:5px;border-radius:50%;background:var(--blood);animation:pulse 2.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.15;}}
+
+/* ---------- nav ---------- */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:80;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px clamp(22px,5vw,60px);
+  background:rgba(9,9,10,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid transparent;
+  transform:translateY(-110%);
+  transition:transform .65s var(--ease),border-color .65s var(--ease);
+}
+.nav.show{transform:translateY(0);border-color:var(--hair);}
+.nav__mark{display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--display);font-size:24px;letter-spacing:3px;}
+.nav__mark b{color:var(--blood);font-weight:400;}
+.nav__logo{width:26px;height:26px;display:block;border-radius:50%;
+  opacity:.92;transition:opacity .25s var(--ease),transform .35s var(--ease);}
+.nav__mark:hover .nav__logo{opacity:1;transform:rotate(8deg) scale(1.06);}
+.nav__links{display:flex;gap:clamp(13px,2.6vw,32px);}
+.nav__links a{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--ash);transition:color .25s;}
+.nav__links a:hover,.nav__links a.active{color:var(--bone);}
+
+/* ---------- hero ---------- */
+.hero{position:relative;height:188vh;}
+.hero__inner{
+  position:sticky;top:0;height:100vh;overflow:hidden;
+  display:flex;align-items:flex-end;background:var(--paper);
+}
+.hero__photo{
+  position:absolute;inset:0;z-index:1;
+  background:var(--paper) url('hero.jpg') center 32%/cover no-repeat; /* SWAP: hero.jpg */
+  transform-origin:50% 38%;
+  will-change:transform,filter,opacity;
+}
+.hero__gl{
+  position:absolute;inset:0;width:100%;height:100%;
+  z-index:2;pointer-events:none;opacity:0;
+  transition:opacity .55s var(--ease);
+}
+.hero__gl.live{opacity:1;}
+.hero.gl-on .hero__photo{opacity:0!important;}
+.hero__scrim{position:absolute;inset:0;z-index:3;
+  background:linear-gradient(to top,var(--paper) 0%,var(--paper) 12%,rgba(247,247,247,0) 54%);}
+.hero__content{
+  position:relative;z-index:4;width:100%;
+  padding:0 clamp(26px,7vw,120px) clamp(78px,12vh,128px);
+}
+.hero__eyebrow{font-size:11px;letter-spacing:4px;color:var(--blood);text-transform:uppercase;
+  margin-bottom:18px;opacity:0;animation:up .9s var(--ease) .15s forwards;}
+.hero__name{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(4rem,17vw,13rem);line-height:.82;letter-spacing:.015em;color:var(--ink);
+  opacity:0;animation:up 1.1s var(--ease) .28s forwards;
+}
+.hero__title{
+  font-family:var(--display);font-size:clamp(1.3rem,4.4vw,2.9rem);
+  letter-spacing:.3em;color:var(--ink-soft);margin-top:clamp(12px,2vh,22px);padding-left:.3em;
+  opacity:0;animation:up 1s var(--ease) .46s forwards;
+}
+.hero__role{font-size:12px;letter-spacing:1.5px;color:#7a766d;margin-top:16px;
+  opacity:0;animation:up 1s var(--ease) .62s forwards;}
+.hero__cue{
+  position:absolute;left:50%;bottom:28px;z-index:4;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink-soft);
+  opacity:0;animation:up 1s var(--ease) .9s forwards;
+}
+.hero__cue-line{width:1px;height:46px;background:linear-gradient(var(--ink-soft),transparent);
+  animation:drop 2.4s var(--ease) infinite;}
+@keyframes up{from{opacity:0;transform:translateY(34px);}to{opacity:1;transform:translateY(0);}}
+@keyframes drop{0%{transform:scaleY(0);transform-origin:top;}40%{transform:scaleY(1);transform-origin:top;}
+  60%{transform:scaleY(1);transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+
+/* ---------- shared section frame ---------- */
+.section{padding:clamp(80px,13vh,170px) clamp(24px,6vw,96px);position:relative;}
+.eyebrow{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--ash);margin-bottom:22px;}
+.eyebrow::before{content:"";width:30px;height:1px;background:var(--blood);}
+.heading{font-family:var(--display);font-weight:400;
+  font-size:clamp(3rem,8.5vw,6.6rem);line-height:.92;letter-spacing:.012em;}
+.lede{color:var(--ash);max-width:60ch;margin-top:20px;font-size:clamp(.95rem,1.6vw,1.05rem);}
+
+/* ---------- intro band ---------- */
+.intro{
+  padding:clamp(74px,12vh,160px) clamp(24px,6vw,96px) 0;
+  background-color:var(--void);
+  background-image:
+    linear-gradient(var(--void) 0%,rgba(9,9,10,0) 14%,rgba(9,9,10,0) 86%,var(--void) 100%),
+    url('sigils.jpg'); /* SWAP: sigils.jpg */
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.intro__statement{max-width:none;}
+.iline{font-family:'Share Tech Mono',var(--mono);
+  font-size:clamp(1.05rem,2.7vw,2rem);line-height:1.5;min-height:1.5em;
+  white-space:nowrap;color:var(--bone);}
+.iline.soft{color:var(--ash);}
+.iline .cur{display:inline-block;width:.55em;height:1.05em;background:var(--blood);
+  margin-left:.06em;vertical-align:-.16em;animation:blink 1.05s steps(1) infinite;}
+@keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+.marquee{margin-top:clamp(60px,9vh,120px);border-top:1px solid var(--hair);
+  border-bottom:1px solid var(--hair);overflow:hidden;padding:20px 0;}
+.marquee__track{display:flex;width:max-content;gap:34px;
+  padding-right:34px; /* matches gap — supplies the trailing space flex gap omits, so the -50% loop point is seamless */
+  animation:slide 34s linear infinite;}
+.marquee__track span{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--ash);}
+.marquee__track i{color:var(--blood);font-style:normal;}
+@keyframes slide{to{transform:translateX(-50%);}}
+
+/* ---------- grimoire / projects ---------- */
+.project{
+  display:grid;grid-template-columns:96px 1fr;gap:clamp(14px,4vw,52px);
+  padding:clamp(30px,5vw,56px) clamp(24px,6vw,96px);
+  margin:0 calc(-1 * clamp(24px,6vw,96px));
+  border-top:1px solid var(--hair);
+  transition:background .4s var(--ease);
+}
+.projects .project:last-child{border-bottom:1px solid var(--hair);}
+.project:hover{background:var(--coffin);}
+.project__num{font-family:var(--display);font-size:clamp(2.4rem,5vw,3.8rem);
+  color:var(--hair-bright);line-height:1;transition:color .4s var(--ease);}
+.project:hover .project__num{color:var(--blood);}
+.project__name{font-family:var(--display);font-weight:400;
+  font-size:clamp(2.2rem,6vw,4rem);line-height:1;letter-spacing:.01em;
+  transition:transform .4s var(--ease);}
+.project:hover .project__name{transform:translateX(10px);}
+.project__blurb{color:var(--ash);max-width:60ch;margin-top:10px;font-size:14px;}
+.project__meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px;}
+.tag{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ash);
+  border:1px solid var(--hair-bright);padding:5px 11px;}
+.inspect{font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:var(--bone);
+  border-bottom:1px solid var(--blood);padding-bottom:3px;margin-left:auto;
+  transition:letter-spacing .3s var(--ease);}
+.inspect:hover{letter-spacing:3.6px;}
+
+/* ---------- specialities ---------- */
+.specs{margin-top:clamp(46px,7vh,86px);display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--hair);border:1px solid var(--hair);}
+.spec{background:var(--void);padding:clamp(26px,2.6vw,42px);}
+.spec__tag{font-size:11px;letter-spacing:2.5px;color:var(--ash-dim);text-transform:uppercase;}
+.spec__name{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,2.6vw,2.7rem);
+  letter-spacing:.012em;margin:12px 0 14px;}
+.spec__intro{color:var(--ash);font-size:13.5px;margin-bottom:24px;}
+.spec__list{list-style:none;}
+.spec__list li{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--hair);
+  font-size:13px;color:var(--bone);transition:color .25s,padding-left .25s var(--ease);}
+.spec__list li:hover{padding-left:8px;color:#fff;}
+.spec__list li span{color:var(--blood);font-size:10px;flex-shrink:0;line-height:1.9;}
+
+/* ---------- loadout ---------- */
+.loadout{margin-top:clamp(46px,7vh,86px);display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--hair);border:1px solid var(--hair);}
+.tcol{background:var(--void);padding:clamp(26px,2.8vw,44px);}
+.tcol__head{display:flex;align-items:baseline;justify-content:space-between;
+  border-bottom:1px solid var(--hair);padding-bottom:14px;margin-bottom:8px;}
+.tcol__head h3{font-family:var(--display);font-weight:400;font-size:1.5rem;letter-spacing:1px;}
+.tcol__head em{font-family:var(--display);font-style:normal;font-size:1.1rem;color:var(--blood);}
+.tcol ul{list-style:none;}
+.tcol li{font-size:13px;color:var(--ash);padding:13px 0;border-bottom:1px solid var(--hair);
+  transition:color .22s,padding-left .22s var(--ease);}
+.tcol li:last-child{border-bottom:none;}
+.tcol li:hover{color:var(--bone);padding-left:7px;}
+
+/* ---------- contact / footer ---------- */
+.contact .heading{font-size:clamp(3.2rem,11vw,8.5rem);}
+.socials{margin-top:clamp(40px,6vh,72px);border-top:1px solid var(--hair);}
+.social{position:relative;display:flex;align-items:center;gap:18px;
+  padding:clamp(18px,2.4vw,27px) clamp(24px,6vw,96px);
+  margin:0 calc(-1 * clamp(24px,6vw,96px));
+  border-bottom:1px solid var(--hair);overflow:hidden;}
+.social::before{content:"";position:absolute;inset:0;background:rgba(156,54,54,.12);
+  transform:scaleX(0);transform-origin:left;transition:transform .42s var(--ease);}
+.social:hover::before{transform:scaleX(1);}
+.social__name{position:relative;font-family:var(--display);font-weight:400;
+  font-size:clamp(1.6rem,3vw,2.5rem);letter-spacing:.02em;color:var(--bone);
+  min-width:clamp(116px,22vw,210px);transition:color .3s var(--ease);}
+.social:hover .social__name{color:#fff;}
+.social__handle{position:relative;font-size:12.5px;letter-spacing:.6px;color:var(--ash);
+  opacity:.38;transform:translateX(-9px);
+  transition:opacity .4s var(--ease),transform .4s var(--ease);}
+.social:hover .social__handle{opacity:1;transform:translateX(0);}
+.social__arrow{position:relative;margin-left:auto;color:var(--blood);font-size:15px;
+  transition:transform .35s var(--ease);}
+.social:hover .social__arrow{transform:translate(5px,-5px);}
+.footbar{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-between;
+  align-items:center;padding-top:clamp(34px,5vh,56px);font-size:11px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--ash-dim);}
+.footbar .status{display:flex;align-items:center;gap:9px;color:var(--ash);}
+.footbar .status i{width:6px;height:6px;border-radius:50%;background:var(--blood);
+  animation:pulse 2.8s infinite;}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(30px);
+  transition:opacity 1s var(--ease),transform 1s var(--ease);}
+.reveal.in{opacity:1;transform:none;}
+.d1{transition-delay:.09s;}.d2{transition-delay:.18s;}.d3{transition-delay:.27s;}.d4{transition-delay:.36s;}
+
+/* ---------- responsive ---------- */
+@media (max-width:1023px){.spine{display:none!important;}}
+@media (max-width:900px){.specs{grid-template-columns:1fr;}}
+@media (max-width:760px){.loadout{grid-template-columns:1fr 1fr;}}
+@media (max-width:520px){.loadout{grid-template-columns:1fr;}}
+@media (max-width:680px){
+  .project{grid-template-columns:1fr;gap:6px;}
+  .project__num{font-size:1.7rem;}
+  .project:hover .project__name{transform:none;}
+  .inspect{margin-left:0;margin-top:8px;}
+  .nav__links{gap:13px;}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .reveal{opacity:1;transform:none;transition:none;}
+  .marquee__track,.hero__cue-line{animation:none;}
+  [class*="hero__"]{animation:none!important;opacity:1!important;}
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="vignette"></div>
+
+<aside class="spine" id="spine">
+  <span>Bugsy Hewitt — Digital Necromancer</span>
+  <div class="sdot"></div>
+</aside>
+
+<nav class="nav" id="nav">
+  <a href="#hero" class="nav__mark">B<b>H</b><img class="nav__logo" src="logo.png" alt="" /></a>
+  <div class="nav__links">
+    <a href="#grimoire">Grimoire</a>
+    <a href="#specialities">Specialities</a>
+    <a href="#loadout">Loadout</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <div class="hero__inner" id="heroInner">
+    <div class="hero__photo" id="heroPhoto"></div>
+    <canvas class="hero__gl" id="heroGL" aria-hidden="true"></canvas>
+    <div class="hero__scrim" id="heroScrim"></div>
+    <div class="hero__content" id="heroContent">
+      <div class="hero__eyebrow">// identity</div>
+      <h1 class="hero__name">Bugsy Hewitt</h1>
+      <div class="hero__title">Digital Necromancer</div>
+      <div class="hero__role">Bug bounty hunter — offensive security researcher</div>
+    </div>
+    <div class="hero__cue" id="heroCue">
+      <span>Scroll to descend</span>
+      <div class="hero__cue-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INTRO ============ -->
+<div class="intro">
+  <div class="intro__statement" id="manifesto">
+    <p class="iline" data-text="Every system has its dead">Every system has its dead</p>
+    <p class="iline soft" data-text="Not gone, but forgotten">Not gone, but forgotten</p>
+    <p class="iline soft" data-text="Lost services and secrets">Lost services and secrets</p>
+    <p class="iline soft" data-text="Buried in shallow graves">Buried in shallow graves</p>
+    <p class="iline" data-text="I make them speak">I make them speak</p>
+  </div>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>HackerOne</span><i>&#10022;</i><span>Immunefi</span><i>&#10022;</i>
+      <span>Bugcrowd</span><i>&#10022;</i><span>OSINT</span><i>&#10022;</i>
+      <span>Recon</span><i>&#10022;</i><span>Web3</span><i>&#10022;</i>
+      <span>Smart Contracts</span><i>&#10022;</i><span>Bug Bounty</span><i>&#10022;</i>
+      <span>Responsible Disclosure</span><i>&#10022;</i><span>Attack Surface</span><i>&#10022;</i>
+      <span>API Security</span><i>&#10022;</i><span>IDOR</span><i>&#10022;</i>
+      <span>SSRF</span><i>&#10022;</i><span>XSS</span><i>&#10022;</i>
+      <span>Penetration Testing</span><i>&#10022;</i><span>Vulnerability Research</span><i>&#10022;</i>
+      <span>HackerOne</span><i>&#10022;</i><span>Immunefi</span><i>&#10022;</i>
+      <span>Bugcrowd</span><i>&#10022;</i><span>OSINT</span><i>&#10022;</i>
+      <span>Recon</span><i>&#10022;</i><span>Web3</span><i>&#10022;</i>
+      <span>Smart Contracts</span><i>&#10022;</i><span>Bug Bounty</span><i>&#10022;</i>
+      <span>Responsible Disclosure</span><i>&#10022;</i><span>Attack Surface</span><i>&#10022;</i>
+      <span>API Security</span><i>&#10022;</i><span>IDOR</span><i>&#10022;</i>
+      <span>SSRF</span><i>&#10022;</i><span>XSS</span><i>&#10022;</i>
+      <span>Penetration Testing</span><i>&#10022;</i><span>Vulnerability Research</span><i>&#10022;</i>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GRIMOIRE ============ -->
+<section class="section" id="grimoire">
+  <div class="eyebrow reveal">01 — currently raising</div>
+  <h2 class="heading reveal">Grimoire</h2>
+  <p class="lede reveal">Animating what was meant to stay still.</p>
+
+  <div class="projects" style="margin-top:clamp(40px,6vh,80px);">
+    <article class="project reveal">
+      <div class="project__num">01</div>
+      <div>
+        <h3 class="project__name">AlienClaw</h3>
+        <p class="project__blurb">Evolvable agent infrastructure where tool-composition genomes
+          evolve and compete, enabling group improvement leaderboards.</p>
+        <div class="project__meta">
+          <span class="tag">Agents</span><span class="tag">AI</span>
+          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
+        </div>
+      </div>
+    </article>
+    <article class="project reveal">
+      <div class="project__num">02</div>
+      <div>
+        <h3 class="project__name">graverobber</h3>
+        <p class="project__blurb">External recon and attack-surface discovery — drags exposed
+          assets out of unmarked graves before anyone else maps them. <!-- SWAP-COPY --></p>
+        <div class="project__meta">
+          <span class="tag">Recon</span><span class="tag">Python</span>
+          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
+        </div>
+      </div>
+    </article>
+    <article class="project reveal">
+      <div class="project__num">03</div>
+      <div>
+        <h3 class="project__name">possession</h3>
+        <p class="project__blurb">Authorized exploitation framework — takes the host quietly and
+          completely, only ever inside a signed scope. <!-- SWAP-COPY --></p>
+        <div class="project__meta">
+          <span class="tag">Exploitation</span><span class="tag">Python</span>
+          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
+        </div>
+      </div>
+    </article>
+    <article class="project reveal">
+      <div class="project__num">04</div>
+      <div>
+        <h3 class="project__name">exhumed</h3>
+        <p class="project__blurb">Secret and credential extraction — disinters keys, tokens and
+          passwords buried in code, config and commit history. <!-- SWAP-COPY --></p>
+        <div class="project__meta">
+          <span class="tag">Secrets</span><span class="tag">Python</span>
+          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
+        </div>
+      </div>
+    </article>
+    <article class="project reveal">
+      <div class="project__num">05</div>
+      <div>
+        <h3 class="project__name">unearth</h3>
+        <p class="project__blurb">Subdomain and service enumeration — maps everything still
+          breathing beneath an organisation&rsquo;s surface. <!-- SWAP-COPY --></p>
+        <div class="project__meta">
+          <span class="tag">Enumeration</span><span class="tag">Go</span>
+          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
+        </div>
+      </div>
+    </article>
+    <article class="project reveal">
+      <div class="project__num">06</div>
+      <div>
+        <h3 class="project__name">seance</h3>
+        <p class="project__blurb">Public-commit secret scanner — summoning secret streams and
+          dragging leaked souls from their graves.</p>
+        <div class="project__meta">
+          <span class="tag">Secrets</span><span class="tag">Recon</span>
+          <a class="inspect" href="https://github.com/bugsyhewitt/seance" target="_blank" rel="noopener">Inspect &#8599;</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ SPECIALITIES ============ -->
+<section class="section" id="specialities">
+  <div class="eyebrow reveal">02 — disciplines</div>
+  <h2 class="heading reveal">Specialities</h2>
+  <p class="lede reveal">Three crafts, one operator. Ranked first of 180,000 in one of the
+    largest security communities online — what follows is the work behind it.</p>
+
+  <div class="specs">
+    <div class="spec reveal">
+      <div class="spec__tag">Discipline / I</div>
+      <div class="spec__name">Audio / Video / Media</div>
+      <p class="spec__intro">A full studio — sound and image, written, produced, mixed and
+        mastered end to end.</p>
+      <ul class="spec__list">
+        <li><span>&#9656;</span>Music production</li>
+        <li><span>&#9656;</span>Mixing &amp; mastering engineering</li>
+        <li><span>&#9656;</span>Songwriting &amp; composition</li>
+        <li><span>&#9656;</span>Audio engineering</li>
+        <li><span>&#9656;</span>Sound design &amp; post</li>
+        <li><span>&#9656;</span>Reaper — recording &amp; production</li>
+        <li><span>&#9656;</span>Premiere Pro — video editing</li>
+        <li><span>&#9656;</span>Photoshop — design &amp; visual</li>
+      </ul>
+    </div>
+    <div class="spec reveal d1">
+      <div class="spec__tag">Discipline / II</div>
+      <div class="spec__name">AI &amp; Automation</div>
+      <p class="spec__intro">Most hunters work with one set of hands. This is a fleet —
+        autonomous agents running recon, tooling and triage in parallel.</p>
+      <ul class="spec__list">
+        <li><span>&#9656;</span>Autonomous agent orchestration</li>
+        <li><span>&#9656;</span>Multi-agent pipelines at scale</li>
+        <li><span>&#9656;</span>LLM tooling &amp; MCP server design</li>
+        <li><span>&#9656;</span>Security automation pipelines</li>
+        <li><span>&#9656;</span>AI-assisted recon &amp; triage</li>
+        <li><span>&#9656;</span>Custom offensive tooling</li>
+        <li><span>&#9656;</span>Prompt &amp; workflow engineering</li>
+        <li><span>&#9656;</span>Rapid prototyping — idea to shipped</li>
+      </ul>
+    </div>
+    <div class="spec reveal d2">
+      <div class="spec__tag">Discipline / III</div>
+      <div class="spec__name">Offensive Security</div>
+      <p class="spec__intro">Web and web3 targets taken apart by hand — the bugs scanners
+        walk past. Disclosed across HackerOne and Immunefi.</p>
+      <ul class="spec__list">
+        <li><span>&#9656;</span>Web application penetration testing</li>
+        <li><span>&#9656;</span>IDOR &amp; broken access control</li>
+        <li><span>&#9656;</span>SSRF, blind SSRF &amp; request smuggling</li>
+        <li><span>&#9656;</span>Stored &amp; DOM-based XSS</li>
+        <li><span>&#9656;</span>Business logic flaws</li>
+        <li><span>&#9656;</span>Web3 &amp; smart-contract attack surface</li>
+        <li><span>&#9656;</span>API security testing</li>
+        <li><span>&#9656;</span>Recon, OSINT &amp; responsible disclosure</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOADOUT ============ -->
+<section class="section" id="loadout">
+  <div class="eyebrow reveal">03 — the rig</div>
+  <h2 class="heading reveal">The Loadout</h2>
+  <p class="lede reveal">Two rigs, one operator — the offensive stack that finds the bugs,
+    and the studio that scores everything else. Curated, sharpened, mostly hand-built.</p>
+
+  <div class="loadout">
+    <div class="tcol reveal">
+      <div class="tcol__head"><h3>Offensive</h3><em>I</em></div>
+      <ul>
+        <li>Burp Suite Professional</li>
+        <li>Caido</li>
+        <li>Custom Grimoire suite</li>
+        <li>AI-assisted recon &amp; triage</li>
+        <li>Manual-first methodology</li>
+      </ul>
+    </div>
+    <div class="tcol reveal d1">
+      <div class="tcol__head"><h3>Engineering &amp; AI</h3><em>II</em></div>
+      <ul>
+        <li>Python</li>
+        <li>Claude Code</li>
+        <li>Custom MCP servers</li>
+        <li>Multi-agent orchestration</li>
+        <li>Git</li>
+      </ul>
+    </div>
+    <div class="tcol reveal d2">
+      <div class="tcol__head"><h3>Environment</h3><em>III</em></div>
+      <ul>
+        <li>BlackArch / Kali Linux</li>
+        <li>Neovim</li>
+        <li>tmux</li>
+        <li>Docker</li>
+        <li>Self-hosted infrastructure</li>
+      </ul>
+    </div>
+    <div class="tcol reveal">
+      <div class="tcol__head"><h3>Studio Software</h3><em>IV</em></div>
+      <ul>
+        <li>Reaper</li>
+        <li>FabFilter</li>
+        <li>Waves</li>
+        <li>Soundtoys</li>
+        <li>Toontrack / STL Tones</li>
+      </ul>
+    </div>
+    <div class="tcol reveal d1">
+      <div class="tcol__head"><h3>Studio Hardware</h3><em>V</em></div>
+      <ul>
+        <li>Audient interface</li>
+        <li>Shure</li>
+        <li>Audio-Technica</li>
+        <li>Electro-Voice</li>
+        <li>Kali Audio monitors</li>
+      </ul>
+    </div>
+    <div class="tcol reveal d2">
+      <div class="tcol__head"><h3>Instruments</h3><em>VI</em></div>
+      <ul>
+        <li>Gibson</li>
+        <li>Fender</li>
+        <li>Ibanez</li>
+        <li>Alesis keyboard</li>
+        <li>Ernie Ball</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="section contact" id="contact">
+  <div class="eyebrow reveal">04 — the s&eacute;ance</div>
+  <h2 class="heading reveal">Initiate Contact</h2>
+  <p class="lede reveal">Found something I should see — a target, a collaboration, a contract?
+    The veil is thin. Reach through.</p>
+
+  <div class="socials reveal">
+    <a class="social" href="https://instagram.com/bugsyhewitt" target="_blank" rel="noopener">
+      <span class="social__name">Instagram</span>
+      <span class="social__handle">@bugsyhewitt</span>
+      <span class="social__arrow">&#8599;</span>
+    </a>
+    <a class="social" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">
+      <span class="social__name">GitHub</span>
+      <span class="social__handle">github.com/bugsyhewitt</span>
+      <span class="social__arrow">&#8599;</span>
+    </a>
+    <a class="social" href="https://discord.com/" target="_blank" rel="noopener">
+      <span class="social__name">Discord</span>
+      <span class="social__handle">bugsy5899</span>
+      <span class="social__arrow">&#8599;</span>
+    </a>
+    <a class="social" href="mailto:bugsyhewitt@gmail.com">
+      <span class="social__name">Email</span>
+      <span class="social__handle">bugsyhewitt@gmail.com</span>
+      <span class="social__arrow">&#8599;</span>
+    </a>
+  </div>
+
+  <div class="footbar">
+    <span>Bugsy Hewitt — Digital Necromancer</span>
+    <span>USA &middot; MMXXVI</span>
+    <span class="status"><i></i>Status: Operational</span>
+  </div>
+</section>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
