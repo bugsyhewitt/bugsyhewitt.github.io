@@ -21,7 +21,7 @@ import { initHeroFX } from './hero-fx';
     var p = clamp(-r.top / dist, 0, 1);
     var zoom = reduce ? 0.1 : 0.6, blurMax = reduce ? 0 : 18;
     var pOp = clamp(1 - p * 1.24, 0, 1);
-    photo.style.transform = 'scale(' + (1 + p * zoom).toFixed(4) + ')';
+    photo.style.transform = 'scale(' + (1 - p * zoom).toFixed(4) + ')';
     photo.style.filter = 'blur(' + (p * blurMax).toFixed(2) + 'px)';
     photo.style.opacity = pOp.toFixed(3);
     scrim.style.opacity = pOp.toFixed(3);
