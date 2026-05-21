@@ -20,14 +20,10 @@ import { initHeroFX } from './hero-fx';
     var dist = hero.offsetHeight - window.innerHeight;
     var p = clamp(-r.top / dist, 0, 1);
     var blurMax = reduce ? 0 : 18;
-    var pOp = clamp(1 - p * 1.24, 0, 1);
-    /* No scale() transform — the div stays full-screen throughout.
-       Only background-size animates: cover (close-up face, matching WebGL)
-       shrinks toward contain (~57% width for this near-square image on 16:9),
-       revealing the full angel. The void background-color fills the sides. */
+    var pOp = clamp(1 - p, 0, 1);
     photo.style.transform = '';
     var containW = window.innerHeight / window.innerWidth * 100;
-    photo.style.backgroundSize = lerp(100, containW, p).toFixed(1) + '% auto';
+    photo.style.backgroundSize = lerp(100, containW * 0.7, p).toFixed(1) + '% auto';
     photo.style.filter = 'blur(' + (p * blurMax).toFixed(2) + 'px)';
     photo.style.opacity = pOp.toFixed(3);
     scrim.style.opacity = pOp.toFixed(3);
