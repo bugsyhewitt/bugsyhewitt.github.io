@@ -19,9 +19,18 @@ import { initHeroFX } from './hero-fx';
     var r = hero.getBoundingClientRect();
     var dist = hero.offsetHeight - window.innerHeight;
     var p = clamp(-r.top / dist, 0, 1);
-    var zoom = reduce ? 0.05 : 0.8, blurMax = reduce ? 0 : 18;
+    var zoom = reduce ? 0.05 : 0.6, blurMax = reduce ? 0 : 18;
     var pOp = clamp(1 - p * 1.24, 0, 1);
-    photo.style.transform = 'scale(' + (1 + (1 - p) * zoom).toFixed(4) + ')';
+    /* Scale starts at 1.0 — identical zoom to the WebGL canvas, seamless handoff.
+       Zooms out toward 0.4 as user scrolls, revealing the full figure. */
+    photo.style.transform = 'scale(' + (1 - p * zoom).toFixed(4) + ')';
+    /* background-size animates from cover (100%) toward contain (~57% for a
+       near-square image on 16:9), reaching full-image view by p=0.7. The
+       background-color (set below) fills the side bars so they track the
+       darkening hero background and don't clash with the image edges. */
+    var containW = (window.innerHeight / window.innerWidth * 100).toFixed(1);
+    var bgW = lerp(100, parseFloat(containW), Math.min(p / 0.7, 1));
+    photo.style.backgroundSize = bgW.toFixed(1) + '% auto';
     photo.style.filter = 'blur(' + (p * blurMax).toFixed(2) + 'px)';
     photo.style.opacity = pOp.toFixed(3);
     scrim.style.opacity = pOp.toFixed(3);
