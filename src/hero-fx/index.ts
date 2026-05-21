@@ -54,6 +54,7 @@ export function initHeroFX(canvas: HTMLCanvasElement, opts: HeroFXOptions): void
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
       renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
       renderer.setSize(w, h);
+      renderer.setClearColor(0xf7f7f7, 1);
 
       /* Scene */
       const scene = new THREE.Scene();

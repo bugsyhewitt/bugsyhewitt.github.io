@@ -24,14 +24,17 @@ export class PlaneMesh {
     this.camera = new THREE.OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0.001, 10);
     this.camera.position.z = 1;
 
-    this.geometry = new THREE.PlaneGeometry(1, 1);
+    /* Plane is 88% of camera width — matches CSS background-size start (88%).
+       The 6% strips on each side show the renderer clear colour (paper),
+       giving wing tips breathing room and making WebGL → CSS handoff seamless. */
+    this.geometry = new THREE.PlaneGeometry(0.88, 1);
     this.material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
         uTexture: new THREE.Uniform(texture),
         uGrid: new THREE.Uniform(null as unknown as THREE.Texture),
-        uContainerResolution: new THREE.Uniform(new THREE.Vector2(canvasWidth, canvasHeight)),
+        uContainerResolution: new THREE.Uniform(new THREE.Vector2(canvasWidth * 0.88, canvasHeight)),
         uImageResolution: new THREE.Uniform(new THREE.Vector2(imageWidth, imageHeight)),
       },
     });
@@ -45,7 +48,7 @@ export class PlaneMesh {
   }
 
   onResize(canvasWidth: number, canvasHeight: number): void {
-    this.material.uniforms['uContainerResolution'].value.set(canvasWidth, canvasHeight);
+    this.material.uniforms['uContainerResolution'].value.set(canvasWidth * 0.88, canvasHeight);
   }
 
   dispose(): void {
