@@ -49,7 +49,7 @@ void main() {
     finalImage.r = texture2D(uTexture, redUvs).r;
     finalImage.g = texture2D(uTexture, greenUvs).g;
     finalImage.b = texture2D(uTexture, blueUvs).b;
-    finalImage.a = texture2D(uTexture, displacedUvs).a;
+    finalImage.a = 1.0;
 
     gl_FragColor = finalImage;
 }

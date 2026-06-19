@@ -22,8 +22,8 @@ import { initHeroFX } from './hero-fx';
     var blurMax = reduce ? 0 : 18;
     var pOp = clamp(1 - p, 0, 1);
     photo.style.transform = '';
-    var containW = Math.min(100, window.innerHeight / window.innerWidth * 100);
-    photo.style.backgroundSize = lerp(88, containW * 0.7, p).toFixed(1) + '% auto';
+    // Start at full cover (fills frame); ease slightly larger as the user scrolls.
+    photo.style.backgroundSize = lerp(112, 132, p).toFixed(1) + '% auto';
     photo.style.filter = 'blur(' + (p * blurMax).toFixed(2) + 'px)';
     photo.style.opacity = pOp.toFixed(3);
     scrim.style.opacity = pOp.toFixed(3);
