@@ -48,7 +48,11 @@ export function initHeroFX(canvas: HTMLCanvasElement, opts: HeroFXOptions): void
     }
 
     function setup(loadedImg: HTMLImageElement): void {
-      const [w, h] = canvasDims();
+      let [w, h] = canvasDims();
+      if (w === 0 || h === 0) {
+        requestAnimationFrame(() => setup(loadedImg));
+        return;
+      }
 
       /* Renderer */
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
@@ -63,6 +67,8 @@ export function initHeroFX(canvas: HTMLCanvasElement, opts: HeroFXOptions): void
       const texture = new THREE.Texture(loadedImg);
       texture.minFilter = THREE.LinearFilter;
       texture.magFilter = THREE.LinearFilter;
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.format = THREE.RGBAFormat;
       texture.needsUpdate = true;
 
       /* GPGPU */
@@ -122,6 +128,7 @@ export function initHeroFX(canvas: HTMLCanvasElement, opts: HeroFXOptions): void
       window.addEventListener('resize', onResize);
 
       /* ── Render loop ────────────────────────────────────────── */
+      let frameCount = 0;
       function tick(): void {
         if (killed) return;
 
@@ -130,8 +137,9 @@ export function initHeroFX(canvas: HTMLCanvasElement, opts: HeroFXOptions): void
         planeMesh.setGridTexture(gpgpu.getTexture());
         renderer.render(scene, planeMesh.camera);
 
-        /* Reveal on first painted frame */
-        if (!revealed) {
+        /* Reveal after 2 real frames so the texture has uploaded to the GPU */
+        frameCount++;
+        if (!revealed && frameCount >= 2) {
           revealed = true;
           heroEl!.classList.add('gl-on');
           canvas.classList.add('live');
