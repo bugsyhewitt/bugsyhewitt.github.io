@@ -66,7 +66,7 @@ import { initHeroFX } from './hero-fx';
   if (manifesto) {
     var mLines = Array.prototype.slice.call(manifesto.querySelectorAll('.iline')) as HTMLElement[];
     var lastLine = mLines[mLines.length - 1];
-    var GLY = 'ABCDEFGHJKLMNPQRSTUVWXYZ#%&/<>*+=$!?23456789';
+    var GLY = 'ABCDEFGHJKLMNPQRSTUVWXYZ#%&/*+=$!?23456789';
     var reduceM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function paint(el: HTMLElement, text: string, cursor: boolean) {
