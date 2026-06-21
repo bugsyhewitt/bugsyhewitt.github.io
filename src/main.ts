@@ -59,7 +59,7 @@ import { initHeroFX } from './hero-fx';
         });
       }
     });
-  }, { threshold: 0.42 });
+  }, { threshold: 0.15 });
   document.querySelectorAll('section[id]').forEach(function (s) { secObs.observe(s); });
 
   var manifesto: HTMLElement | null = document.getElementById('manifesto');
