@@ -26,9 +26,6 @@
   THINGS TO REPLACE  ·  search this file for the word  SWAP
   --------------------------------------------------------------------------
   · hero.jpg / sigils.jpg / logo.png  — ship these alongside index.html
-  · SWAP-REPO  — 5 project "Inspect" links → your real GitHub repo URLs
-  · SWAP-COPY  — graverobber / possession / exhumed / unearth blurbs are
-                 still placeholder; rewrite them in your own voice
   ==========================================================================
 -->
 
@@ -194,31 +191,20 @@ img{display:block;max-width:100%;}
 .marquee__track i{color:var(--blood);font-style:normal;}
 @keyframes slide{to{transform:translateX(-50%);}}
 
-/* ---------- grimoire / projects ---------- */
-.project{
-  display:grid;grid-template-columns:96px 1fr;gap:clamp(14px,4vw,52px);
-  padding:clamp(30px,5vw,56px) clamp(24px,6vw,96px);
-  margin:0 calc(-1 * clamp(24px,6vw,96px));
-  border-top:1px solid var(--hair);
-  transition:background .4s var(--ease);
-}
-.projects .project:last-child{border-bottom:1px solid var(--hair);}
-.project:hover{background:var(--coffin);}
-.project__num{font-family:var(--display);font-size:clamp(2.4rem,5vw,3.8rem);
-  color:var(--hair-bright);line-height:1;transition:color .4s var(--ease);}
-.project:hover .project__num{color:var(--blood);}
-.project__name{font-family:var(--display);font-weight:400;
-  font-size:clamp(2.2rem,6vw,4rem);line-height:1;letter-spacing:.01em;
-  transition:transform .4s var(--ease);}
-.project:hover .project__name{transform:translateX(10px);}
-.project__blurb{color:var(--ash);max-width:60ch;margin-top:10px;font-size:14px;}
-.project__meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px;}
-.tag{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ash);
-  border:1px solid var(--hair-bright);padding:5px 11px;}
-.inspect{font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:var(--bone);
-  border-bottom:1px solid var(--blood);padding-bottom:3px;margin-left:auto;
-  transition:letter-spacing .3s var(--ease);}
-.inspect:hover{letter-spacing:3.6px;}
+/* ---------- visitor / ufo ---------- */
+.ufo-zone{position:relative;height:96px;}
+.ufo{position:absolute;top:14px;left:50%;width:76px;display:block;opacity:.8;
+  animation:ufo-bob 5.4s ease-in-out infinite;}
+.ufo svg{display:block;width:100%;height:auto;
+  transition:transform .35s var(--ease),filter .35s var(--ease);}
+.ufo:hover,.ufo:focus-visible{opacity:1;}
+.ufo:hover svg,.ufo:focus-visible svg{transform:scale(1.15);
+  filter:drop-shadow(0 0 12px rgba(156,54,54,.45));}
+.ufo__hull{fill:var(--coffin);stroke:var(--hair-bright);}
+.ufo__light{fill:var(--blood);animation:pulse 2.8s infinite;}
+@keyframes ufo-bob{0%,100%{transform:translateY(0) rotate(-2deg);}
+  50%{transform:translateY(-9px) rotate(2deg);}}
+@media (max-width:700px){.ufo{width:56px;}.ufo-zone{height:70px;}}
 
 /* ---------- carousel / the deck ---------- */
 .grimoire-carousel { overflow: hidden; }
@@ -349,10 +335,6 @@ img{display:block;max-width:100%;}
 @media (max-width:760px){.loadout{grid-template-columns:1fr 1fr;}}
 @media (max-width:520px){.loadout{grid-template-columns:1fr;}}
 @media (max-width:680px){
-  .project{grid-template-columns:1fr;gap:6px;}
-  .project__num{font-size:1.7rem;}
-  .project:hover .project__name{transform:none;}
-  .inspect{margin-left:0;margin-top:8px;}
   .nav__links{gap:13px;}
 }
 @media (max-width:420px){
@@ -362,7 +344,7 @@ img{display:block;max-width:100%;}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
   .reveal{opacity:1;transform:none;transition:none;}
-  .marquee__track,.hero__cue-line{animation:none;}
+  .marquee__track,.hero__cue-line,.ufo{animation:none;}
   [class*="hero__"]{animation:none!important;opacity:1!important;}
 }
 </style>
@@ -437,91 +419,24 @@ img{display:block;max-width:100%;}
   </div>
 </div>
 
-<!-- ============ GRIMOIRE ============ -->
-<section class="section" id="grimoire">
-  <div class="eyebrow reveal">01 — currently raising</div>
-  <h2 class="heading reveal">Grimoire</h2>
-  <p class="lede reveal">Animating what was meant to stay still.</p>
+<!-- ============ VISITOR ============ -->
+<div class="ufo-zone">
+  <a class="ufo" id="ufo" href="https://github.com/bugsyhewitt/alienclaw" target="_blank" rel="noopener"
+     aria-label="AlienClaw — evolvable agent infrastructure. Unidentified craft, identified repo.">
+    <svg viewBox="0 0 120 64" aria-hidden="true" focusable="false">
+      <ellipse cx="60" cy="30" rx="34" ry="13" fill="rgba(156,54,54,.14)"/>
+      <path d="M38 26 Q60 4 82 26 Z" fill="rgba(233,230,221,.16)" stroke="rgba(233,230,221,.35)" stroke-width="1.5"/>
+      <ellipse class="ufo__hull" cx="60" cy="30" rx="36" ry="11" stroke-width="1.5"/>
+      <circle class="ufo__light" cx="38" cy="32" r="2.6"/>
+      <circle class="ufo__light" cx="60" cy="35" r="2.6" style="animation-delay:.9s"/>
+      <circle class="ufo__light" cx="82" cy="32" r="2.6" style="animation-delay:1.8s"/>
+    </svg>
+  </a>
+</div>
 
-  <div class="projects" style="margin-top:clamp(40px,6vh,80px);">
-    <article class="project reveal">
-      <div class="project__num">01</div>
-      <div>
-        <h3 class="project__name">AlienClaw</h3>
-        <p class="project__blurb">Evolvable agent infrastructure where tool-composition genomes
-          evolve and compete, enabling group improvement leaderboards.</p>
-        <div class="project__meta">
-          <span class="tag">Agents</span><span class="tag">AI</span>
-          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
-        </div>
-      </div>
-    </article>
-    <article class="project reveal">
-      <div class="project__num">02</div>
-      <div>
-        <h3 class="project__name">graverobber</h3>
-        <p class="project__blurb">External recon and attack-surface discovery — drags exposed
-          assets out of unmarked graves before anyone else maps them. <!-- SWAP-COPY --></p>
-        <div class="project__meta">
-          <span class="tag">Recon</span><span class="tag">Python</span>
-          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
-        </div>
-      </div>
-    </article>
-    <article class="project reveal">
-      <div class="project__num">03</div>
-      <div>
-        <h3 class="project__name">possession</h3>
-        <p class="project__blurb">Authorized exploitation framework — takes the host quietly and
-          completely, only ever inside a signed scope. <!-- SWAP-COPY --></p>
-        <div class="project__meta">
-          <span class="tag">Exploitation</span><span class="tag">Python</span>
-          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
-        </div>
-      </div>
-    </article>
-    <article class="project reveal">
-      <div class="project__num">04</div>
-      <div>
-        <h3 class="project__name">exhumed</h3>
-        <p class="project__blurb">Secret and credential extraction — disinters keys, tokens and
-          passwords buried in code, config and commit history. <!-- SWAP-COPY --></p>
-        <div class="project__meta">
-          <span class="tag">Secrets</span><span class="tag">Python</span>
-          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
-        </div>
-      </div>
-    </article>
-    <article class="project reveal">
-      <div class="project__num">05</div>
-      <div>
-        <h3 class="project__name">unearth</h3>
-        <p class="project__blurb">Subdomain and service enumeration — maps everything still
-          breathing beneath an organisation&rsquo;s surface. <!-- SWAP-COPY --></p>
-        <div class="project__meta">
-          <span class="tag">Enumeration</span><span class="tag">Go</span>
-          <a class="inspect" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">Inspect &#8599;</a><!-- SWAP-REPO -->
-        </div>
-      </div>
-    </article>
-    <article class="project reveal">
-      <div class="project__num">06</div>
-      <div>
-        <h3 class="project__name">seance</h3>
-        <p class="project__blurb">Public-commit secret scanner — summoning secret streams and
-          dragging leaked souls from their graves.</p>
-        <div class="project__meta">
-          <span class="tag">Secrets</span><span class="tag">Recon</span>
-          <a class="inspect" href="https://github.com/bugsyhewitt/seance" target="_blank" rel="noopener">Inspect &#8599;</a>
-        </div>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- ============ CAROUSEL / THE DECK ============ -->
-<section class="section grimoire-carousel" id="grimoire-carousel">
-  <div class="eyebrow reveal">01.5 — the deck</div>
+<!-- ============ THE DECK / GRIMOIRE ============ -->
+<section class="section grimoire-carousel" id="grimoire">
+  <div class="eyebrow reveal">01 — the deck</div>
   <h2 class="heading reveal">Necromancer Suite</h2>
   <p class="lede reveal">Twenty tools, resurrected. Drag the wheel.</p>
 

@@ -1,5 +1,6 @@
 import { initHeroFX } from './hero-fx';
 import { initCarousel } from './carousel';
+import { initUfo } from './ufo';
 
 (function () {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -142,3 +143,4 @@ if (heroGL) {
 }
 
 initCarousel();
+initUfo();
