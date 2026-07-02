@@ -26,7 +26,7 @@ export function initCarousel(): void {
     item.className = 'carousel__item';
     item.innerHTML =
       `<a class="carousel__card" href="${card.repo}" target="_blank" rel="noopener" draggable="false">
-         <img class="carousel__img" src="/cards/${card.name}.jpg" alt="${card.name}" draggable="false" />
+         <img class="carousel__img" src="/cards/${card.name}.jpg" alt="${card.name}" draggable="false" loading="lazy" decoding="async" />
          <span class="carousel__label">${card.name}</span>
        </a>`;
     itemsEl.appendChild(item);
