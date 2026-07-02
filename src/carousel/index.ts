@@ -97,23 +97,16 @@ export function initCarousel(): void {
   }
 
   // Draggable rotation with snap + focus update.
-  let start = 0;
   Draggable.create(itemsEl, {
     type: 'rotation',
     inertia: false,
     onPress() { dragged = false; },
-    onDragStart(this: Draggable) { start = this.rotation; dragged = true; },
+    onDragStart() { dragged = true; },
     onDrag: updateFocus,
     onDragEnd(this: Draggable) {
-      const rotation = this.rotation;
-      const offset = Math.abs(rotation - start);
-      if (rotation > start) {
-        if (offset < degree / 2) gsap.to(itemsEl, { rotation: `-=${offset}`, onUpdate: updateFocus });
-        else gsap.to(itemsEl, { rotation: `+=${2 * degree - offset}`, onUpdate: updateFocus });
-      } else {
-        if (offset < degree / 2) gsap.to(itemsEl, { rotation: `+=${offset}`, onUpdate: updateFocus });
-        else gsap.to(itemsEl, { rotation: `-=${2 * degree - offset}`, onUpdate: updateFocus });
-      }
+      // land on the nearest card — a short drag moves one step, a fling moves several
+      const snapped = Math.round(this.rotation / degree) * degree;
+      gsap.to(itemsEl, { rotation: snapped, onUpdate: updateFocus });
       // clear the drag flag shortly after so genuine clicks work next time
       setTimeout(() => { dragged = false; }, 0);
     },
