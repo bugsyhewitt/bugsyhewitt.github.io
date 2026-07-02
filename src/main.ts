@@ -1,4 +1,5 @@
 import { initHeroFX } from './hero-fx';
+import { initCarousel } from './carousel';
 
 (function () {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -139,3 +140,5 @@ if (heroGL) {
     console.warn('[hero-fx] init threw, ignoring:', e);
   }
 }
+
+initCarousel();
