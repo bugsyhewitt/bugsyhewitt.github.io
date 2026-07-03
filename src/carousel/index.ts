@@ -83,6 +83,23 @@ export function initCarousel(): void {
     }, assembleAt);
   });
 
+  // Liquid materialize on the incoming front card: displace through the shared
+  // #liquid SVG filter for ~0.6s, then drop the inline filter so drag stays cheap.
+  let prevBest = -1;
+  let revealImg: HTMLElement | null = null;
+  function liquidReveal(img: HTMLElement): void {
+    const disp = document.getElementById('liquidDisp');
+    if (!disp) return;
+    if (revealImg && revealImg !== img) revealImg.style.filter = ''; // interrupted reveal: unfilter the old card
+    revealImg = img;
+    gsap.killTweensOf(disp);
+    img.style.filter = 'url(#liquid)';
+    gsap.fromTo(disp, { attr: { scale: 26 } }, {
+      attr: { scale: 0 }, duration: 0.6, ease: 'power2.out',
+      onComplete() { img.style.filter = ''; if (revealImg === img) revealImg = null; },
+    });
+  }
+
   // Desaturate all but the front-most card. Front = the item whose world
   // rotation is closest to 0 (pointing up at the viewer).
   function updateFocus(): void {
@@ -98,6 +115,13 @@ export function initCarousel(): void {
       if (d < bestDelta) { bestDelta = d; best = i; }
     });
     images.forEach((image, i) => image.classList.toggle('is-dim', i !== best));
+    if (best !== prevBest) {
+      prevBest = best;
+      if (!reduceMotion) {
+        const img = images[best].querySelector<HTMLElement>('.carousel__img');
+        if (img) liquidReveal(img);
+      }
+    }
   }
 
   // Draggable rotation with snap + focus update.
