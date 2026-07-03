@@ -351,15 +351,12 @@ img{display:block;max-width:100%;}
 .footbar .status i{width:6px;height:6px;border-radius:50%;background:var(--blood);
   animation:pulse 2.8s infinite;}
 
-/* ---------- premium fx: cursor / veil ---------- */
-.cursor{position:fixed;top:0;left:0;width:26px;height:26px;border:1px solid var(--blood);border-radius:50%;
-  pointer-events:none;z-index:120;transform:translate3d(-50%,-50%,0);
-  transition:width .25s var(--ease),height .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease);
-  mix-blend-mode:difference;will-change:transform;}
-.cursor--on{width:52px;height:52px;background:rgba(156,54,54,.12);}
-body.cursor-live{cursor:none;}
-body.cursor-live a,body.cursor-live button{cursor:none;}
+/* ---------- skeleton hand cursors — zero-lag, OS-rendered ---------- */
+html{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><g fill='none' stroke-linecap='round'><g stroke='%230d0d0f' stroke-width='4.6'><path d='M7 5.5v5.5M11.5 3.5v6.5M16 3.5v6.5M20.5 5.5v5.5'/><path d='M7 13.5v1.5M11.5 12.5v2.5M16 12.5v2.5M20.5 13.5v1.5'/><path d='M4 17.5l3.5 3'/></g><rect x='5.8' y='15' width='16.4' height='9.6' rx='4.4' fill='%230d0d0f'/><g stroke='%23e9e6dd' stroke-width='2.4'><path d='M7 5.5v5.5M11.5 3.5v6.5M16 3.5v6.5M20.5 5.5v5.5'/><path d='M7 13.5v1.5M11.5 12.5v2.5M16 12.5v2.5M20.5 13.5v1.5'/><path d='M4 17.5l3.5 3'/></g><rect x='7.2' y='16.4' width='13.6' height='6.8' rx='3.2' fill='%23e9e6dd'/><path d='M10.6 18.2v3.2M14 18.2v3.2M17.4 18.2v3.2' stroke='%230d0d0f' stroke-width='1.1'/></g></svg>") 14 14,auto;}
+a,button,.inspect,.social,.ufo{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><g fill='none' stroke-linecap='round'><g stroke='%230d0d0f' stroke-width='4.6'><path d='M10.5 2.5v5M10.5 9.5v3.5'/><path d='M16 10.5v2.5M20 11.5v2M23.5 13v1.5'/><path d='M6.5 18.5c1.5 3 4.5 3.5 6.5 3'/></g><rect x='8' y='12.6' width='16' height='11.4' rx='4.6' fill='%230d0d0f'/><g stroke='%23e9e6dd' stroke-width='2.4'><path d='M10.5 2.5v5M10.5 9.5v3.5'/><path d='M16 10.5v2.5M20 11.5v2M23.5 13v1.5'/></g><rect x='9.4' y='14' width='13.2' height='8.6' rx='3.4' fill='%23e9e6dd'/><path d='M13 16v3.4M16.4 16v3.4M19.8 16v3.4' stroke='%230d0d0f' stroke-width='1.1'/><path d='M6.5 18.5c1.5 3 4.5 3.5 6.5 3' stroke='%23e9e6dd' stroke-width='2.4'/></g></svg>") 10 3,pointer;}
+.carousel__item,.carousel__card{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><g fill='none' stroke-linecap='round'><g stroke='%230d0d0f' stroke-width='4.6'><path d='M7 5.5v5.5M11.5 3.5v6.5M16 3.5v6.5M20.5 5.5v5.5'/><path d='M7 13.5v1.5M11.5 12.5v2.5M16 12.5v2.5M20.5 13.5v1.5'/><path d='M4 17.5l3.5 3'/></g><rect x='5.8' y='15' width='16.4' height='9.6' rx='4.4' fill='%230d0d0f'/><g stroke='%23e9e6dd' stroke-width='2.4'><path d='M7 5.5v5.5M11.5 3.5v6.5M16 3.5v6.5M20.5 5.5v5.5'/><path d='M7 13.5v1.5M11.5 12.5v2.5M16 12.5v2.5M20.5 13.5v1.5'/><path d='M4 17.5l3.5 3'/></g><rect x='7.2' y='16.4' width='13.6' height='6.8' rx='3.2' fill='%23e9e6dd'/><path d='M10.6 18.2v3.2M14 18.2v3.2M17.4 18.2v3.2' stroke='%230d0d0f' stroke-width='1.1'/></g></svg>") 14 14,grab;}
 
+/* ---------- premium fx: veil ---------- */
 .veil{position:absolute;inset:0;z-index:0;pointer-events:none;}
 .intro,.contact{position:relative;}
 .intro>:not(.veil),.contact>:not(.veil){position:relative;z-index:1;}
@@ -393,7 +390,6 @@ body.cursor-live a,body.cursor-live button{cursor:none;}
   html{scroll-behavior:auto;}
   .reveal{opacity:1;transform:none;transition:none;}
   .reveal-blur{opacity:1;filter:none;transform:none;transition:none;}
-  .cursor{display:none;}
   .veil{display:none;}
   .marquee__track,.hero__cue-line,.ufo{animation:none;}
   [class*="hero__"]{animation:none!important;opacity:1!important;}
