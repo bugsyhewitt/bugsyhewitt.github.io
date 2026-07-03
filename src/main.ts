@@ -132,6 +132,22 @@ import { initUfo } from './ufo';
     }
   }
 
+  var discord = document.getElementById('discordCopy');
+  if (discord) {
+    var dHandle = discord.querySelector('.social__handle') as HTMLElement | null;
+    // the visible span is the single source of the handle text
+    var dText = (dHandle && dHandle.textContent || '').trim();
+    var dTimer = 0;
+    discord.addEventListener('click', function (e) {
+      e.preventDefault();
+      try { navigator.clipboard.writeText(dText).catch(function () {}); } catch {}
+      if (dHandle) {
+        dHandle.textContent = 'copied to clipboard';
+        window.clearTimeout(dTimer);
+        dTimer = window.setTimeout(function () { dHandle!.textContent = dText; }, 1600);
+      }
+    });
+  }
 })();
 
 const heroGL = document.getElementById('heroGL') as HTMLCanvasElement | null;
