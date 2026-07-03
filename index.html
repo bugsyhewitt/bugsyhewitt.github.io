@@ -52,7 +52,7 @@
   --ease:cubic-bezier(.16,1,.3,1);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;scroll-padding-top:90px;-webkit-text-size-adjust:100%;}
+html{scroll-behavior:smooth;scroll-padding-top:90px;-webkit-text-size-adjust:100%;} /* scroll-padding-top is consumed by Lenis scrollTo (src/scroll/lenis.ts) — do not remove */
 body{
   background:var(--void);color:var(--bone);
   font-family:var(--mono);font-size:15px;line-height:1.7;
@@ -351,10 +351,26 @@ img{display:block;max-width:100%;}
 .footbar .status i{width:6px;height:6px;border-radius:50%;background:var(--blood);
   animation:pulse 2.8s infinite;}
 
+/* ---------- premium fx: cursor / veil ---------- */
+.cursor{position:fixed;top:0;left:0;width:26px;height:26px;border:1px solid var(--blood);border-radius:50%;
+  pointer-events:none;z-index:120;transform:translate3d(-50%,-50%,0);
+  transition:width .25s var(--ease),height .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease);
+  mix-blend-mode:difference;will-change:transform;}
+.cursor--on{width:52px;height:52px;background:rgba(156,54,54,.12);}
+body.cursor-live{cursor:none;}
+body.cursor-live a,body.cursor-live button{cursor:none;}
+
+.veil{position:absolute;inset:0;z-index:0;pointer-events:none;}
+.intro,.contact{position:relative;}
+.intro>:not(.veil),.contact>:not(.veil){position:relative;z-index:1;}
+
 /* ---------- reveal ---------- */
 .reveal{opacity:0;transform:translateY(30px);
   transition:opacity 1s var(--ease),transform 1s var(--ease);}
 .reveal.in{opacity:1;transform:none;}
+.reveal-blur{opacity:0;filter:blur(14px);transform:translateY(24px);
+  transition:opacity 1s var(--ease),filter 1.1s var(--ease),transform 1s var(--ease);}
+.reveal-blur.in{opacity:1;filter:blur(0);transform:none;}
 .d1{transition-delay:.09s;}.d2{transition-delay:.18s;}.d3{transition-delay:.27s;}.d4{transition-delay:.36s;}
 
 /* ---------- responsive ---------- */
@@ -376,12 +392,23 @@ img{display:block;max-width:100%;}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
   .reveal{opacity:1;transform:none;transition:none;}
+  .reveal-blur{opacity:1;filter:none;transform:none;transition:none;}
+  .cursor{display:none;}
+  .veil{display:none;}
   .marquee__track,.hero__cue-line,.ufo{animation:none;}
   [class*="hero__"]{animation:none!important;opacity:1!important;}
 }
 </style>
 </head>
 <body>
+
+<!-- #liquid / #liquidDisp drive the deck's focus reveal — consumed by src/carousel/index.ts -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <filter id="liquid" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap id="liquidDisp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
 
 <div class="grain"></div>
 <div class="vignette"></div>
@@ -454,8 +481,8 @@ img{display:block;max-width:100%;}
 <!-- ============ THE DECK / GRIMOIRE ============ -->
 <section class="section grimoire-carousel" id="grimoire">
   <div class="eyebrow reveal">01 — currently raising</div>
-  <h2 class="heading reveal">Grimoire</h2>
-  <p class="lede reveal">Animating what was meant to stay still.</p>
+  <h2 class="heading reveal-blur">Grimoire</h2>
+  <p class="lede reveal-blur">Animating what was meant to stay still.</p>
 
   <div class="carousel" id="carousel" aria-label="Necromancer tool carousel">
     <div class="carousel__center">
@@ -493,8 +520,8 @@ img{display:block;max-width:100%;}
 <!-- ============ SPECIALITIES ============ -->
 <section class="section" id="specialities">
   <div class="eyebrow reveal">02 — disciplines</div>
-  <h2 class="heading reveal">Specialities</h2>
-  <p class="lede reveal">Three crafts, one operator.</p>
+  <h2 class="heading reveal-blur">Specialities</h2>
+  <p class="lede reveal-blur">Three crafts, one operator.</p>
 
   <div class="specs">
     <div class="spec reveal">
@@ -551,8 +578,8 @@ img{display:block;max-width:100%;}
 <!-- ============ LOADOUT ============ -->
 <section class="section" id="loadout">
   <div class="eyebrow reveal">03 — the rig</div>
-  <h2 class="heading reveal">The Loadout</h2>
-  <p class="lede reveal">Two rigs, one operator — the offensive stack that finds the bugs,
+  <h2 class="heading reveal-blur">The Loadout</h2>
+  <p class="lede reveal-blur">Two rigs, one operator — the offensive stack that finds the bugs,
     and the studio that scores everything else. Curated, sharpened, mostly hand-built.</p>
 
   <div class="loadout">
@@ -622,8 +649,8 @@ img{display:block;max-width:100%;}
 <!-- ============ CONTACT ============ -->
 <section class="section contact" id="contact">
   <div class="eyebrow reveal">04 — the s&eacute;ance</div>
-  <h2 class="heading reveal">Initiate Contact</h2>
-  <p class="lede reveal">Found something I should see — a target, a collaboration, a contract?
+  <h2 class="heading reveal-blur">Initiate Contact</h2>
+  <p class="lede reveal-blur">Found something I should see — a target, a collaboration, a contract?
     The veil is thin. Reach through.</p>
 
   <div class="socials reveal">
