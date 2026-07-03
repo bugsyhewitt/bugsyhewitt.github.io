@@ -20,6 +20,8 @@ export function initCarousel(): void {
   const itemsEl = document.getElementById('carouselItems');
   if (!wheel || !itemsEl) return;
 
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // build cards
   CARDS.forEach(card => {
     const item = document.createElement('div');
@@ -117,8 +119,8 @@ export function initCarousel(): void {
     entries.forEach(entry => {
       if (entry.isIntersecting && !played) {
         played = true;
-        tl.play();
-        tl.eventCallback('onComplete', updateFocus);
+        if (reduceMotion) { tl.progress(1); updateFocus(); }
+        else { tl.play(); tl.eventCallback('onComplete', updateFocus); }
       }
     });
   }, { threshold: 0.35 });
