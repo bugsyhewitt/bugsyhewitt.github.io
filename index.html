@@ -193,17 +193,20 @@ img{display:block;max-width:100%;}
 
 /* ---------- visitor / ufo ---------- */
 .ufo-zone{position:relative;height:96px;}
-.ufo{position:absolute;top:14px;left:50%;width:76px;display:block;opacity:.8;
-  animation:ufo-bob 5.4s ease-in-out infinite;}
+.ufo{position:absolute;top:14px;left:50%;width:76px;display:block;opacity:.85;
+  animation:ufo-drift 7s ease-in-out infinite;}
 .ufo svg{display:block;width:100%;height:auto;
+  filter:drop-shadow(0 0 9px rgba(74,255,110,.4));
   transition:transform .35s var(--ease),filter .35s var(--ease);}
 .ufo:hover,.ufo:focus-visible{opacity:1;}
 .ufo:hover svg,.ufo:focus-visible svg{transform:scale(1.15);
-  filter:drop-shadow(0 0 12px rgba(156,54,54,.45));}
+  filter:drop-shadow(0 0 18px rgba(74,255,110,.8));}
 .ufo__hull{fill:var(--coffin);stroke:var(--hair-bright);}
-.ufo__light{fill:var(--blood);animation:pulse 2.8s infinite;}
-@keyframes ufo-bob{0%,100%{transform:translateY(0) rotate(-2deg);}
-  50%{transform:translateY(-9px) rotate(2deg);}}
+.ufo__light{fill:#4aff6e;animation:pulse 2.8s infinite;}
+@keyframes ufo-drift{0%,100%{transform:translate(-18px,0) rotate(-2deg);}
+  25%{transform:translate(0,-8px) rotate(0deg);}
+  50%{transform:translate(18px,-2px) rotate(2deg);}
+  75%{transform:translate(0,-10px) rotate(1deg);}}
 @media (max-width:700px){.ufo{width:56px;}.ufo-zone{height:70px;}}
 
 /* ---------- carousel / the deck ---------- */
@@ -259,13 +262,6 @@ img{display:block;max-width:100%;}
   /* DEFAULT: full color. Desaturate mode toggled via JS by adding .is-dim */
 }
 .carousel__item.is-dim .carousel__img { filter: grayscale(1) brightness(0.7); }
-
-.carousel__label {
-  position: absolute; z-index: 20; left: 12px; bottom: 12px;
-  font-family: var(--display); font-size: 1.4rem; letter-spacing: .02em;
-  color: var(--bone); text-shadow: 0 2px 8px rgba(0,0,0,0.8);
-  pointer-events: none;
-}
 
 /* ---------- specialities ---------- */
 .specs{margin-top:clamp(46px,7vh,86px);display:grid;grid-template-columns:repeat(3,1fr);
@@ -424,7 +420,7 @@ img{display:block;max-width:100%;}
   <a class="ufo" id="ufo" href="https://github.com/bugsyhewitt/alienclaw" target="_blank" rel="noopener"
      aria-label="AlienClaw — evolvable agent infrastructure. Unidentified craft, identified repo.">
     <svg viewBox="0 0 120 64" aria-hidden="true" focusable="false">
-      <ellipse cx="60" cy="30" rx="34" ry="13" fill="rgba(156,54,54,.14)"/>
+      <ellipse cx="60" cy="30" rx="34" ry="13" fill="rgba(74,255,110,.16)"/>
       <path d="M38 26 Q60 4 82 26 Z" fill="rgba(233,230,221,.16)" stroke="rgba(233,230,221,.35)" stroke-width="1.5"/>
       <ellipse class="ufo__hull" cx="60" cy="30" rx="36" ry="11" stroke-width="1.5"/>
       <circle class="ufo__light" cx="38" cy="32" r="2.6"/>
