@@ -23,9 +23,9 @@ import { initUfo } from './ufo';
     var p = clamp(-r.top / dist, 0, 1);
     var blurMax = reduce ? 0 : 18;
     var pOp = clamp(1 - p, 0, 1);
-    photo.style.transform = '';
-    // Start at full cover (fills frame); ease slightly larger as the user scrolls.
-    photo.style.backgroundSize = lerp(112, 132, p).toFixed(1) + '% auto';
+    // Zoom past the CSS `cover` base with transform — background-size %
+    // breaks cover on portrait viewports (mobile regression, fixed).
+    photo.style.transform = 'scale(' + (1 + 0.18 * p).toFixed(4) + ')';
     photo.style.filter = 'blur(' + (p * blurMax).toFixed(2) + 'px)';
     photo.style.opacity = pOp.toFixed(3);
     scrim.style.opacity = pOp.toFixed(3);
@@ -131,6 +131,7 @@ import { initUfo } from './ufo';
       mObs.observe(manifesto);
     }
   }
+
 })();
 
 const heroGL = document.getElementById('heroGL') as HTMLCanvasElement | null;

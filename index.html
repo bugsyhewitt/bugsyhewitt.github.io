@@ -107,15 +107,17 @@ img{display:block;max-width:100%;}
 .nav__links a:hover,.nav__links a.active{color:var(--bone);}
 
 /* ---------- hero ---------- */
-.hero{position:relative;height:188vh;}
+.hero{position:relative;height:188vh;height:188svh;}
 .hero__inner{
-  position:sticky;top:0;height:100vh;overflow:hidden;
+  position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;
   display:flex;align-items:flex-end;background:var(--paper);
 }
 .hero__photo{
   position:absolute;inset:0;z-index:1;
-  background:var(--paper) url('/hero.jpg') center 32%/cover no-repeat; /* SWAP: hero.jpg */
-  will-change:filter,opacity;
+  --hero-focal:50% 32%; /* crop focal point — feeds background position AND the scroll-zoom pivot below */
+  background:var(--paper) url('/hero.jpg') var(--hero-focal)/cover no-repeat; /* SWAP: hero.jpg — path also in <head> preload + hero-fx imageSrc */
+  will-change:filter,opacity,transform;
+  transform-origin:var(--hero-focal);
 }
 .hero__gl{
   position:absolute;inset:0;width:100%;height:100%;
