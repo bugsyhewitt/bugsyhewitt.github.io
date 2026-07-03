@@ -28,7 +28,10 @@ export function initCarousel(): void {
     item.className = 'carousel__item';
     item.innerHTML =
       `<a class="carousel__card" href="${card.repo}" target="_blank" rel="noopener" draggable="false">
-         <img class="carousel__img" src="/cards/${card.name}.jpg" alt="${card.name}" draggable="false" loading="lazy" decoding="async" />
+         <img class="carousel__img" src="/cards/${card.name}.jpg"
+              srcset="/cards/${card.name}-340.jpg 340w, /cards/${card.name}-480.jpg 480w, /cards/${card.name}-680.jpg 680w, /cards/${card.name}.jpg 848w"
+              sizes="(max-width: 700px) 240px, (max-width: 1000px) 300px, 340px"
+              alt="${card.name}" draggable="false" loading="lazy" decoding="async" />
        </a>`;
     itemsEl.appendChild(item);
   });
