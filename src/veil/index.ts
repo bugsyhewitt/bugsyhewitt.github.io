@@ -25,12 +25,12 @@ function makeEmber(w: number, h: number, atBottom: boolean): Ember {
   };
 }
 
-// Blob drift between --void and very dark blood/amber tones, alpha ≤ 0.10.
+// Blob drift between --void and desaturated green tones (Bugsy's call), alpha ≤ 0.10.
 const BLOBS = [
-  { sx: 0.20, sy: 0.11, px: 0.0, py: 1.7, r: 0.55, rgb: '156,54,54', a: 0.08 },
-  { sx: 0.13, sy: 0.17, px: 2.1, py: 0.6, r: 0.65, rgb: '70,26,28', a: 0.10 },
-  { sx: 0.09, sy: 0.14, px: 4.0, py: 3.2, r: 0.50, rgb: '122,74,26', a: 0.06 },
-  { sx: 0.16, sy: 0.08, px: 5.3, py: 4.4, r: 0.70, rgb: '30,10,12', a: 0.10 },
+  { sx: 0.20, sy: 0.11, px: 0.0, py: 1.7, r: 0.55, rgb: '96,128,104', a: 0.07 },
+  { sx: 0.13, sy: 0.17, px: 2.1, py: 0.6, r: 0.65, rgb: '52,84,64', a: 0.10 },
+  { sx: 0.09, sy: 0.14, px: 4.0, py: 3.2, r: 0.50, rgb: '118,138,96', a: 0.05 },
+  { sx: 0.16, sy: 0.08, px: 5.3, py: 4.4, r: 0.70, rgb: '20,34,26', a: 0.10 },
 ];
 
 function attach(section: HTMLElement): void {
