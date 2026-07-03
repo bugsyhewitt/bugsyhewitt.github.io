@@ -1,6 +1,20 @@
 import { initHeroFX } from './hero-fx';
 import { initCarousel } from './carousel';
 import { initUfo } from './ufo';
+import { initLenis } from './scroll/lenis';
+import { initCursor } from './cursor';
+import { initVeil } from './veil';
+import { initScrambleHovers } from './fx/scramble';
+import type Lenis from 'lenis';
+
+// Consolidated motion/pointer guards. Every FX init below is gated here;
+// lenis/cursor/veil ALSO self-guard internally (packet-mandated import safety).
+// The hero scrub IIFE keeps its own internal check; it is off-limits.
+const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FINE = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+// Early so anchors are Lenis-driven from the first interaction. Null under reduced motion.
+const lenis = REDUCE ? null : initLenis();
 
 (function () {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -50,7 +64,7 @@ import { initUfo } from './ufo';
       if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
     });
   }, { threshold: 0.16, rootMargin: '0px 0px -7% 0px' });
-  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  document.querySelectorAll('.reveal, .reveal-blur').forEach(function (el) { io.observe(el); });
 
   var links = Array.prototype.slice.call(document.querySelectorAll('.nav__links a')) as HTMLAnchorElement[];
   var secObs = new IntersectionObserver(function (es) {
@@ -161,3 +175,27 @@ if (heroGL) {
 
 initCarousel();
 initUfo();
+if (FINE && !REDUCE) {
+  initCursor();
+  initScrambleHovers();
+}
+if (!REDUCE) initVeil();
+if (lenis) initMarqueeSkew(lenis);
+
+// Marquee leans with scroll velocity, easing back upright at rest.
+// Skew rides the .marquee container so it never fights the track's slide loop.
+function initMarqueeSkew(l: Lenis): void {
+  const marquee = document.querySelector<HTMLElement>('.marquee');
+  if (!marquee) return;
+  let skew = 0;
+  (function tick() {
+    const target = Math.max(-7, Math.min(7, (l.velocity || 0) * 0.35));
+    skew += (target - skew) * 0.12;
+    if (Math.abs(skew) < 0.02 && Math.abs(target) < 0.02) {
+      if (marquee.style.transform) marquee.style.transform = '';
+    } else {
+      marquee.style.transform = 'skewX(' + skew.toFixed(2) + 'deg)';
+    }
+    requestAnimationFrame(tick);
+  })();
+}
