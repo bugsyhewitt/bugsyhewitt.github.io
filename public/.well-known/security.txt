@@ -1,0 +1,4 @@
+Contact: mailto:bugsyhewitt@gmail.com
+Expires: 2027-07-01T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://bugsyhewitt.github.io/.well-known/security.txt
