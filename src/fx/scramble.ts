@@ -26,7 +26,7 @@ export function scrambleTo(el: HTMLElement, finalText: string, opts: ScrambleOpt
 }
 
 export function initScrambleHovers(): void {
-  document.querySelectorAll<HTMLElement>('.nav__links a, .social__name').forEach(el => {
+  document.querySelectorAll<HTMLElement>('.nav__links a').forEach(el => {
     const original = el.textContent || ''; // cached once — scrambleTo always settles on this
     el.addEventListener('mouseenter', () => scrambleTo(el, original));
   });

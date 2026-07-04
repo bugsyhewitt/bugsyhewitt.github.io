@@ -223,6 +223,7 @@ img{display:block;max-width:100%;}
   border-bottom:1px solid var(--blood);padding-bottom:3px;margin-left:auto;
   transition:letter-spacing .3s var(--ease);}
 .inspect:hover{letter-spacing:3.6px;}
+.project__blurb .accent{color:var(--blood);}
 
 /* ---------- visitor / ufo ---------- */
 .ufo{position:absolute;top:-30px;left:50%;width:76px;display:block;opacity:.85;z-index:5;
@@ -294,19 +295,44 @@ img{display:block;max-width:100%;}
 }
 .carousel__item.is-dim .carousel__img { filter: grayscale(1) brightness(0.7); }
 
-/* ---------- specialities ---------- */
-.specs{margin-top:clamp(46px,7vh,86px);display:grid;grid-template-columns:repeat(3,1fr);
-  gap:1px;background:var(--hair);border:1px solid var(--hair);}
-.spec{background:var(--void);padding:clamp(26px,2.6vw,42px);}
+/* ---------- specialities: pinned horizontal showpiece ---------- */
+.specs-hint{color:var(--blood);letter-spacing:2px;font-size:.8em;}
+.specs-pin{margin-top:clamp(40px,6vh,72px);position:relative;height:78vh;min-height:520px;overflow:hidden;
+  width:100vw;margin-left:calc(50% - 50vw); /* full-bleed so each panel is a full viewport width */
+  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);background:var(--coffin);}
+.specs-track{display:flex;height:100%;width:calc(var(--n,3)*100%);will-change:transform;}
+.spec-panel{position:relative;flex:0 0 calc(100%/var(--n,3));height:100%;overflow:hidden;
+  display:flex;align-items:center;padding:clamp(26px,5vw,80px);
+  border-right:1px solid var(--hair);}
+.spec-panel:last-child{border-right:none;}
+.spec-panel__ix{position:absolute;right:clamp(-10px,-1vw,-4px);bottom:-6vh;pointer-events:none;
+  font-family:var(--display);font-weight:400;font-size:min(46vh,42vw);line-height:.8;
+  color:var(--hair-bright);opacity:.35;letter-spacing:-.02em;z-index:0;}
+.spec-panel__body{position:relative;z-index:1;max-width:min(58ch,90%);}
+.spec-panel__name{font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,6vw,5rem);
+  line-height:.94;letter-spacing:.012em;margin:14px 0 18px;}
+.spec-panel__intro{color:var(--ash);font-size:clamp(.95rem,1.5vw,1.15rem);margin-bottom:26px;max-width:52ch;}
 .spec__tag{font-size:11px;letter-spacing:2.5px;color:var(--ash-dim);text-transform:uppercase;}
-.spec__name{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,2.6vw,2.7rem);
-  letter-spacing:.012em;margin:12px 0 14px;}
-.spec__intro{color:var(--ash);font-size:13.5px;margin-bottom:24px;}
-.spec__list{list-style:none;}
-.spec__list li{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--hair);
+.spec__list{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(20px,3vw,56px);}
+.spec__list li{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--hair);
   font-size:13px;color:var(--bone);transition:color .25s,padding-left .25s var(--ease);}
 .spec__list li:hover{padding-left:8px;color:#fff;}
 .spec__list li span{color:var(--blood);font-size:10px;flex-shrink:0;line-height:1.9;}
+.specs-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hair);z-index:2;}
+.specs-progress i{display:block;height:100%;width:calc(100%/var(--n,3));background:var(--blood);
+  transform-origin:left;transition:transform .1s linear;}
+/* no-pin fallback (mobile OR reduced-motion — JS pins only on the complement,
+   query mirrored in src/specialities/index.ts): stack panels, scroll normally */
+@media (max-width:767px),(prefers-reduced-motion:reduce){
+  .specs-pin{height:auto;min-height:0;overflow:visible;border:none;background:transparent;
+    width:auto;margin-left:0;}
+  .specs-track{flex-direction:column;width:100%;height:auto;transform:none!important;}
+  .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);
+    padding:clamp(30px,8vw,48px) 4vw;}
+  .spec-panel__ix{font-size:34vw;bottom:auto;top:4px;right:2px;opacity:.14;}
+  .spec__list{grid-template-columns:1fr;}
+  .specs-progress{display:none;}
+}
 
 /* ---------- loadout ---------- */
 .loadout{margin-top:clamp(46px,7vh,86px);display:grid;grid-template-columns:repeat(3,1fr);
@@ -321,28 +347,43 @@ img{display:block;max-width:100%;}
   transition:color .22s,padding-left .22s var(--ease);}
 .tcol li:last-child{border-bottom:none;}
 .tcol li:hover{color:var(--bone);padding-left:7px;}
+/* terminal compile-in skin */
+.loadout.is-terminal .tcol__head h3,
+.loadout.is-terminal .tcol li{font-family:'Share Tech Mono',var(--mono);}
+.loadout.is-terminal .tcol__head h3{text-transform:lowercase;letter-spacing:.5px;font-size:1.15rem;}
+.loadout.is-terminal .tcol__head h3::before{content:"> ";color:var(--blood);}
+.loadout.is-terminal .tcol__head h3::after{content:"/";color:var(--ash-dim);}
+.loadout.is-terminal .tcol li::before{content:"▸ ";color:var(--blood);}
+.loadout.is-terminal .tcol .pending,
+.loadout.is-terminal .tcol__head.pending{opacity:0;}
+.loadout.is-terminal .printed{opacity:1;transition:opacity .2s var(--ease);}
+.term-cursor{display:inline-block;width:.5em;height:1.02em;background:var(--blood);
+  margin-left:.16em;vertical-align:-.14em;animation:blink 1.05s steps(1) infinite;}
+.term-rest{font-family:'Share Tech Mono',var(--mono);color:var(--ash-dim);
+  margin-top:18px;font-size:13px;letter-spacing:.5px;}
+.term-rest .p{color:var(--blood);}
 
-/* ---------- contact / footer ---------- */
+/* ---------- contact / séance terminal ---------- */
 .contact .heading{font-size:clamp(3.2rem,11vw,8.5rem);}
-.socials{margin-top:clamp(40px,6vh,72px);border-top:1px solid var(--hair);}
-.social{position:relative;display:flex;align-items:center;gap:18px;
-  padding:clamp(18px,2.4vw,27px) clamp(24px,6vw,96px);
-  margin:0 calc(-1 * clamp(24px,6vw,96px));
-  border-bottom:1px solid var(--hair);overflow:hidden;}
-.social::before{content:"";position:absolute;inset:0;background:rgba(156,54,54,.12);
-  transform:scaleX(0);transform-origin:left;transition:transform .42s var(--ease);}
-.social:hover::before{transform:scaleX(1);}
-.social__name{position:relative;font-family:var(--display);font-weight:400;
-  font-size:clamp(1.6rem,3vw,2.5rem);letter-spacing:.02em;color:var(--bone);
-  min-width:clamp(116px,22vw,210px);transition:color .3s var(--ease);}
-.social:hover .social__name{color:#fff;}
-.social__handle{position:relative;font-size:12.5px;letter-spacing:.6px;color:var(--ash);
-  opacity:.38;transform:translateX(-9px);
-  transition:opacity .4s var(--ease),transform .4s var(--ease);}
-.social:hover .social__handle{opacity:1;transform:translateX(0);}
-.social__arrow{position:relative;margin-left:auto;color:var(--blood);font-size:15px;
-  transition:transform .35s var(--ease);}
-.social:hover .social__arrow{transform:translate(5px,-5px);}
+.seance{margin-top:clamp(40px,6vh,72px);max-width:680px;border:1px solid var(--hair-bright);
+  border-radius:10px;overflow:hidden;background:#0b0b0d;
+  box-shadow:0 26px 74px rgba(0,0,0,.55);}
+.seance__bar{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--coffin);
+  border-bottom:1px solid var(--hair);font-family:var(--mono);font-size:11px;letter-spacing:1px;
+  color:var(--ash);text-transform:lowercase;}
+.seance__dot{width:10px;height:10px;border-radius:50%;background:var(--blood);
+  box-shadow:0 0 9px var(--blood);flex-shrink:0;}
+.seance__body{padding:clamp(18px,3vw,30px);font-family:'Share Tech Mono',var(--mono);
+  font-size:clamp(11.5px,1.5vw,14.5px);line-height:2;color:var(--bone);overflow-x:auto;}
+.sline{color:var(--ash);white-space:pre;}
+.sline--dim{color:var(--ash-dim);}
+.chan{display:block;width:max-content;color:var(--bone);white-space:pre;
+  transition:color .25s var(--ease);will-change:transform;}
+.chan__k{color:var(--blood);}
+.chan:hover{color:#fff;}
+.chan:hover .chan__v{color:var(--blood);}
+.seance.is-live .sline,.seance.is-live .chan{opacity:0;}
+.seance.is-live .printed{opacity:1;transition:opacity .18s var(--ease);}
 .footbar{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-between;
   align-items:center;padding-top:clamp(34px,5vh,56px);font-size:11px;letter-spacing:1.5px;
   text-transform:uppercase;color:var(--ash-dim);}
@@ -370,7 +411,6 @@ img{display:block;max-width:100%;}
 
 /* ---------- responsive ---------- */
 @media (max-width:1023px){.spine{display:none!important;}}
-@media (max-width:900px){.specs{grid-template-columns:1fr;}}
 @media (max-width:760px){.loadout{grid-template-columns:1fr 1fr;}}
 @media (max-width:520px){.loadout{grid-template-columns:1fr;}}
 @media (max-width:680px){
@@ -508,6 +548,32 @@ img{display:block;max-width:100%;}
         </svg>
       </a>
     </article>
+    <article class="project reveal">
+      <div class="project__num">02</div>
+      <div>
+        <h3 class="project__name">Chimera</h3>
+        <p class="project__blurb">Adaptive honeypot intelligence — SPRT sequential detection and POMDP
+          decision engines that learn an intruder&rsquo;s intent and bait them deeper.</p>
+        <div class="project__meta">
+          <span class="tag">Deception</span><span class="tag">AI</span>
+          <a class="inspect" href="https://github.com/bugsyhewitt/chimera" target="_blank" rel="noopener">Inspect &#8599;</a>
+        </div>
+      </div>
+    </article>
+    <article class="project reveal">
+      <div class="project__num">03</div>
+      <div>
+        <h3 class="project__name">v3x.tech</h3>
+        <p class="project__blurb">The offensive-security platform. Home to <span class="accent">Pho3nix</span> —
+          an autonomous bug-bounty platform whose AI hunters recon, triage, and validate findings at
+          fleet scale — and <span class="accent">L3viathan</span>, a premium operator workstation that
+          unifies an entire engagement into one command deck.</p>
+        <div class="project__meta">
+          <span class="tag">Platform</span><span class="tag">AI</span>
+          <a class="inspect" href="http://www.v3x.tech" target="_blank" rel="noopener">Inspect &#8599;</a>
+        </div>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -515,57 +581,69 @@ img{display:block;max-width:100%;}
 <section class="section" id="specialities">
   <div class="eyebrow reveal">02 — disciplines</div>
   <h2 class="heading reveal-blur">Specialities</h2>
-  <p class="lede reveal-blur">Three crafts, one operator.</p>
+  <p class="lede reveal-blur">Three crafts, one operator. <span class="specs-hint">Scroll —</span></p>
 
-  <div class="specs">
-    <div class="spec reveal">
-      <div class="spec__tag">Discipline / I</div>
-      <div class="spec__name">Audio / Video / Media</div>
-      <p class="spec__intro">A full studio — sound and image, written, produced, mixed and
-        mastered end to end.</p>
-      <ul class="spec__list">
-        <li><span>&#9656;</span>Music production</li>
-        <li><span>&#9656;</span>Mixing &amp; mastering engineering</li>
-        <li><span>&#9656;</span>Songwriting &amp; composition</li>
-        <li><span>&#9656;</span>Audio engineering</li>
-        <li><span>&#9656;</span>Sound design &amp; post</li>
-        <li><span>&#9656;</span>Reaper — recording &amp; production</li>
-        <li><span>&#9656;</span>Premiere Pro — video editing</li>
-        <li><span>&#9656;</span>Photoshop — design &amp; visual</li>
-      </ul>
+  <div class="specs-pin" id="specsPin">
+    <div class="specs-track" id="specsTrack">
+      <article class="spec-panel">
+        <span class="spec-panel__ix" aria-hidden="true">I</span>
+        <div class="spec-panel__body">
+          <div class="spec__tag">Discipline / I</div>
+          <div class="spec-panel__name">Audio / Video / Media</div>
+          <p class="spec-panel__intro">A full studio — sound and image, written, produced, mixed and
+            mastered end to end.</p>
+          <ul class="spec__list">
+            <li><span>&#9656;</span>Music production</li>
+            <li><span>&#9656;</span>Mixing &amp; mastering engineering</li>
+            <li><span>&#9656;</span>Songwriting &amp; composition</li>
+            <li><span>&#9656;</span>Audio engineering</li>
+            <li><span>&#9656;</span>Sound design &amp; post</li>
+            <li><span>&#9656;</span>Reaper — recording &amp; production</li>
+            <li><span>&#9656;</span>Premiere Pro — video editing</li>
+            <li><span>&#9656;</span>Photoshop — design &amp; visual</li>
+          </ul>
+        </div>
+      </article>
+      <article class="spec-panel">
+        <span class="spec-panel__ix" aria-hidden="true">II</span>
+        <div class="spec-panel__body">
+          <div class="spec__tag">Discipline / II</div>
+          <div class="spec-panel__name">AI &amp; Automation</div>
+          <p class="spec-panel__intro">Most hunters work with one set of hands. This is a fleet —
+            autonomous agents running recon, tooling and triage in parallel.</p>
+          <ul class="spec__list">
+            <li><span>&#9656;</span>Autonomous agent orchestration</li>
+            <li><span>&#9656;</span>Multi-agent pipelines at scale</li>
+            <li><span>&#9656;</span>LLM tooling &amp; MCP server design</li>
+            <li><span>&#9656;</span>Security automation pipelines</li>
+            <li><span>&#9656;</span>AI-assisted recon &amp; triage</li>
+            <li><span>&#9656;</span>Custom offensive tooling</li>
+            <li><span>&#9656;</span>Prompt &amp; workflow engineering</li>
+            <li><span>&#9656;</span>Rapid prototyping — idea to shipped</li>
+          </ul>
+        </div>
+      </article>
+      <article class="spec-panel">
+        <span class="spec-panel__ix" aria-hidden="true">III</span>
+        <div class="spec-panel__body">
+          <div class="spec__tag">Discipline / III</div>
+          <div class="spec-panel__name">Offensive Security</div>
+          <p class="spec-panel__intro">Web and web3 targets taken apart by hand — the bugs scanners
+            walk past. Disclosed across HackerOne and Immunefi.</p>
+          <ul class="spec__list">
+            <li><span>&#9656;</span>Web application penetration testing</li>
+            <li><span>&#9656;</span>IDOR &amp; broken access control</li>
+            <li><span>&#9656;</span>SSRF, blind SSRF &amp; request smuggling</li>
+            <li><span>&#9656;</span>Stored &amp; DOM-based XSS</li>
+            <li><span>&#9656;</span>Business logic flaws</li>
+            <li><span>&#9656;</span>Web3 &amp; smart-contract attack surface</li>
+            <li><span>&#9656;</span>API security testing</li>
+            <li><span>&#9656;</span>Recon, OSINT &amp; responsible disclosure</li>
+          </ul>
+        </div>
+      </article>
     </div>
-    <div class="spec reveal d1">
-      <div class="spec__tag">Discipline / II</div>
-      <div class="spec__name">AI &amp; Automation</div>
-      <p class="spec__intro">Most hunters work with one set of hands. This is a fleet —
-        autonomous agents running recon, tooling and triage in parallel.</p>
-      <ul class="spec__list">
-        <li><span>&#9656;</span>Autonomous agent orchestration</li>
-        <li><span>&#9656;</span>Multi-agent pipelines at scale</li>
-        <li><span>&#9656;</span>LLM tooling &amp; MCP server design</li>
-        <li><span>&#9656;</span>Security automation pipelines</li>
-        <li><span>&#9656;</span>AI-assisted recon &amp; triage</li>
-        <li><span>&#9656;</span>Custom offensive tooling</li>
-        <li><span>&#9656;</span>Prompt &amp; workflow engineering</li>
-        <li><span>&#9656;</span>Rapid prototyping — idea to shipped</li>
-      </ul>
-    </div>
-    <div class="spec reveal d2">
-      <div class="spec__tag">Discipline / III</div>
-      <div class="spec__name">Offensive Security</div>
-      <p class="spec__intro">Web and web3 targets taken apart by hand — the bugs scanners
-        walk past. Disclosed across HackerOne and Immunefi.</p>
-      <ul class="spec__list">
-        <li><span>&#9656;</span>Web application penetration testing</li>
-        <li><span>&#9656;</span>IDOR &amp; broken access control</li>
-        <li><span>&#9656;</span>SSRF, blind SSRF &amp; request smuggling</li>
-        <li><span>&#9656;</span>Stored &amp; DOM-based XSS</li>
-        <li><span>&#9656;</span>Business logic flaws</li>
-        <li><span>&#9656;</span>Web3 &amp; smart-contract attack surface</li>
-        <li><span>&#9656;</span>API security testing</li>
-        <li><span>&#9656;</span>Recon, OSINT &amp; responsible disclosure</li>
-      </ul>
-    </div>
+    <div class="specs-progress" aria-hidden="true"><i id="specsProgress"></i></div>
   </div>
 </section>
 
@@ -647,27 +725,9 @@ img{display:block;max-width:100%;}
   <p class="lede reveal-blur">Found something I should see — a target, a collaboration, a contract?
     The veil is thin. Reach through.</p>
 
-  <div class="socials reveal">
-    <a class="social" href="https://instagram.com/bugsyhewitt" target="_blank" rel="noopener">
-      <span class="social__name">Instagram</span>
-      <span class="social__handle">@bugsyhewitt</span>
-      <span class="social__arrow">&#8599;</span>
-    </a>
-    <a class="social" href="https://github.com/bugsyhewitt" target="_blank" rel="noopener">
-      <span class="social__name">GitHub</span>
-      <span class="social__handle">github.com/bugsyhewitt</span>
-      <span class="social__arrow">&#8599;</span>
-    </a>
-    <a class="social" href="#" id="discordCopy">
-      <span class="social__name">Discord</span>
-      <span class="social__handle">bugsy5899</span>
-      <span class="social__arrow">&#10697;</span>
-    </a>
-    <a class="social" href="mailto:bugsyhewitt@gmail.com">
-      <span class="social__name">Email</span>
-      <span class="social__handle">bugsyhewitt@gmail.com</span>
-      <span class="social__arrow">&#8599;</span>
-    </a>
+  <div class="seance" id="seance">
+    <div class="seance__bar"><i class="seance__dot"></i><span>necromancer@v3x — s&eacute;ance</span></div>
+    <div class="seance__body" id="seanceBody"><div class="sline" data-line>necromancer@v3x ~ % ./summon --channels</div><div class="sline sline--dim" data-line>[ s&eacute;ance initiated ]</div><a class="chan" data-line href="https://instagram.com/bugsyhewitt" target="_blank" rel="noopener"><span class="chan__k">instagram</span> ......... <span class="chan__v">@bugsyhewitt</span></a><a class="chan" data-line href="https://github.com/bugsyhewitt" target="_blank" rel="noopener"><span class="chan__k">github</span> ............ <span class="chan__v">/bugsyhewitt</span></a><a class="chan" data-line href="#" id="discordCopy"><span class="chan__k">discord</span> ........... <span class="chan__v">bugsy5899</span></a><a class="chan" data-line href="mailto:bugsyhewitt@gmail.com"><span class="chan__k">email</span> ............. <span class="chan__v">bugsyhewitt@gmail.com</span></a><div class="sline sline--dim" data-line data-last>[ four channels open ]</div></div>
   </div>
 
   <div class="footbar">

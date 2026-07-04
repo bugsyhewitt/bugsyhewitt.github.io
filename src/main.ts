@@ -5,6 +5,9 @@ import { initLenis } from './scroll/lenis';
 import { initCursor } from './cursor';
 import { initVeil } from './veil';
 import { initScrambleHovers } from './fx/scramble';
+import { initSpecialities } from './specialities';
+import { initLoadout } from './loadout';
+import { initContact } from './contact';
 import type Lenis from 'lenis';
 
 // Consolidated motion/pointer guards. Every FX init below is gated here;
@@ -145,23 +148,6 @@ const lenis = REDUCE ? null : initLenis();
       mObs.observe(manifesto);
     }
   }
-
-  var discord = document.getElementById('discordCopy');
-  if (discord) {
-    var dHandle = discord.querySelector('.social__handle') as HTMLElement | null;
-    // the visible span is the single source of the handle text
-    var dText = (dHandle && dHandle.textContent || '').trim();
-    var dTimer = 0;
-    discord.addEventListener('click', function (e) {
-      e.preventDefault();
-      try { navigator.clipboard.writeText(dText).catch(function () {}); } catch {}
-      if (dHandle) {
-        dHandle.textContent = 'copied to clipboard';
-        window.clearTimeout(dTimer);
-        dTimer = window.setTimeout(function () { dHandle!.textContent = dText; }, 1600);
-      }
-    });
-  }
 })();
 
 const heroGL = document.getElementById('heroGL') as HTMLCanvasElement | null;
@@ -181,6 +167,9 @@ if (FINE && !REDUCE) {
 }
 if (!REDUCE) initVeil();
 if (lenis) initMarqueeSkew(lenis);
+initSpecialities();
+initLoadout();
+initContact();
 
 // Marquee leans with scroll velocity, easing back upright at rest.
 // Skew rides the .marquee container so it never fights the track's slide loop.
