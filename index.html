@@ -226,7 +226,7 @@ img{display:block;max-width:100%;}
 .project__blurb .accent{color:var(--blood);}
 
 /* ---------- visitor / ufo ---------- */
-.ufo{position:absolute;top:-30px;left:50%;width:76px;display:block;opacity:.85;z-index:5;
+.ufo{position:absolute;top:-8px;left:50%;width:76px;display:block;opacity:.85;z-index:5;
   animation:ufo-drift 7s ease-in-out infinite;}
 .ufo svg{display:block;width:100%;height:auto;
   filter:drop-shadow(0 0 9px rgba(74,255,110,.4));
@@ -240,7 +240,7 @@ img{display:block;max-width:100%;}
   25%{transform:translate(0,-8px) rotate(0deg);}
   50%{transform:translate(18px,-2px) rotate(2deg);}
   75%{transform:translate(0,-10px) rotate(1deg);}}
-@media (max-width:700px){.ufo{width:56px;top:-24px;}}
+@media (max-width:700px){.ufo{width:56px;top:-6px;}}
 
 /* ---------- carousel / the deck ---------- */
 .grimoire-carousel { overflow: hidden; }
@@ -259,7 +259,7 @@ img{display:block;max-width:100%;}
 .carousel__center {
   position: absolute;
   left: 50%;
-  top: calc(100% - var(--card-h) - 30px); /* front card bottom rides 30px above the box edge (packet tune-point) */
+  top: calc(100% - var(--card-h)); /* front card bottom sits flush at the box edge so the divider butts the carousel */
   transform: translateX(-50%);
 }
 .carousel__items {
@@ -398,7 +398,7 @@ img{display:block;max-width:100%;}
 /* ---------- premium fx: veil ---------- */
 .veil{position:absolute;inset:0;z-index:0;pointer-events:none;}
 .intro,.contact{position:relative;}
-.intro>:not(.veil),.contact>:not(.veil){position:relative;z-index:1;}
+.intro>:not(.veil),.contact>:not(.veil),#grimoire>:not(.veil){position:relative;z-index:1;}
 
 /* ---------- reveal ---------- */
 .reveal{opacity:0;transform:translateY(30px);
@@ -524,7 +524,7 @@ img{display:block;max-width:100%;}
     </div>
   </div>
 
-  <div class="projects" style="margin-top:clamp(40px,6vh,80px);">
+  <div class="projects" style="margin-top:0;">
     <article class="project reveal">
       <div class="project__num">01</div>
       <div>
