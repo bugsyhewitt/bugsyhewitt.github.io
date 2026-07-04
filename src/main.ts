@@ -39,18 +39,19 @@ const lenis = REDUCE ? null : initLenis();
     var dist = hero.offsetHeight - window.innerHeight;
     var p = clamp(-r.top / dist, 0, 1);
     var blurMax = reduce ? 0 : 18;
-    var pOp = clamp(1 - p, 0, 1);
+    var pOp = clamp(1 - p, 0, 1);            // photo fade (unchanged)
+    var scrimOp = clamp(1 - p * 2.2, 0, 1);  // scrim clears ~2x faster so it can't wash the dark bg grey
     // Zoom past the CSS `cover` base with transform — background-size %
     // breaks cover on portrait viewports (mobile regression, fixed).
     photo.style.transform = 'scale(' + (1 + 0.18 * p).toFixed(4) + ')';
     photo.style.filter = 'blur(' + (p * blurMax).toFixed(2) + 'px)';
     photo.style.opacity = pOp.toFixed(3);
-    scrim.style.opacity = pOp.toFixed(3);
+    scrim.style.opacity = scrimOp.toFixed(3);
     var cp = clamp(p * 1.9, 0, 1);
     content.style.opacity = (1 - cp).toFixed(3);
     content.style.transform = 'translateY(' + (-p * 70).toFixed(1) + 'px)';
     cue.style.opacity = clamp(1 - p * 3.6, 0, 1).toFixed(3);
-    var bp = clamp(p * 1.2, 0, 1);
+    var bp = clamp(p * 1.6, 0, 1);   // background reaches full #09090a earlier in the scroll
     inner.style.background = 'rgb(' + lerp(247, 9, bp) + ',' + lerp(247, 9, bp) + ',' + lerp(247, 10, bp) + ')';
     var past = window.scrollY > window.innerHeight * 0.8;
     nav.classList.toggle('show', past);
