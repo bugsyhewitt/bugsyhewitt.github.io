@@ -67,7 +67,10 @@ export function initHeroFX(canvas: HTMLCanvasElement, opts: HeroFXOptions): void
       const texture = new THREE.Texture(loadedImg);
       texture.minFilter = THREE.LinearFilter;
       texture.magFilter = THREE.LinearFilter;
-      texture.colorSpace = THREE.SRGBColorSpace;
+      /* NoColorSpace: raw ShaderMaterial never re-encodes to sRGB, so an
+         SRGB-tagged texture gets decoded to linear and rendered darker than
+         the CSS photo. Passthrough keeps GL output byte-identical to the jpg. */
+      texture.colorSpace = THREE.NoColorSpace;
       texture.format = THREE.RGBAFormat;
       texture.needsUpdate = true;
 
