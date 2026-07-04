@@ -108,5 +108,5 @@ function attach(section: HTMLElement): void {
 export function initVeil(): void {
   // Hidden entirely under reduced motion (packet-sanctioned call — calmest option).
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  document.querySelectorAll<HTMLElement>('.intro, .contact').forEach(attach);
+  document.querySelectorAll<HTMLElement>('#grimoire').forEach(attach);
 }
