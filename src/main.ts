@@ -51,8 +51,8 @@ const lenis = REDUCE ? null : initLenis();
     content.style.opacity = (1 - cp).toFixed(3);
     content.style.transform = 'translateY(' + (-p * 70).toFixed(1) + 'px)';
     cue.style.opacity = clamp(1 - p * 3.6, 0, 1).toFixed(3);
-    var bp = clamp(p * 1.6, 0, 1);   // background reaches full #09090a earlier in the scroll
-    inner.style.background = 'rgb(' + lerp(247, 9, bp) + ',' + lerp(247, 9, bp) + ',' + lerp(247, 10, bp) + ')';
+    var bp = clamp(p * 1.6, 0, 1);   // background reaches full #000 (--void) earlier in the scroll
+    inner.style.background = 'rgb(' + lerp(247, 0, bp) + ',' + lerp(247, 0, bp) + ',' + lerp(247, 0, bp) + ')';
     var past = window.scrollY > window.innerHeight * 0.8;
     nav.classList.toggle('show', past);
     spine.classList.toggle('show', past);

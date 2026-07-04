@@ -72,7 +72,7 @@ function attach(section: HTMLElement): void {
       const br = Math.max(fog.width, fog.height) * b.r;
       const g = fctx!.createRadialGradient(bx, by, 0, bx, by, br);
       g.addColorStop(0, `rgba(${b.rgb},${b.a})`);
-      g.addColorStop(1, 'rgba(9,9,10,0)');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
       fctx!.fillStyle = g;
       fctx!.fillRect(0, 0, fog.width, fog.height);
     });
