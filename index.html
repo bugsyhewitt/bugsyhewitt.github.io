@@ -64,12 +64,9 @@ a:focus-visible{outline:2px solid var(--blood);outline-offset:3px;}
 img{display:block;max-width:100%;}
 
 /* ---------- atmosphere ---------- */
-.grain,.vignette{position:fixed;inset:0;pointer-events:none;}
+.grain{position:fixed;inset:0;pointer-events:none;}
 .grain{z-index:95;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
-.vignette{z-index:94;background:linear-gradient(to right,
-  rgba(0,0,0,.55) 0%,rgba(0,0,0,.16) 7%,rgba(0,0,0,0) 14%,
-  rgba(0,0,0,0) 86%,rgba(0,0,0,.16) 93%,rgba(0,0,0,.55) 100%);}
 
 /* ---------- side spine ---------- */
 .spine{
@@ -445,7 +442,6 @@ img{display:block;max-width:100%;}
 </svg>
 
 <div class="grain"></div>
-<div class="vignette"></div>
 
 <aside class="spine" id="spine" aria-hidden="true">
   <span>Bugsy Hewitt — Digital Necromancer</span>
