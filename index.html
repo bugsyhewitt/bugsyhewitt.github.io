@@ -161,6 +161,7 @@ img{display:block;max-width:100%;}
 .eyebrow{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:3px;
   text-transform:uppercase;color:var(--ash);margin-bottom:22px;}
 .eyebrow::before{content:"";width:30px;height:1px;background:var(--blood);}
+.eyebrow--suite{margin-top:clamp(70px,11vh,140px);} /* breathes the Suite block off the project list */
 .heading{font-family:var(--display);font-weight:400;
   font-size:clamp(3rem,8.5vw,6.6rem);line-height:.92;letter-spacing:.012em;}
 .lede{color:var(--ash);max-width:60ch;margin-top:20px;font-size:clamp(.95rem,1.6vw,1.05rem);}
@@ -203,7 +204,6 @@ img{display:block;max-width:100%;}
   border-top:1px solid var(--hair);
   transition:background .4s var(--ease);
 }
-.projects .project:last-child{border-bottom:1px solid var(--hair);}
 .project:hover{background:var(--coffin);}
 .project__num{font-family:var(--display);font-size:clamp(2.4rem,5vw,3.8rem);
   color:var(--hair-bright);line-height:1;transition:color .4s var(--ease);}
@@ -249,6 +249,7 @@ img{display:block;max-width:100%;}
   height: 680px;
   user-select: none;
   overflow: hidden;
+  border-bottom: 1px solid var(--hair); /* closing divider — front card sits flush against it */
 }
 @media (max-height: 1000px) { .carousel { height: 560px; } }
 @media (max-width: 700px)   { .carousel { height: 460px; } }
@@ -514,13 +515,7 @@ img{display:block;max-width:100%;}
   <h2 class="heading reveal-blur">Grimoire</h2>
   <p class="lede reveal-blur">Animating what was meant to stay still.</p>
 
-  <div class="carousel" id="carousel" aria-label="Necromancer tool carousel">
-    <div class="carousel__center">
-      <div class="carousel__items" id="carouselItems"><!-- cards injected by JS --></div>
-    </div>
-  </div>
-
-  <div class="projects" style="margin-top:0;">
+  <div class="projects">
     <article class="project reveal">
       <div class="project__num">01</div>
       <div>
@@ -571,11 +566,21 @@ img{display:block;max-width:100%;}
       </div>
     </article>
   </div>
+
+  <div class="eyebrow eyebrow--suite reveal">02 — necromancer suite</div>
+  <h2 class="heading reveal-blur">Necromancer Suite</h2>
+  <p class="lede reveal-blur">20 resurrected tools to die for!</p>
+
+  <div class="carousel" id="carousel" aria-label="Necromancer tool carousel">
+    <div class="carousel__center">
+      <div class="carousel__items" id="carouselItems"><!-- cards injected by JS --></div>
+    </div>
+  </div>
 </section>
 
 <!-- ============ SPECIALITIES ============ -->
 <section class="section" id="specialities">
-  <div class="eyebrow reveal">02 — disciplines</div>
+  <div class="eyebrow reveal">03 — disciplines</div>
   <h2 class="heading reveal-blur">Specialities</h2>
   <p class="lede reveal-blur">Three crafts, one operator. <span class="specs-hint">Scroll —</span></p>
 
@@ -645,7 +650,7 @@ img{display:block;max-width:100%;}
 
 <!-- ============ LOADOUT ============ -->
 <section class="section" id="loadout">
-  <div class="eyebrow reveal">03 — the rig</div>
+  <div class="eyebrow reveal">04 — the rig</div>
   <h2 class="heading reveal-blur">The Loadout</h2>
   <p class="lede reveal-blur">Two rigs, one operator — the offensive stack that finds the bugs,
     and the studio that scores everything else. Curated, sharpened, mostly hand-built.</p>
@@ -716,7 +721,7 @@ img{display:block;max-width:100%;}
 
 <!-- ============ CONTACT ============ -->
 <section class="section contact" id="contact">
-  <div class="eyebrow reveal">04 — the s&eacute;ance</div>
+  <div class="eyebrow reveal">05 — the s&eacute;ance</div>
   <h2 class="heading reveal-blur">Initiate Contact</h2>
   <p class="lede reveal-blur">Found something I should see — a target, a collaboration, a contract?
     The veil is thin. Reach through.</p>

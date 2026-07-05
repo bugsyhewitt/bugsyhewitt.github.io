@@ -26,11 +26,12 @@ function makeEmber(w: number, h: number, atBottom: boolean): Ember {
 }
 
 // Blob drift between --void and desaturated green tones (Bugsy's call), alpha ≤ 0.10.
+// Retuned per Bugsy: +10% brightness, −50% saturation vs the original greens.
 const BLOBS = [
-  { sx: 0.20, sy: 0.11, px: 0.0, py: 1.7, r: 0.55, rgb: '96,128,104', a: 0.07 },
-  { sx: 0.13, sy: 0.17, px: 2.1, py: 0.6, r: 0.65, rgb: '52,84,64', a: 0.10 },
-  { sx: 0.09, sy: 0.14, px: 4.0, py: 3.2, r: 0.50, rgb: '118,138,96', a: 0.05 },
-  { sx: 0.16, sy: 0.08, px: 5.3, py: 4.4, r: 0.70, rgb: '20,34,26', a: 0.10 },
+  { sx: 0.20, sy: 0.11, px: 0.0, py: 1.7, r: 0.55, rgb: '116,134,121', a: 0.07 },
+  { sx: 0.13, sy: 0.17, px: 2.1, py: 0.6, r: 0.65, rgb: '68,86,75', a: 0.10 },
+  { sx: 0.09, sy: 0.14, px: 4.0, py: 3.2, r: 0.50, rgb: '135,146,123', a: 0.05 },
+  { sx: 0.16, sy: 0.08, px: 5.3, py: 4.4, r: 0.70, rgb: '27,35,30', a: 0.10 },
 ];
 
 function attach(section: HTMLElement): void {
