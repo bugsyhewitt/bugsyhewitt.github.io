@@ -91,9 +91,10 @@ img{display:block;max-width:100%;}
   background:rgba(0,0,0,.85);backdrop-filter:blur(12px);
   border-bottom:1px solid transparent;
   transform:translateY(-110%);
-  transition:transform .65s var(--ease),border-color .65s var(--ease);
+  visibility:hidden;
+  transition:transform .65s var(--ease),border-color .65s var(--ease),visibility 0s .65s;
 }
-.nav.show{transform:translateY(0);border-color:var(--hair);}
+.nav.show{transform:translateY(0);border-color:var(--hair);visibility:visible;transition-delay:0s;}
 .nav__mark{display:inline-flex;align-items:center;gap:10px;
   font-family:var(--display);font-size:24px;letter-spacing:3px;}
 .nav__mark b{color:var(--blood);font-weight:400;}
