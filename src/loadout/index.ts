@@ -13,6 +13,7 @@ export function initLoadout(): void {
 
   const rest = document.createElement('div');
   rest.className = 'term-rest';
+  rest.setAttribute('aria-hidden', 'true');
   rest.innerHTML = `<span class="p">></span> loadout compiled &mdash; ${cols.length} modules `;
   root.insertAdjacentElement('afterend', rest);
 
