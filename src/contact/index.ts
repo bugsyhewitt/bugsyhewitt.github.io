@@ -22,6 +22,14 @@ export function initContact(): void {
     const val = discord.querySelector<HTMLElement>('.chan__v');
     const orig = val ? (val.textContent || '') : '';
     let t = 0;
+
+    // hidden live region so screen readers hear copy confirmation
+    const live = document.createElement('span');
+    live.setAttribute('aria-live', 'polite');
+    live.setAttribute('aria-atomic', 'true');
+    live.style.cssText = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;';
+    document.body.appendChild(live);
+
     discord.addEventListener('click', e => {
       e.preventDefault();
       try { navigator.clipboard.writeText(orig).catch(() => {}); } catch {}
@@ -30,6 +38,9 @@ export function initContact(): void {
         window.clearTimeout(t);
         t = window.setTimeout(() => { val.textContent = orig; }, 1600);
       }
+      live.textContent = '';
+      window.requestAnimationFrame(() => { live.textContent = 'Discord handle copied to clipboard'; });
+      window.setTimeout(() => { live.textContent = ''; }, 2000);
     });
   }
 
