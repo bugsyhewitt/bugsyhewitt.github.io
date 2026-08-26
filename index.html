@@ -78,9 +78,9 @@ img{display:block;max-width:100%;}
 .spine.show{transform:translateX(0);}
 .spine span{
   writing-mode:vertical-rl;transform:rotate(180deg);
-  font-size:10px;letter-spacing:4px;color:var(--ash-dim);text-transform:uppercase;
+  font-size:11px;letter-spacing:4px;color:var(--ash-dim);text-transform:uppercase;
 }
-.spine .sdot{width:5px;height:5px;border-radius:50%;background:var(--blood);animation:pulse 2.8s infinite;}
+.spine .sdot{width:5px;height:5px;border-radius:50%;background:var(--ash-dim);}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.15;}}
 
 /* ---------- nav ---------- */
@@ -131,7 +131,7 @@ img{display:block;max-width:100%;}
   position:relative;z-index:4;width:100%;
   padding:0 clamp(26px,7vw,120px) clamp(78px,12vh,128px);
 }
-.hero__eyebrow{font-size:11px;letter-spacing:4px;color:var(--blood);text-transform:uppercase;
+.hero__eyebrow{font-size:11px;letter-spacing:4px;color:var(--ash);text-transform:uppercase;
   margin-bottom:18px;opacity:0;animation:up .9s var(--ease) .15s forwards;}
 .hero__name{
   font-family:var(--display);font-weight:400;
@@ -148,7 +148,7 @@ img{display:block;max-width:100%;}
 .hero__cue{
   position:absolute;left:50%;bottom:28px;z-index:4;transform:translateX(-50%);
   display:flex;flex-direction:column;align-items:center;gap:12px;
-  font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink-soft);
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--ink-soft);
   opacity:0;animation:up 1s var(--ease) .9s forwards;
 }
 .hero__cue-line{width:1px;height:46px;background:linear-gradient(var(--ink-soft),transparent);
@@ -160,8 +160,8 @@ img{display:block;max-width:100%;}
 /* ---------- shared section frame ---------- */
 .section{padding:clamp(80px,13vh,170px) clamp(24px,6vw,96px);position:relative;}
 .eyebrow{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:3px;
-  text-transform:uppercase;color:var(--ash);margin-bottom:22px;}
-.eyebrow::before{content:"";width:30px;height:1px;background:var(--blood);}
+  text-transform:uppercase;color:var(--ash-dim);margin-bottom:22px;}
+.eyebrow::before{content:"";width:30px;height:1px;background:var(--ash-dim);}
 .eyebrow--suite{margin-top:clamp(70px,11vh,140px);} /* breathes the Suite block off the project list */
 .heading{font-family:var(--display);font-weight:400;
   font-size:clamp(3rem,8.5vw,6.6rem);line-height:.92;letter-spacing:.012em;}
@@ -193,7 +193,8 @@ img{display:block;max-width:100%;}
   padding-right:34px; /* matches gap — supplies the trailing space flex gap omits, so the -50% loop point is seamless */
   animation:slide 34s linear infinite;}
 .marquee__track span{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--ash);}
-.marquee__track i{color:var(--blood);font-style:normal;}
+.marquee__track i{color:var(--ash-dim);font-style:normal;}
+.marquee:hover .marquee__track{animation-play-state:paused;}
 @keyframes slide{to{transform:translateX(-50%);}}
 
 /* ---------- grimoire / projects ---------- */
@@ -218,10 +219,10 @@ img{display:block;max-width:100%;}
 .tag{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ash);
   border:1px solid var(--hair-bright);padding:5px 11px;}
 .inspect{font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:var(--bone);
-  border-bottom:1px solid var(--blood);padding-bottom:3px;margin-left:auto;
-  transition:letter-spacing .3s var(--ease);}
-.inspect:hover{letter-spacing:3.6px;}
-.project__blurb .accent{color:var(--blood);}
+  border-bottom:1px solid var(--hair-bright);padding-bottom:3px;margin-left:auto;
+  transition:letter-spacing .3s var(--ease),border-color .3s var(--ease);}
+.inspect:hover{letter-spacing:3.6px;border-bottom-color:var(--blood);}
+.project__blurb .accent{color:var(--bone);}
 
 /* ---------- visitor / ufo ---------- */
 .ufo{position:absolute;top:-8px;left:50%;width:76px;display:block;opacity:.85;z-index:5;
@@ -295,7 +296,7 @@ img{display:block;max-width:100%;}
 .carousel__item.is-dim .carousel__img { filter: grayscale(1) brightness(0.7); }
 
 /* ---------- specialities: pinned horizontal showpiece ---------- */
-.specs-hint{color:var(--blood);letter-spacing:2px;font-size:.8em;}
+.specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;}
 .specs-pin{margin-top:clamp(40px,6vh,72px);position:relative;height:78vh;min-height:520px;overflow:hidden;
   width:100vw;margin-left:calc(50% - 50vw); /* full-bleed so each panel is a full viewport width */
   border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);background:var(--coffin);}
@@ -316,7 +317,7 @@ img{display:block;max-width:100%;}
 .spec__list li{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--hair);
   font-size:13px;color:var(--bone);transition:color .25s,padding-left .25s var(--ease);}
 .spec__list li:hover{padding-left:8px;color:#fff;}
-.spec__list li span{color:var(--blood);font-size:10px;flex-shrink:0;line-height:1.9;}
+.spec__list li span{color:var(--ash-dim);font-size:10px;flex-shrink:0;line-height:1.9;}
 .specs-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hair);z-index:2;}
 .specs-progress i{display:block;height:100%;width:calc(100%/var(--n,3));background:var(--blood);
   transform-origin:left;transition:transform .1s linear;}
@@ -340,7 +341,7 @@ img{display:block;max-width:100%;}
 .tcol__head{display:flex;align-items:baseline;justify-content:space-between;
   border-bottom:1px solid var(--hair);padding-bottom:14px;margin-bottom:8px;}
 .tcol__head h3{font-family:var(--display);font-weight:400;font-size:1.5rem;letter-spacing:1px;}
-.tcol__head em{font-family:var(--display);font-style:normal;font-size:1.1rem;color:var(--blood);}
+.tcol__head em{font-family:var(--display);font-style:normal;font-size:1.1rem;color:var(--ash-dim);}
 .tcol ul{list-style:none;}
 .tcol li{font-size:13px;color:var(--ash);padding:13px 0;border-bottom:1px solid var(--hair);
   transition:color .22s,padding-left .22s var(--ease);}
@@ -350,9 +351,9 @@ img{display:block;max-width:100%;}
 .loadout.is-terminal .tcol__head h3,
 .loadout.is-terminal .tcol li{font-family:'Share Tech Mono',var(--mono);}
 .loadout.is-terminal .tcol__head h3{text-transform:lowercase;letter-spacing:.5px;font-size:1.15rem;}
-.loadout.is-terminal .tcol__head h3::before{content:"> ";color:var(--blood);}
+.loadout.is-terminal .tcol__head h3::before{content:"> ";color:var(--ash-dim);}
 .loadout.is-terminal .tcol__head h3::after{content:"/";color:var(--ash-dim);}
-.loadout.is-terminal .tcol li::before{content:"▸ ";color:var(--blood);}
+.loadout.is-terminal .tcol li::before{content:"▸ ";color:var(--ash-dim);}
 .loadout.is-terminal .tcol .pending,
 .loadout.is-terminal .tcol__head.pending{opacity:0;}
 .loadout.is-terminal .printed{opacity:1;transition:opacity .2s var(--ease);}
@@ -370,8 +371,7 @@ img{display:block;max-width:100%;}
 .seance__bar{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--coffin);
   border-bottom:1px solid var(--hair);font-family:var(--mono);font-size:11px;letter-spacing:1px;
   color:var(--ash);text-transform:lowercase;}
-.seance__dot{width:10px;height:10px;border-radius:50%;background:var(--blood);
-  box-shadow:0 0 9px var(--blood);flex-shrink:0;}
+.seance__dot{width:10px;height:10px;border-radius:50%;background:var(--ash-dim);flex-shrink:0;}
 .seance__body{padding:clamp(18px,3vw,30px);font-family:'Share Tech Mono',var(--mono);
   font-size:clamp(11.5px,1.5vw,14.5px);line-height:2;color:var(--bone);overflow-x:auto;}
 .sline{color:var(--ash);white-space:pre;}
@@ -387,8 +387,7 @@ img{display:block;max-width:100%;}
   align-items:center;padding-top:clamp(34px,5vh,56px);font-size:11px;letter-spacing:1.5px;
   text-transform:uppercase;color:var(--ash-dim);}
 .footbar .status{display:flex;align-items:center;gap:9px;color:var(--ash);}
-.footbar .status i{width:6px;height:6px;border-radius:50%;background:var(--blood);
-  animation:pulse 2.8s infinite;}
+.footbar .status i{width:6px;height:6px;border-radius:50%;background:var(--ash-dim);}
 
 /* ---------- skeleton hand cursor — index finger out, folds to a fist on click (OS-rendered, zero lag) ---------- */
 *{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><g fill='%230d0d0f' stroke='%230d0d0f' stroke-width='3' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='7.8' y='8.6' width='4.6' height='8.8' rx='2.3'/><circle cx='10.1' cy='8.8' r='2.4'/><rect x='8.1' y='3.4' width='4.0' height='6.0' rx='2.0'/><circle cx='10.1' cy='3.8' r='2.1'/></g><g fill='%23e9e6dd' stroke='%230d0d0f' stroke-width='0.9' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='7.8' y='8.6' width='4.6' height='8.8' rx='2.3'/><circle cx='10.1' cy='8.8' r='2.4'/><rect x='8.1' y='3.4' width='4.0' height='6.0' rx='2.0'/><circle cx='10.1' cy='3.8' r='2.1'/></g></svg>") 16 15,auto;}
@@ -431,6 +430,9 @@ img{display:block;max-width:100%;}
   .marquee__track,.hero__cue-line,.ufo{animation:none;}
   [class*="hero__"]{animation:none!important;opacity:1!important;}
 }
+.hero__cue-line.stop{animation:none;}
+.carousel-hint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ash-dim);text-align:center;padding:16px 0;}
 </style>
 </head>
 <body>
@@ -572,13 +574,14 @@ img{display:block;max-width:100%;}
 
   <div class="eyebrow eyebrow--suite reveal">02 — necromancer suite</div>
   <h2 class="heading reveal-blur">Necromancer Suite</h2>
-  <p class="lede reveal-blur">20 resurrected tools to die for!</p>
+  <p class="lede reveal-blur">Nineteen tools. Each one raised for a reason.</p>
 
   <div class="carousel" id="carousel" role="region" aria-label="Necromancer tool carousel">
     <div class="carousel__center">
       <div class="carousel__items" id="carouselItems"><!-- cards injected by JS --></div>
     </div>
   </div>
+  <div class="carousel-hint" id="carouselHint" aria-hidden="true">◀ drag &middot; arrow keys ▶&ensp;&ensp;<span id="carouselCount"></span></div>
 </section>
 
 <!-- ============ SPECIALITIES ============ -->
@@ -725,7 +728,7 @@ img{display:block;max-width:100%;}
 <!-- ============ CONTACT ============ -->
 <section class="section contact" id="contact">
   <div class="eyebrow reveal">05 — the s&eacute;ance</div>
-  <h2 class="heading reveal-blur">Initiate Contact</h2>
+  <h2 class="heading reveal-blur">The S&eacute;ance</h2>
   <p class="lede reveal-blur">Found something I should see — a target, a collaboration, a contract?
     The veil is thin. Reach through.</p>
 
@@ -743,6 +746,24 @@ img{display:block;max-width:100%;}
 
 </main>
 
+<script>
+// Stop hero cue-line animation after first scroll
+window.addEventListener('scroll',function(){
+  var cl=document.querySelector('.hero__cue-line');
+  if(cl)cl.classList.add('stop');
+},{once:true,passive:true});
+// Populate carousel card count when JS injects cards
+(function(){
+  var items=document.getElementById('carouselItems');
+  var count=document.getElementById('carouselCount');
+  if(!items||!count)return;
+  var mo=new MutationObserver(function(){
+    var n=items.children.length;
+    if(n>0){count.textContent=n+' cards';mo.disconnect();}
+  });
+  mo.observe(items,{childList:true});
+})();
+</script>
 <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
