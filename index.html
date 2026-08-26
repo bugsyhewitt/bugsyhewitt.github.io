@@ -315,8 +315,8 @@ img{display:block;max-width:100%;}
 .spec__tag{font-size:11px;letter-spacing:2.5px;color:var(--ash-dim);text-transform:uppercase;}
 .spec__list{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(20px,3vw,56px);}
 .spec__list li{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--hair);
-  font-size:13px;color:var(--bone);transition:color .25s,padding-left .25s var(--ease);}
-.spec__list li:hover{padding-left:8px;color:#fff;}
+  font-size:13px;color:var(--bone);transition:color .25s,transform .25s var(--ease);}
+.spec__list li:hover{transform:translateX(8px);color:#fff;}
 .spec__list li span{color:var(--ash-dim);font-size:10px;flex-shrink:0;line-height:1.9;}
 .specs-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hair);z-index:2;}
 .specs-progress i{display:block;height:100%;width:calc(100%/var(--n,3));background:var(--blood);
@@ -344,9 +344,9 @@ img{display:block;max-width:100%;}
 .tcol__head em{font-family:var(--display);font-style:normal;font-size:1.1rem;color:var(--ash-dim);}
 .tcol ul{list-style:none;}
 .tcol li{font-size:13px;color:var(--ash);padding:13px 0;border-bottom:1px solid var(--hair);
-  transition:color .22s,padding-left .22s var(--ease);}
+  transition:color .22s,transform .22s var(--ease);}
 .tcol li:last-child{border-bottom:none;}
-.tcol li:hover{color:var(--bone);padding-left:7px;}
+.tcol li:hover{color:var(--bone);transform:translateX(7px);}
 /* terminal compile-in skin */
 .loadout.is-terminal .tcol__head h3,
 .loadout.is-terminal .tcol li{font-family:'Share Tech Mono',var(--mono);}
