@@ -1,5 +1,5 @@
 import { magnetize } from '../fx/magnet';
-import { onceInView, makeTermCursor } from '../fx/terminal';
+import { onceInView, makeTermCursor, printLines } from '../fx/terminal';
 
 // Séance terminal: on scroll-in the channel manifest prints line by line, a
 // blood cursor resting at the end. Channel rows are real links; discord copies
@@ -79,17 +79,8 @@ export function initContact(): void {
   if (reduce) { (last || lines[lines.length - 1])?.appendChild(cursor); return; }
 
   term.classList.add('is-live');
-  onceInView(term, run);
-
-  function run(): void {
-    let i = 0;
-    (function next(): void {
-      if (i >= lines.length) { (last || lines[lines.length - 1]).appendChild(cursor); return; }
-      const el = lines[i];
-      el.classList.add('printed');
-      el.appendChild(cursor);
-      i++;
-      window.setTimeout(next, el.hasAttribute('data-last') ? 260 : 150);
-    })();
-  }
+  onceInView(term, () => printLines(lines, cursor, {
+    delay: el => el.hasAttribute('data-last') ? 260 : 150,
+    done: () => last || lines[lines.length - 1],
+  }));
 }

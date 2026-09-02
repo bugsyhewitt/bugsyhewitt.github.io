@@ -18,3 +18,24 @@ export function makeTermCursor(): HTMLElement {
   c.setAttribute('aria-hidden', 'true');
   return c;
 }
+
+interface PrintOpts {
+  delay: (el: HTMLElement) => number;
+  done: () => HTMLElement;
+  beforePrint?: (el: HTMLElement) => void;
+}
+
+// Print items one-by-one, moving cursor to each newly printed line.
+// delay(el) → ms to wait after el; done() → element to park cursor on finish.
+export function printLines(items: HTMLElement[], cursor: HTMLElement, opts: PrintOpts): void {
+  let i = 0;
+  (function next(): void {
+    if (i >= items.length) { opts.done().appendChild(cursor); return; }
+    const el = items[i];
+    opts.beforePrint?.(el);
+    el.classList.add('printed');
+    el.appendChild(cursor);
+    i++;
+    window.setTimeout(next, opts.delay(el));
+  })();
+}
