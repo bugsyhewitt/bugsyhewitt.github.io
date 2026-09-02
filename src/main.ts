@@ -90,7 +90,7 @@ const lenis = REDUCE ? null : initLenis();
     var reduceM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function paint(el: HTMLElement, text: string, cursor: boolean) {
-      el.innerHTML = cursor ? (text + '<span class="cur"></span>') : text;
+      el.innerHTML = cursor ? (text + '<span class="cur" aria-hidden="true"></span>') : text;
     }
 
     if (reduceM) {
