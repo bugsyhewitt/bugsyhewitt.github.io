@@ -16,5 +16,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "//": "Tests live under src/ but must not gate the Pages deploy: build is `tsc && vite build`, so a type error in a test file would block publishing. Vitest typechecks them at run time instead.",
+  "exclude": ["**/*.test.ts"]
 }
