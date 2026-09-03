@@ -32,15 +32,42 @@ export function initContact(): void {
 
     discord.addEventListener('click', e => {
       e.preventDefault();
-      try { navigator.clipboard.writeText(orig).catch(() => {}); } catch {}
-      if (val) {
-        val.textContent = 'copied ✓';
-        window.clearTimeout(t);
-        t = window.setTimeout(() => { val.textContent = orig; }, 1600);
+      // Properly await the clipboard write — if it fails (no API, insecure
+      // context, permission denied, iframe without allow="clipboard-write"),
+      // surface a failure message to both sighted and screen-reader users
+      // instead of falsely claiming success.
+      const onSuccess = () => {
+        if (val) {
+          val.textContent = 'copied ✓';
+          window.clearTimeout(t);
+          t = window.setTimeout(() => { val.textContent = orig; }, 1600);
+        }
+        live.textContent = '';
+        window.requestAnimationFrame(() => { live.textContent = 'Discord handle copied to clipboard'; });
+        window.setTimeout(() => { live.textContent = ''; }, 2000);
+      };
+      const onFail = () => {
+        if (val) {
+          val.textContent = 'copy failed';
+          window.clearTimeout(t);
+          t = window.setTimeout(() => { val.textContent = orig; }, 2400);
+        }
+        live.textContent = '';
+        window.requestAnimationFrame(() => { live.textContent = `Copy failed; Discord handle is ${orig}`; });
+        window.setTimeout(() => { live.textContent = ''; }, 4000);
+      };
+      let write: Promise<void> | undefined;
+      try {
+        write = navigator.clipboard?.writeText(orig);
+      } catch {
+        onFail();
+        return;
       }
-      live.textContent = '';
-      window.requestAnimationFrame(() => { live.textContent = 'Discord handle copied to clipboard'; });
-      window.setTimeout(() => { live.textContent = ''; }, 2000);
+      if (write && typeof write.then === 'function') {
+        write.then(onSuccess, onFail);
+      } else {
+        onFail();
+      }
     });
   }
 
