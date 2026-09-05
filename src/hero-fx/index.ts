@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GPGPU } from './GPGPU';
 import { PlaneMesh } from './PlaneMesh';
 
-export interface HeroFXOptions {
+interface HeroFXOptions {
   imageSrc: string;
   scrollGate?: number;
 }
