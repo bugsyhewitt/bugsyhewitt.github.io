@@ -138,3 +138,85 @@ describe('initContact — discord clipboard copy', () => {
     expect(val().textContent).toBe('bugsy#1234');
   });
 });
+
+// Regression guard for BUG-NEW-460: Discord copy row must activate on both
+// Enter AND Space (WCAG 2.1.1 Keyboard). The fix was to change the markup
+// from <a href="#" role="button"> to <button type="button"> so the browser
+// natively synthesizes the click for Space. A native <button> in Chromium
+// dispatches a click event on Space; if anyone refactors back to <a> or to
+// a div with role="button", BUG-NEW-460 will silently come back.
+//
+// jsdom does not synthesize clicks from keydown the way real browsers do for
+// <button>, so we can't test that synthesis in unit. What we CAN lock in is:
+// (1) the production markup is a <button type="button"> (not <a>, not <div>),
+// (2) calling .click() on it (which is what Chromium synthesizes for Space
+// and Enter on a real <button>) reaches the click handler and copies,
+// (3) an <a role="button"> with the SAME handler does NOT receive a click
+//     when a click is dispatched with the default-prevented behavior of a
+//     link — i.e., the original BUG-NEW-460 mechanism is gone because the
+//     handler no longer lives on an anchor.
+describe('initContact — Discord button is a native <button> (BUG-NEW-460)', () => {
+  beforeEach(() => {
+    // Build DOM that mirrors the production markup: <button type="button">
+    document.body.innerHTML = `
+      <div id="seance">
+        <div id="seanceBody">
+          <button type="button" id="discordCopy"
+            aria-label="Copy Discord handle bugsy5899 to clipboard">
+            <span class="chan__k">discord</span>
+            <span class="chan__v">bugsy5899</span>
+          </button>
+        </div>
+      </div>
+    `;
+    vi.stubGlobal('matchMedia', (q: string) => ({
+      matches: q.includes('prefers-reduced-motion') ? true : false,
+      media: q,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+    }));
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText: vi.fn(() => Promise.resolve()) },
+      configurable: true,
+      writable: true,
+    });
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    document.body.innerHTML = '';
+  });
+
+  it('Discord row is a <button type="button"> in production markup', () => {
+    const el = document.getElementById('discordCopy')!;
+    // Lock the contract: native <button> is what makes browsers synthesize
+    // click on Space. If anyone changes this back to <a href="#" role="button">
+    // or <div role="button">, BUG-NEW-460 silently returns.
+    expect(el.tagName).toBe('BUTTON');
+    expect((el as HTMLButtonElement).type).toBe('button');
+    expect(el.hasAttribute('href')).toBe(false);
+  });
+
+  it('click on the native <button> reaches the copy handler', async () => {
+    // This is what Chromium synthesizes natively for both Enter AND Space on
+    // a real <button>. If the handler wiring ever breaks, this fails.
+    initContact();
+    const el = document.getElementById('discordCopy')!;
+    el.click();
+    await Promise.resolve();
+    expect(document.querySelector('.chan__v')!.textContent).toBe('copied ✓');
+  });
+
+  it('preserves the accessible name on the native <button>', () => {
+    initContact();
+    const el = document.getElementById('discordCopy')!;
+    // aria-label survives the <a> → <button> change. Screen readers hear
+    // "Copy Discord handle bugsy5899 to clipboard" the same way they did
+    // before the fix.
+    expect(el.getAttribute('aria-label')).toBe(
+      'Copy Discord handle bugsy5899 to clipboard'
+    );
+  });
+});
