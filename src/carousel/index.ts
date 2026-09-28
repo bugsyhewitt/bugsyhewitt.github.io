@@ -124,6 +124,19 @@ export function initCarousel(): void {
     }
   }
 
+  // Keyboard support: ArrowLeft / ArrowRight advance one card. Hint text
+  // in index.html already advertises "drag · arrow keys", but the handler
+  // was missing — WCAG 2.1.1 Keyboard (BUG-NEW-141).
+  function stepBy(delta: number): void {
+    const current = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
+    const target = Math.round(current / degree) * degree + delta;
+    gsap.to(itemsEl, { rotation: target, duration: 0.4, ease: 'power2.out', onUpdate: updateFocus });
+  }
+  window.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); stepBy(-degree); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); stepBy(degree);  }
+  });
+
   // Draggable rotation with snap + focus update.
   Draggable.create(itemsEl, {
     type: 'rotation',
