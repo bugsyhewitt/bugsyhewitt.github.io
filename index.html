@@ -371,14 +371,14 @@ img{display:block;max-width:100%;}
     width:auto;margin-left:0;}
   .specs-track{flex-direction:column;width:100%;height:auto;transform:none!important;}
   .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);
-    padding:clamp(30px,8vw,48px) 4vw;}
+    padding:clamp(30px,8vw,48px) 0;}
   .spec__list{grid-template-columns:1fr;}
   .specs-progress,.specs-hint{display:none;}
 }
 /* without scripts nothing pins, reveals or turns: stack, show, and list the deck (<noscript>) */
 .no-js .specs-pin{height:auto;min-height:0;overflow:visible;border:none;background:transparent;width:auto;margin-left:0;}
 .no-js .specs-track{flex-direction:column;width:100%;height:auto;}
-.no-js .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);padding:clamp(30px,8vw,48px) 4vw;}
+.no-js .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);padding:clamp(30px,8vw,48px) 0;}
 .no-js .specs-progress,.no-js .specs-hint,.no-js .carousel,.no-js .carousel-caption,.no-js .carousel-hint{display:none;}
 .no-js .nav{transform:none;visibility:visible;border-color:var(--hair);}
 .deck-list{list-style:none;columns:2 18rem;column-gap:clamp(20px,3vw,56px);margin-top:clamp(30px,5vh,56px);}
@@ -464,6 +464,11 @@ img{display:block;max-width:100%;}
 .js .reveal-blur.in{opacity:1;filter:blur(0);transform:none;}
 
 /* ---------- responsive ---------- */
+@media (pointer:coarse){
+  .nav__links a{display:inline-block;padding:6px 0;}
+  .inspect{padding-top:6px;}
+  .chan{padding:2px 0;}
+}
 @media (hover:hover){
   .project:hover .project__name{transform:translateX(10px);}
   .spec__list li:hover{transform:translateX(8px);}
