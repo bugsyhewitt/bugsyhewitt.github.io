@@ -410,6 +410,15 @@ img{display:block;max-width:100%;}
 .chan:hover,.chan:focus-visible{color:#fff;}
 .chan:hover .chan__v,.chan:focus-visible .chan__v{color:var(--blood);}
 .seance.is-live .sline,.seance.is-live .chan{opacity:0;}
+/* command prompt (src/contact/seance.ts): the blood block cursor trails what's typed */
+.seance__out .sline{white-space:pre-wrap;}
+.seance__out .sline--echo{color:var(--ash-mid);}
+.seance__prompt{display:flex;align-items:baseline;color:var(--ash);cursor:text;}
+.seance__ps{margin-right:.6em;} /* no flex gap: the cursor must sit flush after the typed text */
+.seance__prompt[hidden]{display:none;}
+.seance__input{all:unset;font:inherit;line-height:inherit;color:var(--bone);caret-color:transparent;width:0;}
+.seance__prompt:focus-within .term-cursor{animation:none;}
+.seance__prompt:has(.seance__input:focus-visible){outline:1px solid var(--blood);outline-offset:6px;}
 .seance.is-live .printed{opacity:1;transition:opacity .18s var(--ease);}
 .footbar{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-between;
   align-items:center;padding-top:clamp(34px,5vh,56px);font-size:11px;letter-spacing:1.5px;
