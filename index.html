@@ -306,7 +306,10 @@ img{display:block;max-width:100%;}
 }
 @media (max-width: 1000px) { .carousel { --card-h: 435px; } .carousel__card { width: 300px; } }
 @media (max-width: 700px)  { .carousel { --card-h: 348px; } .carousel__card { width: 240px; }
-  .carousel__items { --pivot: 100vh; } /* tighter ring: the neighbours peek in at phone width */ }
+  .carousel__items { --pivot: 100vh; } /* tighter ring: the neighbours peek in at phone width */
+  .cc__meta { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .cc__sep { display: none; }  /* one group per line instead of orphaned dots */
+  .carousel-caption { min-height: 9.4em; } }
 
 .carousel__img {
   height: 100%; width: 100%;
@@ -318,6 +321,7 @@ img{display:block;max-width:100%;}
 }
 .carousel__item.is-dim .carousel__img { filter: grayscale(1) brightness(0.7); }
 .carousel__item:not(.is-dim) { z-index: 1; }
+.carousel__card:focus-visible { outline-offset: -6px; }
 
 /* foil variant: front card only, driven by src/carousel/foil.ts (fine pointer + full motion) */
 .carousel__card {
@@ -496,7 +500,8 @@ img{display:block;max-width:100%;}
 .carousel-hint .hint-touch{display:none;}
 @media (hover:none){.carousel-hint .hint-fine{display:none;}.carousel-hint .hint-touch{display:inline;}}
 .carousel-caption{display:flex;flex-direction:column;align-items:center;gap:8px;
-  min-height:5.4em;padding:20px clamp(0px,4vw,40px) 0;text-align:center;}
+  min-height:6.6em;padding:20px clamp(0px,4vw,40px) 0;text-align:center;} /* room for a two-line tagline: the hint never jumps */
+.cc__seg{white-space:nowrap;}
 .cc__meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash-mid);}
 .cc__meta b{font-weight:400;color:var(--bone);}
 .cc__line{font-size:14px;line-height:1.6;color:var(--bone);max-width:60ch;}

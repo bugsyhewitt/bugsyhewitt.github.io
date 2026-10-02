@@ -162,9 +162,11 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     if (!caption) return;
     const c = CARDS[i];
     const seen = raisedOn(c.name);
+    const sep = '<span class="cc__sep"> &middot; </span>';
     caption.querySelector('.cc__meta')!.innerHTML =
-      `<b>${pad(i + 1)}</b> / ${pad(total)} &middot; ${title(c)} &middot; resurrects ${c.raises}` +
-      (seen ? ` &middot; <span class="cc__alive${isAlive(seen) ? ' is-alive' : ''}">last seen alive ${seen}</span>` : '');
+      `<span class="cc__seg"><b>${pad(i + 1)}</b> / ${pad(total)} &middot; ${title(c)}</span>${sep}` +
+      `<span class="cc__seg">resurrects ${c.raises}</span>` +
+      (seen ? `${sep}<span class="cc__seg cc__alive${isAlive(seen) ? ' is-alive' : ''}">last seen alive ${seen}</span>` : '');
     caption.querySelector('.cc__line')!.textContent = c.tagline;
   }
   function settle(byUser: boolean): void {
@@ -253,6 +255,9 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     const i = CARDS.findIndex(c => c.name === name.trim().toLowerCase());
     if (i < 0) return false;
     summon(i);
+    // the visitor asked for the deck: take focus there, or the next key typed in the
+    // séance scrolls the page straight back down to the prompt
+    wheel!.focus({ preventScroll: true });
     return true;
   };
   const linked = cardFromHash();
