@@ -146,7 +146,7 @@ describe('initCarousel — the card reading (caption, announcements, deep links)
   }
   const readingDom = () => {
     document.body.innerHTML = `
-      <div id="carousel"><div id="carouselItems"></div></div>
+      <div id="carousel" tabindex="0"><div id="carouselItems"></div></div>
       <p id="carouselCaption"><span class="cc__meta"></span><span class="cc__line"></span></p>
       <p id="carouselLive"></p>`;
   };
@@ -195,6 +195,7 @@ describe('initCarousel — the card reading (caption, announcements, deep links)
     expect(summonCard('Wraith ')).toBe(true);
     expect(scrollTo).toHaveBeenCalledWith(wheel());
     expect(meta()).toContain('20 / 20 · Wraith');
+    expect(document.activeElement).toBe(wheel());   // the next key turns the deck, not the page
     expect(summonCard('lich')).toBe(false);
   });
 });
