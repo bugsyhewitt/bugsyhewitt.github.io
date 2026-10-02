@@ -231,6 +231,10 @@ img{display:block;max-width:100%;}
   transition:letter-spacing .3s var(--ease),border-color .3s var(--ease);}
 .inspect:hover{letter-spacing:3.6px;border-bottom-color:var(--blood);}
 .project__blurb .accent{color:var(--bone);}
+/* last push date; a blood dot only while the repo is alive (pushed in the last 30 days — state, not ornament) */
+.raised,.cc__alive{display:inline-flex;align-items:center;gap:7px;}
+.raised{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ash-mid);}
+.raised.is-alive::before,.cc__alive.is-alive::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--blood);}
 
 /* ---------- visitor / ufo ---------- */
 .ufo{position:absolute;top:-8px;left:50%;width:76px;display:block;opacity:.85;z-index:5;
@@ -551,7 +555,7 @@ img{display:block;max-width:100%;}
         <p class="project__blurb">Agent infrastructure where tool-composition genomes compete and
           evolve, and the winning strategies climb a shared leaderboard.</p>
         <div class="project__meta">
-          <span class="tag">Agents</span><span class="tag">Evolution</span>
+          <span class="tag">Agents</span><span class="tag">Evolution</span><!--raised:alienclaw-->
           <a class="inspect" href="https://github.com/bugsyhewitt/alienclaw" target="_blank" rel="noopener">Inspect &#8599;</a>
         </div>
       </div>
@@ -574,7 +578,7 @@ img{display:block;max-width:100%;}
         <p class="project__blurb">Adaptive honeypot intelligence. SPRT sequential detection and POMDP
           decision engines learn an intruder&rsquo;s intent, then bait them deeper.</p>
         <div class="project__meta">
-          <span class="tag">Deception</span><span class="tag">Honeypots</span>
+          <span class="tag">Deception</span><span class="tag">Honeypots</span><!--raised:chimera-->
           <a class="inspect" href="https://github.com/bugsyhewitt/chimera" target="_blank" rel="noopener">Inspect &#8599;</a>
         </div>
       </div>
@@ -742,7 +746,7 @@ img{display:block;max-width:100%;}
   </div>
 
   <div class="footbar">
-    <span>Bugsy Hewitt — Digital Necromancer</span>
+    <span>Bugsy Hewitt &middot; last raised <time datetime="%RAISED%">%RAISED%</time></span>
     <span>USA &middot; MMXXVI</span>
   </div>
 </section>
