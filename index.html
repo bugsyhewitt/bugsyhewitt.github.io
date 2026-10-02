@@ -200,7 +200,7 @@ img{display:block;max-width:100%;}
   border-bottom:1px solid var(--hair);overflow:hidden;padding:20px 0;}
 .marquee__track{display:flex;width:max-content;gap:34px;
   padding-right:34px; /* matches gap — supplies the trailing space flex gap omits, so the -50% loop point is seamless */
-  animation:slide 34s linear infinite;}
+  animation:slide 64s linear infinite; /* ~90px/s: scale the duration with the track width */}
 .marquee__track span{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--ash);}
 .marquee__track i{color:var(--ash-dim);font-style:normal;}
 .marquee:hover .marquee__track{animation-play-state:paused;}
@@ -505,22 +505,26 @@ img{display:block;max-width:100%;}
   </div>
   <div class="marquee" aria-hidden="true">
     <div class="marquee__track">
-      <span>HackerOne</span><i>&#10022;</i><span>Immunefi</span><i>&#10022;</i>
-      <span>Bugcrowd</span><i>&#10022;</i><span>OSINT</span><i>&#10022;</i>
-      <span>Recon</span><i>&#10022;</i><span>Web3</span><i>&#10022;</i>
-      <span>Smart Contracts</span><i>&#10022;</i><span>Bug Bounty</span><i>&#10022;</i>
-      <span>Responsible Disclosure</span><i>&#10022;</i><span>Attack Surface</span><i>&#10022;</i>
-      <span>API Security</span><i>&#10022;</i><span>IDOR</span><i>&#10022;</i>
-      <span>SSRF</span><i>&#10022;</i><span>XSS</span><i>&#10022;</i>
-      <span>Penetration Testing</span><i>&#10022;</i><span>Vulnerability Research</span><i>&#10022;</i>
-      <span>HackerOne</span><i>&#10022;</i><span>Immunefi</span><i>&#10022;</i>
-      <span>Bugcrowd</span><i>&#10022;</i><span>OSINT</span><i>&#10022;</i>
-      <span>Recon</span><i>&#10022;</i><span>Web3</span><i>&#10022;</i>
-      <span>Smart Contracts</span><i>&#10022;</i><span>Bug Bounty</span><i>&#10022;</i>
-      <span>Responsible Disclosure</span><i>&#10022;</i><span>Attack Surface</span><i>&#10022;</i>
-      <span>API Security</span><i>&#10022;</i><span>IDOR</span><i>&#10022;</i>
-      <span>SSRF</span><i>&#10022;</i><span>XSS</span><i>&#10022;</i>
-      <span>Penetration Testing</span><i>&#10022;</i><span>Vulnerability Research</span><i>&#10022;</i>
+      <span>BinAbsInspector &rarr; autopsy</span><i>&#10022;</i><span>SCMKit &rarr; covenant</span><i>&#10022;</i>
+      <span>smuggler.py &rarr; doppelganger</span><i>&#10022;</i><span>firmeye &rarr; embalmer</span><i>&#10022;</i>
+      <span>GraphQLmap &rarr; enshroud</span><i>&#10022;</i><span>Panoptic &rarr; exhumed</span><i>&#10022;</i>
+      <span>OFX &rarr; ferryman</span><i>&#10022;</i><span>subjack &rarr; graverobber</span><i>&#10022;</i>
+      <span>IoTSeeker &rarr; hellhound</span><i>&#10022;</i><span>H26Forge &rarr; mangle</span><i>&#10022;</i>
+      <span>MAIAN &rarr; omen</span><i>&#10022;</i><span>mythril &rarr; oracle</span><i>&#10022;</i>
+      <span>xunfeng &rarr; ossuary</span><i>&#10022;</i><span>LLMFuzzer &rarr; ouija</span><i>&#10022;</i>
+      <span>hodor &rarr; possession</span><i>&#10022;</i><span>race-the-web &rarr; reaper</span><i>&#10022;</i>
+      <span>shhgit &rarr; seance</span><i>&#10022;</i><span>credential-digger &rarr; tombstone</span><i>&#10022;</i>
+      <span>cloudflare-enum &rarr; unearth</span><i>&#10022;</i><span>SSRFmap &rarr; wraith</span><i>&#10022;</i>
+      <span>BinAbsInspector &rarr; autopsy</span><i>&#10022;</i><span>SCMKit &rarr; covenant</span><i>&#10022;</i>
+      <span>smuggler.py &rarr; doppelganger</span><i>&#10022;</i><span>firmeye &rarr; embalmer</span><i>&#10022;</i>
+      <span>GraphQLmap &rarr; enshroud</span><i>&#10022;</i><span>Panoptic &rarr; exhumed</span><i>&#10022;</i>
+      <span>OFX &rarr; ferryman</span><i>&#10022;</i><span>subjack &rarr; graverobber</span><i>&#10022;</i>
+      <span>IoTSeeker &rarr; hellhound</span><i>&#10022;</i><span>H26Forge &rarr; mangle</span><i>&#10022;</i>
+      <span>MAIAN &rarr; omen</span><i>&#10022;</i><span>mythril &rarr; oracle</span><i>&#10022;</i>
+      <span>xunfeng &rarr; ossuary</span><i>&#10022;</i><span>LLMFuzzer &rarr; ouija</span><i>&#10022;</i>
+      <span>hodor &rarr; possession</span><i>&#10022;</i><span>race-the-web &rarr; reaper</span><i>&#10022;</i>
+      <span>shhgit &rarr; seance</span><i>&#10022;</i><span>credential-digger &rarr; tombstone</span><i>&#10022;</i>
+      <span>cloudflare-enum &rarr; unearth</span><i>&#10022;</i><span>SSRFmap &rarr; wraith</span><i>&#10022;</i>
     </div>
   </div>
 </div>
