@@ -12,7 +12,7 @@ describe('initFoil — monochrome sheen on the front card only', () => {
     document.body.innerHTML = `
       <div id="carousel">
         <div class="carousel__item is-dim"><a class="carousel__card" id="dim"></a></div>
-        <div class="carousel__item"><a class="carousel__card" id="front"></a></div>
+        <div class="carousel__item is-front"><a class="carousel__card" id="front"></a></div>
       </div>`;
     wheel = document.getElementById('carousel')!;
     front = document.getElementById('front')!;

@@ -51,6 +51,8 @@ export function initCarousel(opts: CarouselOptions = {}): void {
        </a>`;
     // the cover's printed text, so the card reads the same to a screen reader or a crawler
     item.querySelector('img')!.alt = `${title(card)}, resurrects ${card.raises}: ${card.tagline}`;
+    // where this cover would be foil-stamped (CSSOM, not a style attribute: keeps the CSP tight)
+    item.querySelector<HTMLElement>('.carousel__card')!.style.setProperty('--foil-mask', `url(/cards/fx/${card.name}-foil.webp)`);
     itemsEl.appendChild(item);
   });
 
@@ -140,6 +142,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       prevBest = best;
       // runs per drag frame: touch the DOM only when the front card actually changes
       images.forEach((image, i) => {
+        image.classList.toggle('is-front', i === best);   // explicit: before the first pass no card is dim
         if (DESATURATE_SIBLINGS) image.classList.toggle('is-dim', i !== best);
         image.querySelector('a')!.tabIndex = i === best ? 0 : -1;   // only the front card is a tab stop
       });
