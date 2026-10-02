@@ -69,6 +69,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--blood);outline-offs
   font:inherit;text-align:left;}
 ::selection{background:var(--blood);color:var(--bone);}
 img{display:block;max-width:100%;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
 
 /* ---------- atmosphere ---------- */
 .grain{position:fixed;inset:0;pointer-events:none;}
@@ -437,6 +438,9 @@ img{display:block;max-width:100%;}
   [class*="hero__"]{animation:none!important;opacity:1!important;}
 }
 .hero__cue-line.stop{animation:none;}
+.carousel:focus-visible{outline:2px solid var(--blood);outline-offset:-2px;}
+.carousel-hint .hint-touch{display:none;}
+@media (hover:none){.carousel-hint .hint-fine{display:none;}.carousel-hint .hint-touch{display:inline;}}
 .carousel-hint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--ash-dim);text-align:center;padding:16px 0;}
 </style>
@@ -581,12 +585,13 @@ img{display:block;max-width:100%;}
   <h2 class="heading reveal-blur">Necromancer Suite</h2>
   <p class="lede reveal-blur">Nineteen tools. Each one raised for a reason.</p>
 
-  <div class="carousel" id="carousel" role="region" aria-label="Necromancer tool carousel">
+  <div class="carousel" id="carousel" role="region" aria-label="Necromancer tool carousel" aria-describedby="carouselKeys" tabindex="0">
     <div class="carousel__center">
       <div class="carousel__items" id="carouselItems"><!-- cards injected by JS --></div>
     </div>
   </div>
-  <div class="carousel-hint" id="carouselHint" aria-hidden="true">◀ drag &middot; arrow keys ▶&ensp;&ensp;<span id="carouselCount"></span></div>
+  <div class="carousel-hint" id="carouselHint" aria-hidden="true"><span class="hint-fine">◀ drag &middot; arrow keys ▶</span><span class="hint-touch">◀ swipe ▶</span>&ensp;&ensp;<span id="carouselCount"></span></div>
+  <p class="sr-only" id="carouselKeys">Left and right arrow keys turn the wheel. Home and End jump to the first and last card.</p>
 </section>
 
 <!-- ============ SPECIALITIES ============ -->
