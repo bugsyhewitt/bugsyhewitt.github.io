@@ -6,6 +6,7 @@ import { raisedOn, isAlive } from '../raised';
 import { initFoil, initTilt } from './foil';
 import { makeProof } from './proof';
 import { RITE, DUR } from '../fx/motion';
+import { tick } from '../fx/sound';
 
 gsap.registerPlugin(Draggable, InertiaPlugin);
 
@@ -151,6 +152,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
         image.querySelector('a')!.tabIndex = i === best ? 0 : -1;   // only the front card is a tab stop
       });
       paintCaption(best);
+      tick(reduceMotion ? 0 : InertiaPlugin.getVelocity(itemsEl!, 'rotation') || 0);   // opt-in: silent unless enabled
       // keyboard user sitting on a card: follow the wheel to the new front card
       const active = document.activeElement;
       if (active && active !== wheel && wheel!.contains(active)) {
