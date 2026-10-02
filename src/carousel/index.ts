@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
 import { CARDS, repoUrl, title } from './cards';
+import { raisedOn, isAlive } from '../raised';
 
 gsap.registerPlugin(Draggable);
 
@@ -159,8 +160,10 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   function paintCaption(i: number): void {
     if (!caption) return;
     const c = CARDS[i];
+    const seen = raisedOn(c.name);
     caption.querySelector('.cc__meta')!.innerHTML =
-      `<b>${pad(i + 1)}</b> / ${pad(total)} &middot; ${title(c)} &middot; resurrects ${c.raises}`;
+      `<b>${pad(i + 1)}</b> / ${pad(total)} &middot; ${title(c)} &middot; resurrects ${c.raises}` +
+      (seen ? ` &middot; <span class="cc__alive${isAlive(seen) ? ' is-alive' : ''}">last seen alive ${seen}</span>` : '');
     caption.querySelector('.cc__line')!.textContent = c.tagline;
   }
   function settle(byUser: boolean): void {

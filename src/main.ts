@@ -8,6 +8,7 @@ import { initScrambleHovers } from './fx/scramble';
 import { initSpecialities } from './specialities';
 import { initLoadout } from './loadout';
 import { initContact } from './contact';
+import { markAlive } from './raised';
 import type Lenis from 'lenis';
 
 // Consolidated motion/pointer guards. Every FX init below is gated here;
@@ -165,6 +166,7 @@ if (heroGL) {
   }
 }
 
+markAlive();
 initCarousel({
   scrollTo: el => (lenis ? lenis.scrollTo(el) : el.scrollIntoView({ block: 'center' })),
 });
