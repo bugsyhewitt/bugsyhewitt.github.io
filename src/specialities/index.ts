@@ -33,7 +33,7 @@ export function initSpecialities(): void {
       const st = ScrollTrigger.create({
         trigger: pin,
         start: () => 'top top+=' + navH(),
-        end: () => '+=' + track.scrollWidth,
+        end: () => '+=' + track.scrollWidth / 2,   // half a screen of scroll per panel: brisk, not scroll-jacked
         pin: true,
         scrub: true,
         invalidateOnRefresh: true,
