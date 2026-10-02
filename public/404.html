@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Not found · Bugsy Hewitt</title>
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#000000" />
+<link rel="icon" type="image/png" href="/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+<!-- GitHub Pages serves this for any missing path. Standalone on purpose: same
+     tokens as index.html, no scripts. -->
+<style>
+:root{
+  --void:#000;--bone:#e9e6dd;--ash:#8c8c85;--ash-mid:#7c7c76;--hair:#1f1f21;--hair-bright:#2e2e31;--blood:#9c3636;
+  --display:'Bebas Neue','Arial Narrow',Impact,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{background:var(--void);color:var(--bone);font:15px/1.7 var(--mono);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;padding:clamp(24px,6vw,96px);}
+::selection{background:var(--blood);color:var(--bone);}
+main{max-width:60ch;}
+.eyebrow{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--ash-mid);margin-bottom:22px;}
+.eyebrow::before{content:"";width:30px;height:1px;background:var(--ash-mid);}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(3rem,9vw,6.6rem);line-height:.92;letter-spacing:.012em;}
+p{color:var(--ash);margin-top:20px;}
+a{display:inline-block;margin-top:34px;color:var(--bone);text-decoration:none;font-size:11px;letter-spacing:2.4px;
+  text-transform:uppercase;border-bottom:1px solid var(--hair-bright);padding-bottom:3px;
+  transition:letter-spacing .3s var(--ease),border-color .3s var(--ease);}
+a:hover{letter-spacing:3.6px;border-bottom-color:var(--blood);}
+a:focus-visible{outline:2px solid var(--blood);outline-offset:3px;}
+@media (prefers-reduced-motion:reduce){a{transition:none;}}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">404 &middot; no such grave</div>
+  <h1>Nothing answered the summons.</h1>
+  <p>This address holds no body. The record is where you left it.</p>
+  <a href="/">Return to the record</a>
+</main>
+</body>
+</html>
