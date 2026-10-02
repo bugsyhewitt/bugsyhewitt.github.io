@@ -111,7 +111,7 @@ img{display:block;max-width:100%;}
   opacity:.92;transition:opacity .25s var(--ease),transform .35s var(--ease);}
 .nav__mark:hover .nav__logo{opacity:1;transform:rotate(8deg) scale(1.06);}
 .nav__links{display:flex;gap:clamp(13px,2.6vw,32px);}
-.nav__links a{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--ash);transition:color .25s;}
+.nav__links a{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ash);transition:color .25s;}
 .nav__links a:hover,.nav__links a.active{color:var(--bone);}
 
 /* ---------- hero ---------- */
@@ -225,7 +225,7 @@ img{display:block;max-width:100%;}
 .project:hover .project__name{transform:translateX(10px);}
 .project__blurb{color:var(--ash);max-width:60ch;margin-top:10px;font-size:14px;}
 .project__meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px;}
-.tag{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ash);
+.tag{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ash);
   border:1px solid var(--hair-bright);padding:5px 11px;}
 .inspect{font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:var(--bone);
   border-bottom:1px solid var(--hair-bright);padding-bottom:3px;margin-left:auto;
@@ -323,7 +323,7 @@ img{display:block;max-width:100%;}
 .spec__list li{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--hair);
   font-size:13px;color:var(--bone);transition:color .25s,transform .25s var(--ease);}
 .spec__list li:hover{transform:translateX(8px);color:#fff;}
-.spec__list li span{color:var(--ash-dim);font-size:10px;flex-shrink:0;line-height:1.9;}
+.spec__list li span{color:var(--ash-dim);font-size:11px;flex-shrink:0;line-height:1.9;}
 .specs-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hair);z-index:2;}
 .specs-progress i{display:block;height:100%;width:calc(100%/var(--n,3));background:var(--blood);
   transform-origin:left;transition:transform .1s linear;}
@@ -422,8 +422,11 @@ img{display:block;max-width:100%;}
   .nav__links{gap:13px;}
 }
 @media (max-width:420px){
-  .nav__links{gap:8px;}
-  .nav__links a{font-size:9.5px;letter-spacing:1px;}
+  .nav{padding:14px 16px;gap:14px;}
+  .nav__logo{display:none;}
+  .nav__links{gap:10px;min-width:0;overflow-x:auto;scrollbar-width:none;}
+  .nav__links::-webkit-scrollbar{display:none;}
+  .nav__links a{letter-spacing:.5px;white-space:nowrap;}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
