@@ -157,7 +157,7 @@ img{display:block;max-width:100%;}
   position:absolute;left:50%;bottom:28px;z-index:4;transform:translateX(-50%);
   display:flex;flex-direction:column;align-items:center;gap:12px;
   font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--ink-soft);
-  opacity:0;animation:up 1s var(--ease) .9s forwards;
+  opacity:0;animation:up 1s var(--ease) .9s backwards; /* not forwards: a filled animation beats the inline opacity main.ts scrubs */
 }
 .hero__cue-line{width:1px;height:46px;background:linear-gradient(var(--ink-soft),transparent);
   animation:drop 2.4s var(--ease) infinite;}
@@ -435,7 +435,8 @@ img{display:block;max-width:100%;}
   .veil{display:none;}
   .marquee__track,.hero__cue-line,.ufo{animation:none;}
   .ufo__light,.iline .cur,.term-cursor{animation:none;}
-  [class*="hero__"]{animation:none!important;opacity:1!important;}
+  .hero__eyebrow,.hero__name,.hero__title,.hero__role{animation:none;opacity:1;}
+  .hero__cue{animation:none;}
 }
 .hero__cue-line.stop{animation:none;}
 .carousel:focus-visible{outline:2px solid var(--blood);outline-offset:-2px;}
