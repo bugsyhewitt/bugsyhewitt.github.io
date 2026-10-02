@@ -608,8 +608,8 @@ img{display:block;max-width:100%;}
   .carousel__items{display:grid!important;grid-template-columns:repeat(5,1fr);gap:3mm;transform:none!important;break-inside:avoid;}
   .carousel__item{position:static!important;transform:none!important;break-inside:avoid;}
   .carousel__card{width:auto!important;height:auto!important;aspect-ratio:848/1264;border:none;border-radius:2mm;box-shadow:none;transform:none!important;}
-  .carousel__card::after{display:none;}
-  .carousel__img{filter:none!important;}
+  .carousel__card::after,.carousel__card::before,.carousel__proof,.carousel__light,.deck-controls{display:none!important;}
+  .carousel__img{filter:none!important;opacity:1!important;transform:none!important;}
   /* disciplines stacked, as on a phone */
   .specs-pin{height:auto!important;min-height:0;overflow:visible;border:none;background:none;
     width:auto!important;max-width:none!important;max-height:none!important; /* ScrollTrigger pins with inline max-height */
