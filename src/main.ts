@@ -182,8 +182,8 @@ initContact();
 function initMarqueeSkew(l: Lenis): void {
   const marquee = document.querySelector<HTMLElement>('.marquee');
   if (!marquee) return;
-  let skew = 0;
-  (function tick() {
+  let skew = 0, raf = 0;
+  const tick = (): void => {
     const target = Math.max(-7, Math.min(7, (l.velocity || 0) * 0.35));
     skew += (target - skew) * 0.12;
     if (Math.abs(skew) < 0.02 && Math.abs(target) < 0.02) {
@@ -191,6 +191,11 @@ function initMarqueeSkew(l: Lenis): void {
     } else {
       marquee.style.transform = 'skewX(' + skew.toFixed(2) + 'deg)';
     }
-    requestAnimationFrame(tick);
-  })();
+    raf = requestAnimationFrame(tick);
+  };
+  // Only tick while the marquee is on screen.
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) { if (!raf) raf = requestAnimationFrame(tick); }
+    else { cancelAnimationFrame(raf); raf = 0; skew = 0; marquee.style.transform = ''; }
+  }).observe(marquee);
 }
