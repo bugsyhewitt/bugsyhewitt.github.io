@@ -31,14 +31,6 @@
  "sameAs":["https://github.com/bugsyhewitt","https://instagram.com/bugsyhewitt","https://www.v3x.tech"]}
 </script>
 
-<!--
-  ==========================================================================
-  THINGS TO REPLACE  ·  search this file for the word  SWAP
-  --------------------------------------------------------------------------
-  · hero.jpg / sigils.jpg / logo.png  — ship these alongside index.html
-  ==========================================================================
--->
-
 <!-- fonts are self-hosted (public/fonts, SIL OFL): no third-party, render-blocking stylesheet -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/bebas-neue-latin.woff2" crossorigin />
 <link rel="preload" as="font" type="font/woff2" href="/fonts/jetbrains-mono-latin.woff2" crossorigin />
@@ -92,8 +84,7 @@ img{display:block;max-width:100%;}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
 
 /* ---------- atmosphere ---------- */
-.grain{position:fixed;inset:0;pointer-events:none;}
-.grain{z-index:95;opacity:.05;
+.grain{position:fixed;inset:0;pointer-events:none;z-index:95;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 
 /* ---------- side spine ---------- */
@@ -202,12 +193,11 @@ img{display:block;max-width:100%;}
   background-image:
     linear-gradient(var(--void) 0%,rgba(0,0,0,0) 14%,rgba(0,0,0,0) 86%,var(--void) 100%),
     linear-gradient(to right,var(--void) 0%,rgba(0,0,0,0) 12%,rgba(0,0,0,0) 88%,var(--void) 100%),
-    url('/sigils.jpg'); /* SWAP: sigils.jpg */
+    url('/sigils.jpg');
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
 }
-.intro__statement{max-width:none;}
 .iline{font-family:'Share Tech Mono',var(--mono);
   font-size:clamp(1.05rem,2.7vw,2rem);line-height:1.5;min-height:1.5em;
   white-space:nowrap;color:var(--bone);}
@@ -433,7 +423,7 @@ img{display:block;max-width:100%;}
 .sline{color:var(--ash);white-space:pre;}
 .sline--dim{color:var(--ash-mid);}
 .chan{display:block;width:max-content;color:var(--bone);white-space:pre;
-  transition:color .25s var(--ease);will-change:transform;}
+  transition:color .25s var(--ease);}
 .chan__k{color:var(--ash);}
 .chan:hover,.chan:focus-visible{color:#fff;}
 .chan:hover .chan__v,.chan:focus-visible .chan__v{color:var(--blood);}
