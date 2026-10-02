@@ -125,7 +125,7 @@ img{display:block;max-width:100%;}
 .nav__links a:hover,.nav__links a.active{color:var(--bone);}
 
 /* ---------- hero ---------- */
-.hero{position:relative;height:188vh;height:188svh;}
+.hero{position:relative;height:150vh;height:150svh;} /* scrub length: the scrub math in main.ts derives from this */
 .hero__inner{
   position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;
   display:flex;align-items:flex-end;background:var(--paper);
@@ -188,6 +188,9 @@ img{display:block;max-width:100%;}
 
 /* ---------- intro band ---------- */
 .intro{
+  margin-top:-28vh;margin-top:-28svh; /* rises under the darkened hero so the manifesto arrives as the art fades: no empty screen */
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 26vh);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 26vh); /* no seam: the fading hero shows through the band's top */
   padding:clamp(74px,12vh,160px) clamp(24px,6vw,96px) 0;
   background-color:var(--void);
   background-image:
@@ -547,7 +550,7 @@ img{display:block;max-width:100%;}
   .hero__title{font-size:15pt;color:var(--ink-soft);}
   .hero__role{font-size:10pt;color:var(--ink-soft);}
   /* manifesto as plain lines */
-  .intro{background:none!important;padding:0 0 3mm;}
+  .intro{background:none!important;padding:0 0 3mm;margin-top:0;-webkit-mask-image:none;mask-image:none;}
   .iline{font-size:11pt;line-height:1.4;color:var(--ink)!important;white-space:normal;min-height:0;}
   .section{padding:4mm 0 0;}
   .eyebrow--suite{margin-top:0;}

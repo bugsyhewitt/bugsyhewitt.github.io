@@ -147,7 +147,7 @@ const lenis = REDUCE ? null : initLenis();
           inView = e.isIntersecting;
           if (e.isIntersecting && !started) { started = true; typewriter(); }
         });
-      }, { threshold: 0.4 });
+      }, { threshold: 0.05 });   // start typing as soon as the manifesto peeks in: no empty screen
       mObs.observe(manifesto);
     }
   }
