@@ -1,4 +1,3 @@
-import { initHeroFX } from './hero-fx';
 import { initCarousel } from './carousel';
 import { initUfo } from './ufo';
 import { initLenis } from './scroll/lenis';
@@ -157,13 +156,13 @@ window.addEventListener('scroll', () => {
   document.querySelector('.hero__cue-line')?.classList.add('stop');
 }, { once: true, passive: true });
 
+// The GPGPU hero only runs on wide, hover-capable, full-motion screens (hero-fx keeps
+// the same guards). Three.js is most of the JS, so only those visitors download it.
 const heroGL = document.getElementById('heroGL') as HTMLCanvasElement | null;
-if (heroGL) {
-  try {
-    initHeroFX(heroGL, { imageSrc: '/hero.jpg' });
-  } catch (e) {
-    console.warn('[hero-fx] init threw, ignoring:', e);
-  }
+if (heroGL && window.innerWidth >= 768 && window.matchMedia('(hover: hover)').matches && !REDUCE) {
+  import('./hero-fx')
+    .then(m => m.initHeroFX(heroGL, { imageSrc: '/hero.jpg' }))
+    .catch(e => console.warn('[hero-fx] unavailable, keeping the photo:', e));
 }
 
 markAlive();
