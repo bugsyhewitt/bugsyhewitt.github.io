@@ -5,6 +5,7 @@
 import { CARDS } from '../carousel/cards';
 import { summonCard } from '../carousel';
 import { printLines } from '../fx/terminal';
+import { keystroke, thump } from '../fx/sound';
 
 const PS = 'necromancer@v3x ~ %';
 
@@ -35,7 +36,7 @@ export function respond(input: string): Reply {
     case 'summon': {
       const card = CARDS.find(c => c.name === arg);
       if (!card) return noSuchRelic;
-      return { lines: [`raising ${card.name}…`], then: () => { summonCard(card.name); } };
+      return { lines: [`raising ${card.name}…`], then: () => { thump(); summonCard(card.name); } };
     }
     case 'cat':
       return arg === 'dossier' ? {
@@ -85,6 +86,7 @@ export function initSeanceCommands(body: HTMLElement, cursor: HTMLElement, reduc
   // the block cursor trails the text, so the input is exactly as wide as what's typed
   const fit = (): void => { input.style.width = `${input.value.length}ch`; };
   input.addEventListener('input', fit);
+  input.addEventListener('keydown', e => { if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Enter') keystroke(); });
   prompt.addEventListener('click', () => input.focus());
 
   const history: string[] = [];
