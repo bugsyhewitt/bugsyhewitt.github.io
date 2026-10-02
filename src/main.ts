@@ -10,6 +10,8 @@ import { initContact } from './contact';
 import { markAlive } from './raised';
 import type Lenis from 'lenis';
 
+declare const __HERO__: string;   // '/hero.webp' or '/hero.jpg', chosen at build (scripts/hero.ts)
+
 // Consolidated motion/pointer guards. Every FX init below is gated here;
 // lenis/cursor/veil ALSO self-guard internally (packet-mandated import safety).
 // The hero scrub IIFE keeps its own internal check; it is off-limits.
@@ -161,7 +163,7 @@ window.addEventListener('scroll', () => {
 const heroGL = document.getElementById('heroGL') as HTMLCanvasElement | null;
 if (heroGL && window.innerWidth >= 768 && window.matchMedia('(hover: hover)').matches && !REDUCE) {
   import('./hero-fx')
-    .then(m => m.initHeroFX(heroGL, { imageSrc: '/hero.jpg' }))
+    .then(m => m.initHeroFX(heroGL, { imageSrc: __HERO__ }))   // same file the CSS photo and preload use
     .catch(e => console.warn('[hero-fx] unavailable, keeping the photo:', e));
 }
 
