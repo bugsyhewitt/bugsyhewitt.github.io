@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { gsap } from 'gsap';
 import { initCarousel } from './index';
+import { CARDS } from './cards';
 
 // Minimal DOM required by initCarousel: #carousel (wheel) + #carouselItems.
 function buildDom() {
@@ -110,6 +111,20 @@ describe('initCarousel — keyboard (BUG-NEW-141, WCAG 2.1.1), scoped to the whe
     initCarousel();
     const tabbable = [...document.querySelectorAll<HTMLElement>('.carousel__card')].filter(a => a.tabIndex === 0);
     expect(tabbable).toHaveLength(1);
+  });
+
+  it('each card carries its cover text as alt, not the bare slug', () => {
+    initCarousel();
+    const alts = [...document.querySelectorAll<HTMLImageElement>('.carousel__img')].map(i => i.alt);
+    expect(alts).toHaveLength(CARDS.length);
+    expect(alts.find(a => a.startsWith('Reaper'))).toBe(
+      "Reaper, resurrects race-the-web: Single-packet race-condition engine for the bugs scanners can't see.");
+  });
+
+  it('the visible count comes from the card data', () => {
+    document.getElementById('carousel')!.insertAdjacentHTML('afterend', '<span id="carouselCount"></span>');
+    initCarousel();
+    expect(document.getElementById('carouselCount')!.textContent).toBe(`${CARDS.length} cards`);
   });
 
   it('initCarousel is a no-op when #carousel is missing', () => {
