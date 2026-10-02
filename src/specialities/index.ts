@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { RITE } from '../fx/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,7 +30,7 @@ export function initSpecialities(): void {
   // Desktop AND full-motion: the CSS media above stacks in every other case.
   ScrollTrigger.matchMedia({
     '(min-width: 768px) and (prefers-reduced-motion: no-preference)': () => {
-      const xTo = gsap.quickTo(track, 'xPercent', { duration: 0.5, ease: 'power3.out' });
+      const xTo = gsap.quickTo(track, 'xPercent', { duration: 0.5, ease: RITE });
       const st = ScrollTrigger.create({
         trigger: pin,
         start: () => 'top top+=' + navH(),

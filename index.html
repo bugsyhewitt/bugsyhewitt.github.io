@@ -493,9 +493,6 @@ img{display:block;max-width:100%;}
 .js .reveal{opacity:0;transform:translateY(30px);
   transition:opacity 1s var(--ease),transform 1s var(--ease);}
 .js .reveal.in{opacity:1;transform:none;}
-.js .reveal-blur{opacity:0;filter:blur(14px);transform:translateY(24px);
-  transition:opacity 1s var(--ease),filter 1.1s var(--ease),transform 1s var(--ease);}
-.js .reveal-blur.in{opacity:1;filter:blur(0);transform:none;}
 
 /* ---------- responsive ---------- */
 @media (pointer:coarse){
@@ -527,7 +524,6 @@ img{display:block;max-width:100%;}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
   .js .reveal{opacity:1;transform:none;transition:none;}
-  .js .reveal-blur{opacity:1;filter:none;transform:none;transition:none;}
   .veil{display:none;}
   .marquee__track,.hero__cue-line,.ufo{animation:none;}
   .ufo__light,.iline .cur,.term-cursor{animation:none;}
@@ -562,7 +558,7 @@ img{display:block;max-width:100%;}
   .grain,.spine,.nav,.hero__gl,.hero__photo,.hero__scrim,.hero__cue,.veil,canvas,.marquee,.ufo,
   .carousel-hint,.carousel-caption,.specs-hint,.specs-progress,.term-cursor,.seance__bar,
   .seance__prompt,.seance__out,.sline--dim,.cur{display:none!important;}
-  .reveal,.reveal-blur,.project__name{opacity:1!important;filter:none!important;transform:none!important;}
+  .reveal,.project__name,.heading *{opacity:1!important;filter:none!important;transform:none!important;}
   /* one section per sheet; never strand a heading */
   .eyebrow--suite,#specialities,#loadout,#contact{break-before:page;}
   .heading,.lede,.eyebrow{break-after:avoid;}
@@ -721,7 +717,7 @@ img{display:block;max-width:100%;}
 <!-- ============ THE DECK / GRIMOIRE ============ -->
 <section class="section grimoire-carousel" id="grimoire">
   <div class="eyebrow reveal">01 — currently raising</div>
-  <h2 class="heading reveal-blur">Grimoire</h2>
+  <h2 class="heading" data-rise>Grimoire</h2>
   <p class="lede">Animating what was meant to stay still.</p>
 
   <div class="projects">
@@ -777,7 +773,7 @@ img{display:block;max-width:100%;}
   </div>
 
   <div class="eyebrow eyebrow--suite reveal">02 — necromancer suite</div>
-  <h2 class="heading reveal-blur">Necromancer Suite</h2>
+  <h2 class="heading" data-rise>Necromancer Suite</h2>
   <p class="lede">Twenty abandoned open-source tools, dug up and rebuilt for current targets. Each card names the one it raises.</p>
 
   <div class="carousel" id="carousel" role="region" aria-label="Necromancer tool carousel" aria-describedby="carouselKeys" tabindex="0">
@@ -796,7 +792,7 @@ img{display:block;max-width:100%;}
 <!-- ============ SPECIALITIES ============ -->
 <section class="section" id="specialities">
   <div class="eyebrow reveal">03 — disciplines</div>
-  <h2 class="heading reveal-blur">Specialities</h2>
+  <h2 class="heading" data-rise>Specialities</h2>
   <p class="lede">Hunting comes first. The tooling and the studio follow. <span class="specs-hint">Scroll —</span></p>
 
   <div class="specs-pin" id="specsPin">
@@ -863,7 +859,7 @@ img{display:block;max-width:100%;}
 <!-- ============ LOADOUT ============ -->
 <section class="section" id="loadout">
   <div class="eyebrow reveal">04 — the rig</div>
-  <h2 class="heading reveal-blur">The Loadout</h2>
+  <h2 class="heading" data-rise>The Loadout</h2>
   <p class="lede">The offensive stack that finds the bugs, and the B-side that scores
     everything else. Mostly hand-built.</p>
 
@@ -915,7 +911,7 @@ img{display:block;max-width:100%;}
 <!-- ============ CONTACT ============ -->
 <section class="section contact" id="contact">
   <div class="eyebrow reveal">05 — the s&eacute;ance</div>
-  <h2 class="heading reveal-blur">The S&eacute;ance</h2>
+  <h2 class="heading" data-rise>The S&eacute;ance</h2>
   <p class="lede">Found something I should see? A target, a collaboration, a contract.
     The veil is thin. Reach through.</p>
 

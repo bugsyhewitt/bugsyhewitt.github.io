@@ -5,6 +5,7 @@ import { CARDS, repoUrl, title } from './cards';
 import { raisedOn, isAlive } from '../raised';
 import { initFoil, initTilt } from './foil';
 import { makeProof } from './proof';
+import { RITE, DUR } from '../fx/motion';
 
 gsap.registerPlugin(Draggable, InertiaPlugin);
 
@@ -109,7 +110,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       rotation: index % 2 ? 200 : -200,
       scale: 4,
       opacity: 1,
-      ease: 'power4.out',
+      ease: RITE,
       duration: 1,
       delay: 0.15 * Math.floor(index / 2),
     }, 0);
@@ -120,7 +121,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       transformOrigin: `center ${pivot}`, // same pivot as .carousel__items (CSS --pivot)
       rotation: index > total / 2 ? -degree * (total - index) : rotationAngle,
       duration: 1,
-      ease: 'power1.out',
+      ease: RITE,
     }, assembleAt);
   });
 
@@ -190,7 +191,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   function rotateTo(target: number): void {
     keyTarget = target;
     gsap.to(itemsEl, {
-      rotation: target, duration: reduceMotion ? 0 : 0.4, ease: 'power2.out', overwrite: true,
+      rotation: target, duration: reduceMotion ? 0 : DUR.short, ease: RITE, overwrite: true,
       onUpdate: updateFocus, onComplete() { keyTarget = null; updateFocus(); settle(true); },
     });
   }
