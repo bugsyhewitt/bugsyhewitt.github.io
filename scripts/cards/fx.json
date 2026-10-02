@@ -64,5 +64,9 @@
     "doppelganger": {
       "green_gate": 0.64
     }
-  }
+  },
+  "depth_flat": [
+    "mangle",
+    "unearth"
+  ]
 }
