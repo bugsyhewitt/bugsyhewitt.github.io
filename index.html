@@ -539,6 +539,11 @@ img{display:block;max-width:100%;}
 .cc__meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash-mid);}
 .cc__meta b{font-weight:400;color:var(--bone);}
 .cc__line{font-size:14px;line-height:1.6;color:var(--bone);max-width:60ch;}
+.deck-controls{display:flex;justify-content:center;gap:22px;margin-top:-6px;}
+.deck-ctl{appearance:none;background:none;border:0;padding:6px 0;font:inherit;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ash-mid);border-bottom:1px solid var(--hair-bright);}
+.deck-ctl:hover,.deck-ctl[aria-pressed="true"]{color:var(--bone);}
+.deck-ctl[hidden]{display:none;}
 .carousel-hint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--ash-mid);text-align:center;padding:16px 0;}
 
@@ -778,6 +783,7 @@ img{display:block;max-width:100%;}
   <p class="carousel-caption" id="carouselCaption" aria-hidden="true"><span class="cc__meta"></span><span class="cc__line"></span></p>
   <p class="sr-only" id="carouselLive" aria-live="polite" aria-atomic="true"></p>
   <div class="carousel-hint" id="carouselHint" aria-hidden="true"><span class="hint-fine">◀ drag &middot; arrow keys ▶</span><span class="hint-touch">◀ swipe ▶</span>&ensp;&ensp;<span id="carouselCount"></span></div>
+  <div class="deck-controls"><button class="deck-ctl" id="deckTilt" type="button" hidden>&#9680; tilt to catch the foil</button></div>
   <p class="sr-only" id="carouselKeys">Left and right arrow keys turn the wheel. Home and End jump to the first and last card.</p>
 </section>
 

@@ -3,7 +3,7 @@ import { Draggable } from 'gsap/Draggable';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { CARDS, repoUrl, title } from './cards';
 import { raisedOn, isAlive } from '../raised';
-import { initFoil } from './foil';
+import { initFoil, initTilt } from './foil';
 import { makeProof } from './proof';
 
 gsap.registerPlugin(Draggable, InertiaPlugin);
@@ -247,7 +247,10 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     },
   });
 
-  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) initFoil(wheel);
+  if (!reduceMotion) {
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) initFoil(wheel);
+    else if (window.matchMedia('(hover: none)').matches) initTilt(wheel, document.getElementById('deckTilt') as HTMLButtonElement | null);
+  }
 
   let ready = false, pending = -1;   // set once the entrance has assembled the wheel
 
