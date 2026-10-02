@@ -583,7 +583,7 @@ img{display:block;max-width:100%;}
 
   <div class="eyebrow eyebrow--suite reveal">02 — necromancer suite</div>
   <h2 class="heading reveal-blur">Necromancer Suite</h2>
-  <p class="lede reveal-blur">Nineteen tools. Each one raised for a reason.</p>
+  <p class="lede reveal-blur">Twenty tools. Each one raised for a reason.</p>
 
   <div class="carousel" id="carousel" role="region" aria-label="Necromancer tool carousel" aria-describedby="carouselKeys" tabindex="0">
     <div class="carousel__center">
@@ -755,24 +755,6 @@ img{display:block;max-width:100%;}
 
 </main>
 
-<script>
-// Stop hero cue-line animation after first scroll
-window.addEventListener('scroll',function(){
-  var cl=document.querySelector('.hero__cue-line');
-  if(cl)cl.classList.add('stop');
-},{once:true,passive:true});
-// Populate carousel card count when JS injects cards
-(function(){
-  var items=document.getElementById('carouselItems');
-  var count=document.getElementById('carouselCount');
-  if(!items||!count)return;
-  var mo=new MutationObserver(function(){
-    var n=items.children.length;
-    if(n>0){count.textContent=n+' cards';mo.disconnect();}
-  });
-  mo.observe(items,{childList:true});
-})();
-</script>
 <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

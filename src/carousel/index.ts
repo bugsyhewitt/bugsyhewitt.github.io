@@ -1,19 +1,11 @@
 import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
+import { CARDS, repoUrl, title } from './cards';
 
 gsap.registerPlugin(Draggable);
 
 // front card full color, others greyscale. Flip to false for all-color.
 const DESATURATE_SIBLINGS = true;
-
-interface Card { name: string; repo: string; }
-
-const CARDS: Card[] = [
-  'autopsy','covenant','doppelganger','embalmer','enshroud','exhumed',
-  'ferryman','graverobber','hellhound','mangle','omen','oracle',
-  'ossuary','ouija','possession','reaper','seance','tombstone',
-  'unearth','wraith'
-].map(name => ({ name, repo: `https://github.com/bugsyhewitt/${name}` }));
 
 export function initCarousel(): void {
   const wheel = document.getElementById('carousel');
@@ -27,14 +19,19 @@ export function initCarousel(): void {
     const item = document.createElement('div');
     item.className = 'carousel__item';
     item.innerHTML =
-      `<a class="carousel__card" href="${card.repo}" target="_blank" rel="noopener" draggable="false" tabindex="${i === 0 ? 0 : -1}">
+      `<a class="carousel__card" href="${repoUrl(card)}" target="_blank" rel="noopener" draggable="false" tabindex="${i === 0 ? 0 : -1}">
          <img class="carousel__img" src="/cards/${card.name}.jpg"
               srcset="/cards/${card.name}-340.jpg 340w, /cards/${card.name}-480.jpg 480w, /cards/${card.name}-680.jpg 680w, /cards/${card.name}.jpg 848w"
               sizes="(max-width: 700px) 240px, (max-width: 1000px) 300px, 340px"
-              alt="${card.name}" draggable="false" loading="lazy" decoding="async" />
+              alt="" draggable="false" loading="lazy" decoding="async" />
        </a>`;
+    // the cover's printed text, so the card reads the same to a screen reader or a crawler
+    item.querySelector('img')!.alt = `${title(card)}, resurrects ${card.raises}: ${card.tagline}`;
     itemsEl.appendChild(item);
   });
+
+  const count = document.getElementById('carouselCount');
+  if (count) count.textContent = `${CARDS.length} cards`;
 
   const images = gsap.utils.toArray<HTMLElement>('.carousel__item');
   const total = images.length;

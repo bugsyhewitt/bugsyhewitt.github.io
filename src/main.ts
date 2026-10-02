@@ -151,6 +151,11 @@ const lenis = REDUCE ? null : initLenis();
   }
 })();
 
+// The scroll cue has done its job once the visitor scrolls: stop its loop.
+window.addEventListener('scroll', () => {
+  document.querySelector('.hero__cue-line')?.classList.add('stop');
+}, { once: true, passive: true });
+
 const heroGL = document.getElementById('heroGL') as HTMLCanvasElement | null;
 if (heroGL) {
   try {
