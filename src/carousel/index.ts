@@ -247,8 +247,9 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     },
   });
 
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (!reduceMotion) {
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) initFoil(wheel);
+    if (fine) initFoil(wheel);
     else if (window.matchMedia('(hover: none)').matches) initTilt(wheel, document.getElementById('deckTilt') as HTMLButtonElement | null);
   }
 
@@ -270,6 +271,12 @@ export function initCarousel(opts: CarouselOptions = {}): void {
 
   // Summoning: deep links (#card=reaper), hash edits, and the séance's `summon`.
   function assembled(): void {
+    if (!ready && !reduceMotion && fine && window.innerWidth >= 768) {
+      // real light on the front card: desktop only, loaded once the deck is up
+      import('./light')
+        .then(m => m.initLight(wheel!, () => gsap.isTweening(itemsEl)))
+        .catch(() => { /* no WebGL / chunk failed: the CSS foil carries on */ });
+    }
     ready = true;
     updateFocus();
     if (pending >= 0) { rotateToIndex(pending); pending = -1; }
