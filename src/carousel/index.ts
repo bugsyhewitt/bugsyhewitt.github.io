@@ -207,7 +207,11 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     const delta = ((((-own - now) % 360) + 540) % 360) - 180;   // shortest way round
     rotateTo(now + delta);
   }
+  // the visitor took the wheel while the cards are still flying in: land them first,
+  // or the front card is judged against a fan that's still moving
+  const finishEntrance = (): void => { if (!ready && played) tl.progress(1); };
   wheel.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) finishEntrance();
     if (e.key === 'ArrowRight') stepBy(-degree);
     else if (e.key === 'ArrowLeft') stepBy(degree);
     else if (e.key === 'Home') rotateToIndex(0);
@@ -232,7 +236,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     snap: notch,
     minDuration: 0.3,
     maxDuration: 1.4,
-    onPress() { dragged = false; keyTarget = null; },
+    onPress() { dragged = false; keyTarget = null; finishEntrance(); },
     onDragStart() { dragged = true; },
     onDrag: moving,
     onThrowUpdate: moving,
@@ -288,7 +292,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     if (opts.scrollTo) opts.scrollTo(wheel!);
     else wheel!.scrollIntoView?.({ block: 'center' });
     if (ready) rotateToIndex(i);
-    else { pending = i; if (played) tl.progress(1); }   // entrance under way: finish it at once
+    else { pending = i; finishEntrance(); }   // entrance under way: finish it at once
   }
   summonByName = name => {
     const i = CARDS.findIndex(c => c.name === name.trim().toLowerCase());
