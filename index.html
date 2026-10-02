@@ -86,6 +86,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--blood);outline-offs
   font:inherit;text-align:left;}
 ::selection{background:var(--blood);color:var(--bone);}
 img{display:block;max-width:100%;}
+.skip{position:fixed;left:16px;top:-80px;z-index:120;padding:10px 14px;background:var(--void);color:var(--bone);
+  border:1px solid var(--hair-bright);font-size:11px;letter-spacing:2px;text-transform:uppercase;}
+.skip:focus{top:16px;}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
 
 /* ---------- atmosphere ---------- */
@@ -600,6 +603,7 @@ img{display:block;max-width:100%;}
 </style>
 </head>
 <body>
+<a class="skip" href="#grimoire">Skip to the work</a>
 
 <!-- #liquid / #liquidDisp drive the deck's focus reveal — consumed by src/carousel/index.ts -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
@@ -696,7 +700,7 @@ img{display:block;max-width:100%;}
           evolve, and the winning strategies climb a shared leaderboard.</p>
         <div class="project__meta">
           <span class="tag">Agents</span><span class="tag">Evolution</span><!--raised:alienclaw-->
-          <a class="inspect" href="https://github.com/bugsyhewitt/alienclaw" target="_blank" rel="noopener">Inspect &#8599;</a>
+          <a class="inspect" href="https://github.com/bugsyhewitt/alienclaw" target="_blank" rel="noopener">Inspect <span aria-hidden="true">&#8599;</span></a>
         </div>
       </div>
       <a class="ufo" id="ufo" href="https://github.com/bugsyhewitt/alienclaw" target="_blank" rel="noopener"
@@ -719,7 +723,7 @@ img{display:block;max-width:100%;}
           decision engines learn an intruder&rsquo;s intent, then bait them deeper.</p>
         <div class="project__meta">
           <span class="tag">Deception</span><span class="tag">Honeypots</span><!--raised:chimera-->
-          <a class="inspect" href="https://github.com/bugsyhewitt/chimera" target="_blank" rel="noopener">Inspect &#8599;</a>
+          <a class="inspect" href="https://github.com/bugsyhewitt/chimera" target="_blank" rel="noopener">Inspect <span aria-hidden="true">&#8599;</span></a>
         </div>
       </div>
     </article>
@@ -733,7 +737,7 @@ img{display:block;max-width:100%;}
           engagement on one command deck.</p>
         <div class="project__meta">
           <span class="tag">Platform</span><span class="tag">Bug bounty</span>
-          <a class="inspect" href="https://www.v3x.tech" target="_blank" rel="noopener">Inspect &#8599;</a>
+          <a class="inspect" href="https://www.v3x.tech" target="_blank" rel="noopener">Inspect <span aria-hidden="true">&#8599;</span></a>
         </div>
       </div>
     </article>
@@ -766,7 +770,7 @@ img{display:block;max-width:100%;}
       <article class="spec-panel">
         <div class="spec-panel__body">
           <div class="spec__tag">Discipline / I</div>
-          <div class="spec-panel__name">Offensive Security</div>
+          <h3 class="spec-panel__name">Offensive Security</h3>
           <p class="spec-panel__intro">Web and web3 targets taken apart by hand, for the bugs scanners
             walk past. Hunting on HackerOne and Immunefi.</p>
           <ul class="spec__list">
@@ -784,7 +788,7 @@ img{display:block;max-width:100%;}
       <article class="spec-panel">
         <div class="spec-panel__body">
           <div class="spec__tag">Discipline / II</div>
-          <div class="spec-panel__name">AI &amp; Automation</div>
+          <h3 class="spec-panel__name">AI &amp; Automation</h3>
           <p class="spec-panel__intro">Most hunters work with one set of hands. These agents run recon,
             tooling and triage in parallel, and hand back what deserves a human look.</p>
           <ul class="spec__list">
@@ -802,7 +806,7 @@ img{display:block;max-width:100%;}
       <article class="spec-panel">
         <div class="spec-panel__body">
           <div class="spec__tag">Discipline / III</div>
-          <div class="spec-panel__name">Audio / Video / Media</div>
+          <h3 class="spec-panel__name">Audio / Video / Media</h3>
           <p class="spec-panel__intro">A working studio. Songs written, recorded, mixed and mastered
             here, with the video and artwork around them.</p>
           <ul class="spec__list">
@@ -886,10 +890,10 @@ img{display:block;max-width:100%;}
     <div class="seance__body" id="seanceBody"><div class="sline" data-line>necromancer@v3x ~ % ./summon --channels</div><div class="sline sline--dim" data-line>[ s&eacute;ance initiated ]</div><a class="chan" data-line href="https://github.com/bugsyhewitt" target="_blank" rel="noopener"><span class="chan__k">github</span> ............ <span class="chan__v">/bugsyhewitt</span></a><a class="chan" data-line href="mailto:bugsyhewitt@gmail.com"><span class="chan__k">email</span> ............. <span class="chan__v">bugsyhewitt@gmail.com</span></a><button class="chan" data-line type="button" id="discordCopy" aria-label="Copy Discord handle bugsy5899 to clipboard"><span class="chan__k">discord</span> ........... <span class="chan__v">bugsy5899</span></button><a class="chan" data-line href="https://instagram.com/bugsyhewitt" target="_blank" rel="noopener"><span class="chan__k">instagram</span> ......... <span class="chan__v">@bugsyhewitt</span></a><div class="sline sline--dim" data-line data-last>[ four channels open ]</div></div>
   </div>
 
-  <div class="footbar">
+  <footer class="footbar">
     <span>Bugsy Hewitt &middot; last raised <time datetime="%RAISED%">%RAISED%</time></span>
     <span>USA &middot; MMXXVI</span>
-  </div>
+  </footer>
 </section>
 
 </main>
