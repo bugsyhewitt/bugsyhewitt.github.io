@@ -27,8 +27,7 @@ export function initHeroFX(canvas: HTMLCanvasElement, opts: HeroFXOptions): void
     const clock = new THREE.Clock();
 
     /* ── Preload image ──────────────────────────────────────────── */
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
+    const img = new Image();   // same-origin, no crossOrigin: a CORS-mode request can't reuse the preload
 
     img.onerror = () => { /* canvas stays hidden; static photo shows */ };
 
@@ -48,6 +47,8 @@ export function initHeroFX(canvas: HTMLCanvasElement, opts: HeroFXOptions): void
     }
 
     function setup(loadedImg: HTMLImageElement): void {
+      /* Already past the gate (e.g. a hash link) → never build a context */
+      if (window.scrollY > scrollGate) return;
       let [w, h] = canvasDims();
       if (w === 0 || h === 0) {
         requestAnimationFrame(() => setup(loadedImg));
@@ -123,8 +124,8 @@ export function initHeroFX(canvas: HTMLCanvasElement, opts: HeroFXOptions): void
         if (window.scrollY > scrollGate) kill();
       }
 
-      /* Scroll already past gate at init (e.g. hash link) → bail immediately */
-      if (window.scrollY > scrollGate) return;
+      /* GPU reset / driver crash: drop back to the photo instead of a blank paper hero */
+      canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); kill(); }, { once: true });
 
       heroEl!.addEventListener('mousemove', onMouseMove);
       window.addEventListener('scroll', onScroll, { passive: true });
