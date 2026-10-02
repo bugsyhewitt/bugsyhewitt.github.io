@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Not found · Bugsy Hewitt</title>
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#000000" />
+<link rel="icon" type="image/png" href="/logo.png" />
+
+<!-- GitHub Pages serves this for any missing path. Standalone on purpose: same
+     tokens as index.html, no scripts. -->
+<style>
+@font-face{font-family:'Bebas Neue';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/bebas-neue-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face{font-family:'Bebas Neue';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/bebas-neue-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/jetbrains-mono-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/jetbrains-mono-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+:root{
+  --void:#000;--bone:#e9e6dd;--ash:#8c8c85;--ash-mid:#7c7c76;--hair:#1f1f21;--hair-bright:#2e2e31;--blood:#9c3636;
+  --display:'Bebas Neue','Arial Narrow',Impact,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{background:var(--void);color:var(--bone);font:15px/1.7 var(--mono);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;padding:clamp(24px,6vw,96px);}
+::selection{background:var(--blood);color:var(--bone);}
+main{max-width:60ch;}
+.eyebrow{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--ash-mid);margin-bottom:22px;}
+.eyebrow::before{content:"";width:30px;height:1px;background:var(--ash-mid);}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(3rem,9vw,6.6rem);line-height:.92;letter-spacing:.012em;}
+p{color:var(--ash);margin-top:20px;}
+a{display:inline-block;margin-top:34px;color:var(--bone);text-decoration:none;font-size:11px;letter-spacing:2.4px;
+  text-transform:uppercase;border-bottom:1px solid var(--hair-bright);padding-bottom:3px;
+  transition:letter-spacing .3s var(--ease),border-color .3s var(--ease);}
+a:hover{letter-spacing:3.6px;border-bottom-color:var(--blood);}
+a:focus-visible{outline:2px solid var(--blood);outline-offset:3px;}
+@media (prefers-reduced-motion:reduce){a{transition:none;}}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">404 &middot; no such grave</div>
+  <h1>Nothing answered the summons.</h1>
+  <p>This address holds no body. The record is where you left it.</p>
+  <a href="/">Return to the record</a>
+</main>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { onceInView, makeTermCursor } from '../fx/terminal';
+import { onceInView, makeTermCursor, printLines } from '../fx/terminal';
 
 // Loadout "compile-in": on scroll-in the columns stream like a build log — each
 // header prints, then its items follow one by one, a blood cursor trailing the
@@ -33,18 +33,9 @@ export function initLoadout(): void {
   }
 
   units.forEach(el => el.classList.add('pending'));
-  onceInView(root, run);
-
-  function run(): void {
-    let i = 0;
-    (function next(): void {
-      if (i >= units.length) { rest.appendChild(cursor); return; }
-      const el = units[i];
-      el.classList.remove('pending');
-      el.classList.add('printed');
-      el.appendChild(cursor); // trail the freshly printed line
-      i++;
-      window.setTimeout(next, el.classList.contains('tcol__head') ? 130 : 55);
-    })();
-  }
+  onceInView(root, () => printLines(units, cursor, {
+    delay: el => el.classList.contains('tcol__head') ? 130 : 55,
+    done: () => rest,
+    beforePrint: el => el.classList.remove('pending'),
+  }));
 }

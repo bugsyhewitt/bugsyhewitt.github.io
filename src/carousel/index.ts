@@ -1,40 +1,60 @@
 import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
+import { CARDS, repoUrl, title } from './cards';
+import { raisedOn, isAlive } from '../raised';
+import { initFoil } from './foil';
 
 gsap.registerPlugin(Draggable);
 
 // front card full color, others greyscale. Flip to false for all-color.
 const DESATURATE_SIBLINGS = true;
 
-interface Card { name: string; repo: string; }
+export interface CarouselOptions {
+  /** Bring an element into view (main.ts passes Lenis when it's running). */
+  scrollTo?: (el: HTMLElement) => void;
+}
 
-const CARDS: Card[] = [
-  'autopsy','covenant','doppelganger','embalmer','enshroud','exhumed',
-  'ferryman','graverobber','hellhound','mangle','omen','oracle',
-  'ossuary','ouija','possession','reaper','seance','tombstone',
-  'unearth','wraith'
-].map(name => ({ name, repo: `https://github.com/bugsyhewitt/${name}` }));
+// Set by initCarousel; lets other modules (the séance `summon`) turn the wheel.
+let summonByName: ((name: string) => boolean) | null = null;
 
-export function initCarousel(): void {
+/** Scroll to the deck and turn it to the named card. False if no such card. */
+export function summonCard(name: string): boolean {
+  return summonByName ? summonByName(name) : false;
+}
+
+const cardFromHash = (): number => {
+  const m = /^#card=([\w-]+)$/.exec(location.hash);
+  return m ? CARDS.findIndex(c => c.name === m[1].toLowerCase()) : -1;
+};
+
+export function initCarousel(opts: CarouselOptions = {}): void {
   const wheel = document.getElementById('carousel');
   const itemsEl = document.getElementById('carouselItems');
   if (!wheel || !itemsEl) return;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Wheel pivot distance lives in CSS (--pivot on .carousel__items) so the ring can
+  // tighten on phones; every card must orbit the same point.
+  const pivot = getComputedStyle(itemsEl).getPropertyValue('--pivot').trim() || '200vh';
 
   // build cards
   CARDS.forEach((card, i) => {
     const item = document.createElement('div');
     item.className = 'carousel__item';
     item.innerHTML =
-      `<a class="carousel__card" href="${card.repo}" target="_blank" rel="noopener" draggable="false" tabindex="${i === 0 ? 0 : -1}">
+      `<a class="carousel__card" href="${repoUrl(card)}" target="_blank" rel="noopener" draggable="false" tabindex="${i === 0 ? 0 : -1}">
          <img class="carousel__img" src="/cards/${card.name}.jpg"
               srcset="/cards/${card.name}-340.jpg 340w, /cards/${card.name}-480.jpg 480w, /cards/${card.name}-680.jpg 680w, /cards/${card.name}.jpg 848w"
               sizes="(max-width: 700px) 240px, (max-width: 1000px) 300px, 340px"
-              alt="${card.name}" draggable="false" loading="lazy" decoding="async" />
+              alt="" draggable="false" loading="lazy" decoding="async" />
        </a>`;
+    // the cover's printed text, so the card reads the same to a screen reader or a crawler
+    item.querySelector('img')!.alt = `${title(card)}, resurrects ${card.raises}: ${card.tagline}`;
     itemsEl.appendChild(item);
   });
+
+  const count = document.getElementById('carouselCount');
+  if (count) count.textContent = `${CARDS.length} cards`;
 
   const images = gsap.utils.toArray<HTMLElement>('.carousel__item');
   const total = images.length;
@@ -76,7 +96,7 @@ export function initCarousel(): void {
     const rotationAngle = index * degree;
     tl.to(image, { scale: 1, duration: 0 }, assembleAt);
     tl.to(image, {
-      transformOrigin: 'center 200vh', // wheel pivot — must match .carousel__items transform-origin in index.html
+      transformOrigin: `center ${pivot}`, // same pivot as .carousel__items (CSS --pivot)
       rotation: index > total / 2 ? -degree * (total - index) : rotationAngle,
       duration: 1,
       ease: 'power1.out',
@@ -119,6 +139,7 @@ export function initCarousel(): void {
     });
     if (best !== prevBest) {
       prevBest = best;
+      paintCaption(best);
       // keyboard user sitting on a card: follow the wheel to the new front card
       const active = document.activeElement;
       if (active && active !== wheel && wheel!.contains(active)) {
@@ -131,6 +152,30 @@ export function initCarousel(): void {
     }
   }
 
+  // The reading: the front card's number, name, lineage and printed tagline.
+  // The visible caption follows every frame; the screen-reader announcement and
+  // the #card= hash only change once the wheel settles.
+  const caption = document.getElementById('carouselCaption');
+  const live = document.getElementById('carouselLive');
+  const pad = (n: number): string => String(n).padStart(2, '0');
+  function paintCaption(i: number): void {
+    if (!caption) return;
+    const c = CARDS[i];
+    const seen = raisedOn(c.name);
+    const sep = '<span class="cc__sep"> &middot; </span>';
+    caption.querySelector('.cc__meta')!.innerHTML =
+      `<span class="cc__seg"><b>${pad(i + 1)}</b> / ${pad(total)} &middot; ${title(c)}</span>${sep}` +
+      `<span class="cc__seg">resurrects ${c.raises}</span>` +
+      (seen ? `${sep}<span class="cc__seg cc__alive${isAlive(seen) ? ' is-alive' : ''}">last seen alive ${seen}</span>` : '');
+    caption.querySelector('.cc__line')!.textContent = c.tagline;
+  }
+  function settle(byUser: boolean): void {
+    if (prevBest < 0) return;
+    const c = CARDS[prevBest];
+    if (live) live.textContent = `${title(c)}, card ${prevBest + 1} of ${total}. Resurrects ${c.raises}. ${c.tagline}`;
+    if (byUser) history.replaceState(null, '', `#card=${c.name}`);
+  }
+
   // Keyboard (WCAG 2.1.1): the wheel (#carousel, tabindex=0) is the stop, so
   // arrows keep their normal meaning everywhere else on the page. Card i sits
   // at its own rotation; turning the wheel by minus that brings it to the front,
@@ -139,8 +184,8 @@ export function initCarousel(): void {
   function rotateTo(target: number): void {
     keyTarget = target;
     gsap.to(itemsEl, {
-      rotation: target, duration: 0.4, ease: 'power2.out', overwrite: true,
-      onUpdate: updateFocus, onComplete() { keyTarget = null; },
+      rotation: target, duration: reduceMotion ? 0 : 0.4, ease: 'power2.out', overwrite: true,
+      onUpdate: updateFocus, onComplete() { keyTarget = null; updateFocus(); settle(true); },
     });
   }
   function stepBy(delta: number): void {
@@ -172,11 +217,15 @@ export function initCarousel(): void {
     onDragEnd(this: Draggable) {
       // land on the nearest card — a short drag moves one step, a fling moves several
       const snapped = Math.round(this.rotation / degree) * degree;
-      gsap.to(itemsEl, { rotation: snapped, onUpdate: updateFocus });
+      gsap.to(itemsEl, { rotation: snapped, onUpdate: updateFocus, onComplete() { settle(true); } });
       // clear the drag flag shortly after so genuine clicks work next time
       setTimeout(() => { dragged = false; }, 0);
     },
   });
+
+  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) initFoil(wheel);
+
+  let ready = false, pending = -1;   // set once the entrance has assembled the wheel
 
   // Scroll-trigger: play the entrance once when section enters view.
   let played = false;
@@ -184,10 +233,34 @@ export function initCarousel(): void {
     entries.forEach(entry => {
       if (entry.isIntersecting && !played) {
         played = true;
-        if (reduceMotion) { tl.progress(1); updateFocus(); }
-        else { tl.play(); tl.eventCallback('onComplete', updateFocus); }
+        if (reduceMotion) { tl.progress(1); assembled(); }
+        else { tl.play(); tl.eventCallback('onComplete', assembled); }
       }
     });
   }, { threshold: 0.35 });
   io.observe(wheel);
+
+  // Summoning: deep links (#card=reaper), hash edits, and the séance's `summon`.
+  function assembled(): void {
+    ready = true;
+    updateFocus();
+    if (pending >= 0) { rotateToIndex(pending); pending = -1; }
+  }
+  function summon(i: number): void {
+    if (opts.scrollTo) opts.scrollTo(wheel!);
+    else wheel!.scrollIntoView?.({ block: 'center' });
+    if (ready) rotateToIndex(i); else pending = i;
+  }
+  summonByName = name => {
+    const i = CARDS.findIndex(c => c.name === name.trim().toLowerCase());
+    if (i < 0) return false;
+    summon(i);
+    // the visitor asked for the deck: take focus there, or the next key typed in the
+    // séance scrolls the page straight back down to the prompt
+    wheel!.focus({ preventScroll: true });
+    return true;
+  };
+  const linked = cardFromHash();
+  if (linked >= 0) summon(linked);
+  window.addEventListener('hashchange', () => { const i = cardFromHash(); if (i >= 0) summon(i); });
 }

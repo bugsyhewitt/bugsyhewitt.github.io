@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { gsap } from 'gsap';
-import { initCarousel } from './index';
+import { initCarousel, summonCard } from './index';
+import { CARDS } from './cards';
 
 // Minimal DOM required by initCarousel: #carousel (wheel) + #carouselItems.
 function buildDom() {
@@ -26,10 +27,13 @@ function keyOn(target: EventTarget, key: string): KeyboardEvent {
 
 const wheel = () => document.getElementById('carousel')!;
 const items = () => document.getElementById('carouselItems')!;
-// where the most recent wheel tween is headed
+// where the wheel is headed: a running tween's target, else where it already sits
+// (under reduced motion key turns are instant, so there is no tween to read)
 const target = () => {
   const tweens = gsap.getTweensOf(items());
-  return tweens.length ? (tweens[tweens.length - 1].vars.rotation as number) : null;
+  return tweens.length
+    ? (tweens[tweens.length - 1].vars.rotation as number)
+    : ((gsap.getProperty(items(), 'rotation') as number) || 0);
 };
 // lay the cards out where the entrance timeline leaves them (card i at i·18°, back half negative)
 const settle = () => document.querySelectorAll<HTMLElement>('.carousel__item').forEach((el, i) => {
@@ -58,7 +62,7 @@ describe('initCarousel — keyboard (BUG-NEW-141, WCAG 2.1.1), scoped to the whe
     initCarousel();
     const e = keyOn(window, 'ArrowRight');
     expect(e.defaultPrevented).toBe(false);
-    expect(target()).toBeNull();
+    expect(target()).toBe(0);
   });
 
   it('→ on the wheel turns one card toward the next (negative turn) and claims the key', () => {
@@ -103,7 +107,7 @@ describe('initCarousel — keyboard (BUG-NEW-141, WCAG 2.1.1), scoped to the whe
     initCarousel();
     const e = keyOn(wheel(), 'a');
     expect(e.defaultPrevented).toBe(false);
-    expect(target()).toBeNull();
+    expect(target()).toBe(0);
   });
 
   it('only the first card is a tab stop before the wheel has settled', () => {
@@ -112,8 +116,86 @@ describe('initCarousel — keyboard (BUG-NEW-141, WCAG 2.1.1), scoped to the whe
     expect(tabbable).toHaveLength(1);
   });
 
+  it('each card carries its cover text as alt, not the bare slug', () => {
+    initCarousel();
+    const alts = [...document.querySelectorAll<HTMLImageElement>('.carousel__img')].map(i => i.alt);
+    expect(alts).toHaveLength(CARDS.length);
+    expect(alts.find(a => a.startsWith('Reaper'))).toBe(
+      "Reaper, resurrects race-the-web: Single-packet race-condition engine for the bugs scanners can't see.");
+  });
+
+  it('the visible count comes from the card data', () => {
+    document.getElementById('carousel')!.insertAdjacentHTML('afterend', '<span id="carouselCount"></span>');
+    initCarousel();
+    expect(document.getElementById('carouselCount')!.textContent).toBe(`${CARDS.length} cards`);
+  });
+
   it('initCarousel is a no-op when #carousel is missing', () => {
     document.body.innerHTML = '';
     expect(() => initCarousel()).not.toThrow();
+  });
+});
+
+describe('initCarousel — the card reading (caption, announcements, deep links)', () => {
+  // The deck's entrance plays when it scrolls into view; fire that immediately.
+  class SeenAtOnce {
+    constructor(private cb: IntersectionObserverCallback) {}
+    observe(el: Element) { this.cb([{ isIntersecting: true, target: el } as IntersectionObserverEntry], this as never); }
+    unobserve() {}
+    disconnect() {}
+  }
+  const readingDom = () => {
+    document.body.innerHTML = `
+      <div id="carousel" tabindex="0"><div id="carouselItems"></div></div>
+      <p id="carouselCaption"><span class="cc__meta"></span><span class="cc__line"></span></p>
+      <p id="carouselLive"></p>`;
+  };
+  const meta = () => document.querySelector('.cc__meta')!.textContent;
+  const line = () => document.querySelector('.cc__line')!.textContent;
+  const live = () => document.getElementById('carouselLive')!.textContent;
+
+  beforeEach(() => {
+    readingDom();
+    stubMatchMedia({ reduce: true });
+    vi.stubGlobal('IntersectionObserver', SeenAtOnce);
+    history.replaceState(null, '', '/');
+  });
+  afterEach(() => {
+    gsap.killTweensOf(items());
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    document.body.innerHTML = '';
+    history.replaceState(null, '', '/');
+  });
+
+  it('captions the front card with its number, name, lineage and tagline', () => {
+    initCarousel();
+    expect(meta()).toBe('01 / 20 · Autopsy · resurrects BinAbsInspector');
+    expect(line()).toBe(CARDS[0].tagline);
+  });
+
+  it('announces and deep-links only when a user turn settles', () => {
+    initCarousel();
+    expect(live()).toBe('');                       // assembling is not announced
+    keyOn(wheel(), 'ArrowRight');
+    expect(meta()).toContain('02 / 20 · Covenant');
+    expect(live()).toBe(`Covenant, card 2 of 20. Resurrects SCMKit. ${CARDS[1].tagline}`);
+    expect(location.hash).toBe('#card=covenant');
+  });
+
+  it('opens on the card named in the URL', () => {
+    history.replaceState(null, '', '/#card=reaper');
+    initCarousel();
+    expect(meta()).toContain('16 / 20 · Reaper · resurrects race-the-web');
+  });
+
+  it('summonCard turns to a card by name, and refuses unknown names', () => {
+    const scrollTo = vi.fn();
+    initCarousel({ scrollTo });
+    expect(summonCard('Wraith ')).toBe(true);
+    expect(scrollTo).toHaveBeenCalledWith(wheel());
+    expect(meta()).toContain('20 / 20 · Wraith');
+    expect(document.activeElement).toBe(wheel());   // the next key turns the deck, not the page
+    expect(summonCard('lich')).toBe(false);
   });
 });

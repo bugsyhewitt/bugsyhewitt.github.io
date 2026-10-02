@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { makeTermCursor, onceInView } from './terminal';
+import { makeTermCursor, onceInView, printLines } from './terminal';
 
 describe('makeTermCursor', () => {
   it('returns a <span> with class term-cursor and aria-hidden="true"', () => {
@@ -87,5 +87,39 @@ describe('onceInView', () => {
     fire(true);
 
     expect(cb).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('printLines', () => {
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('prints in order, trailing the cursor, and parks it on done()', () => {
+    vi.useFakeTimers();
+    const items = [0, 1, 2].map(() => document.createElement('div'));
+    const park = document.createElement('div');
+    const cursor = makeTermCursor();
+    const seen: number[] = [];
+    printLines(items, cursor, { delay: () => 100, done: () => park, beforePrint: el => seen.push(items.indexOf(el)) });
+
+    expect(items[0].classList.contains('printed')).toBe(true);   // first line is immediate
+    expect(items[1].classList.contains('printed')).toBe(false);
+    expect(cursor.parentElement).toBe(items[0]);
+    vi.advanceTimersByTime(100);
+    expect(items[1].classList.contains('printed')).toBe(true);
+    expect(cursor.parentElement).toBe(items[1]);
+    vi.advanceTimersByTime(200);
+    expect(items.every(el => el.classList.contains('printed'))).toBe(true);
+    expect(cursor.parentElement).toBe(park);
+    expect(seen).toEqual([0, 1, 2]);
+  });
+
+  it('waits delay(el) after each line', () => {
+    vi.useFakeTimers();
+    const items = [0, 1].map(() => document.createElement('div'));
+    printLines(items, makeTermCursor(), { delay: el => (el === items[0] ? 500 : 0), done: () => items[1] });
+    vi.advanceTimersByTime(499);
+    expect(items[1].classList.contains('printed')).toBe(false);
+    vi.advanceTimersByTime(1);
+    expect(items[1].classList.contains('printed')).toBe(true);
   });
 });

@@ -3,6 +3,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '17 9 * * *'   # daily rebuild keeps the "last raised" dates honest
 
 permissions:
   contents: read
@@ -24,6 +26,8 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # repo push dates (scripts/raised.ts); 1000 req/h vs 60 anonymous
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
