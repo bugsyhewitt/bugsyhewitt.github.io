@@ -306,7 +306,7 @@ img{display:block;max-width:100%;}
 
 /* ---------- specialities: pinned horizontal showpiece ---------- */
 .specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;}
-.specs-pin{margin-top:clamp(40px,6vh,72px);position:relative;height:78vh;min-height:520px;overflow:hidden;
+.specs-pin{margin-top:clamp(40px,6vh,72px);position:relative;height:calc(100vh - var(--nav-h,70px));height:calc(100svh - var(--nav-h,70px));min-height:520px;overflow:hidden;
   width:100vw;margin-left:calc(50% - 50vw); /* full-bleed so each panel is a full viewport width */
   border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);background:var(--coffin);}
 .specs-track{display:flex;height:100%;width:calc(var(--n,3)*100%);will-change:transform;}

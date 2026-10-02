@@ -17,6 +17,12 @@ export function initSpecialities(): void {
 
   const panels = track.children.length;            // 3
   pin.style.setProperty('--n', String(panels));    // single source for the CSS track/panel/bar widths
+  // Pin just under the fixed nav and fill the rest of the viewport (CSS reads --nav-h),
+  // so no panel slides beneath the nav and no dead band sits under the pin.
+  const nav = document.getElementById('nav');
+  const navH = (): number => (nav ? nav.offsetHeight : 0);
+  const syncNavH = (): void => pin.style.setProperty('--nav-h', navH() + 'px');
+  syncNavH();
   const target = -100 * (panels - 1) / panels;     // -66.67 → panel 3 flush
   const LAND_AT = 0.9;                              // land the last panel by 90% of the pin
 
@@ -26,7 +32,7 @@ export function initSpecialities(): void {
       const xTo = gsap.quickTo(track, 'xPercent', { duration: 0.5, ease: 'power3.out' });
       const st = ScrollTrigger.create({
         trigger: pin,
-        start: 'top top',
+        start: () => 'top top+=' + navH(),
         end: () => '+=' + track.scrollWidth,
         pin: true,
         scrub: true,
@@ -37,7 +43,7 @@ export function initSpecialities(): void {
           // scaleX is compositor-only (no per-frame layout); base width is 1/n
           if (bar) bar.style.transform = 'scaleX(' + (1 + (panels - 1) * self.progress) + ')';
         },
-        onRefreshInit: () => gsap.set(track, { xPercent: 0 }),
+        onRefreshInit: () => { syncNavH(); gsap.set(track, { xPercent: 0 }); },
       });
       return () => { st.kill(); gsap.set(track, { xPercent: 0 }); if (bar) bar.style.transform = ''; };
     },
