@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import glsl from 'vite-plugin-glsl';
 import { fetchRaised, raisedHtml } from './scripts/raised';
+import { deckNoscript } from './scripts/deck-noscript';
 import { CARDS } from './src/carousel/cards';
 
 export default defineConfig(async ({ command }) => {
@@ -12,7 +13,7 @@ export default defineConfig(async ({ command }) => {
   return {
     base: '/',
     define: { __RAISED__: JSON.stringify(raised) },
-    plugins: [glsl(), raisedHtml(raised)],
+    plugins: [glsl(), raisedHtml(raised), deckNoscript()],
     build: {
       outDir: 'dist',
       assetsInlineLimit: 0
