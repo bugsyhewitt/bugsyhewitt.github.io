@@ -88,6 +88,13 @@ export function initSeanceCommands(body: HTMLElement, cursor: HTMLElement, reduc
   input.addEventListener('input', fit);
   input.addEventListener('keydown', e => { if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Enter') keystroke(); });
   prompt.addEventListener('click', () => input.focus());
+  // iOS zooms the page into any input under 16px, and the terminal type is 11.5px on a
+  // phone. maximum-scale stops that focus zoom; iOS ignores it for pinch-zoom, so the page
+  // stays zoomable. iOS only (-webkit-touch-callout): elsewhere it would block pinch-zoom.
+  const viewport = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
+  if (viewport && CSS.supports?.('-webkit-touch-callout', 'none') && !/maximum-scale/.test(viewport.content)) {
+    viewport.content += ', maximum-scale=1';
+  }
 
   const history: string[] = [];
   let back = 0;

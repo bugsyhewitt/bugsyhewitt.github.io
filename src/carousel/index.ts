@@ -190,8 +190,10 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   // at its own rotation; turning the wheel by minus that brings it to the front,
   // so → (next card, on the right) is a negative turn — same feel as dragging left.
   let keyTarget: number | null = null;   // where a running key tween lands; rapid presses chain off it
+  let proxy: HTMLElement | null = null;  // touch only: the stand-in a sideways drag throws (below)
   function rotateTo(target: number): void {
     keyTarget = target;
+    if (proxy) gsap.killTweensOf(proxy);   // a flick still coasting would fight the turn
     gsap.to(itemsEl, {
       rotation: target, duration: reduceMotion ? 0 : DUR.short, ease: RITE, overwrite: true,
       onUpdate: updateFocus, onComplete() { keyTarget = null; updateFocus(); settle(true); },
@@ -230,31 +232,60 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   };
   const moving = (): void => { updateFocus(); if (!reduceMotion) lean(); };
   if (!reduceMotion) InertiaPlugin.track(itemsEl, 'rotation');
-  Draggable.create(itemsEl, {
-    type: 'rotation',
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const turning = {
     inertia: !reduceMotion,
-    snap: notch,
     minDuration: 0.3,
     maxDuration: 1.4,
     onPress() { dragged = false; keyTarget = null; finishEntrance(); },
     onDragStart() { dragged = true; },
-    onDrag: moving,
-    onThrowUpdate: moving,
     onThrowComplete() {
       updateFocus();
       if (prevBest >= 0) cardOf(prevBest).style.removeProperty('--lean');
       settle(true);
     },
-    onDragEnd(this: Draggable) {
+    onDragEnd() {
       if (reduceMotion) {   // no throw: land on the nearest card straight away
-        gsap.to(itemsEl, { rotation: notch(this.rotation), duration: 0, onUpdate: updateFocus, onComplete() { settle(true); } });
+        const at = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
+        gsap.to(itemsEl, { rotation: notch(at), duration: 0, onUpdate: updateFocus, onComplete() { settle(true); } });
       }
       // clear the drag flag shortly after so genuine clicks work next time
       setTimeout(() => { dragged = false; }, 0);
     },
-  });
+  };
+  if (fine) {
+    Draggable.create(itemsEl, { ...turning, type: 'rotation', snap: notch, onDrag: moving, onThrowUpdate: moving });
+  } else {
+    // Touch: a rotation drag claims every gesture (touch-action: none), so a phone could
+    // not scroll past the deck. Here a sideways drag of a stand-in turns the wheel instead,
+    // and an up/down swipe on the cards still scrolls the page (touch-action: pan-y).
+    proxy = document.createElement('div');
+    let rot0 = 0, x0 = 0, perPx = 0.1;   // wheel angle and stand-in x at the press; degrees per px
+    const turn = function (this: Draggable): void {
+      gsap.set(itemsEl, { rotation: rot0 + (this.x - x0) * perPx });
+      moving();
+    };
+    Draggable.create(proxy, {
+      ...turning,
+      type: 'x',
+      trigger: itemsEl,
+      // the notch nearest where the wheel would stop, as a stand-in x
+      snap: (x: number) => x0 + (notch(rot0 + (x - x0) * perPx) - rot0) / perPx,
+      onPress(this: Draggable) {
+        gsap.killTweensOf(itemsEl, 'rotation');   // a key turn in flight
+        rot0 = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
+        x0 = this.x;
+        // the card under the finger follows it: its orbit radius is the pivot less half a card
+        const orbit = parseFloat(getComputedStyle(itemsEl).transformOrigin.split(' ')[1]) - cardOf(0).offsetHeight / 2;
+        if (orbit > 0) perPx = 180 / (Math.PI * orbit);
+        this.vars.throwResistance = 100 / perPx;   // a flick carries as far as the desktop wheel's
+        turning.onPress();
+      },
+      onDrag: turn,
+      onThrowUpdate: turn,
+    });
+  }
 
-  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (!reduceMotion) {
     if (fine) initFoil(wheel);
     else if (window.matchMedia('(hover: none)').matches) initTilt(wheel, document.getElementById('deckTilt') as HTMLButtonElement | null);

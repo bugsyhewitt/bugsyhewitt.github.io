@@ -15,7 +15,8 @@ export function initHeadings(): void {
   // split once the display face is in, or the line breaks are measured in the fallback
   document.fonts.ready.then(() => {
     headings.forEach(h => {
-      const split = SplitText.create(h, { type: 'lines', mask: 'lines' });
+      // masks get .rise-mask, which reaches above the line box (CSS) so accents aren't cut
+      const split = SplitText.create(h, { type: 'lines', mask: 'lines', linesClass: 'rise' });
       gsap.set(split.lines, { yPercent: 110 });
       onceInView(h, () => {
         gsap.to(split.lines, { yPercent: 0, duration: DUR.long, ease: RITE, stagger: 0.08 });
