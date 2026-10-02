@@ -181,6 +181,10 @@ initSpecialities();
 initLoadout();
 initContact();
 
+// for whoever opens the devtools
+console.log('%cThe veil is thin here too.%c Type help in the séance.',
+  'color:#9c3636;font:14px monospace', 'color:#8c8c85;font:12px monospace');
+
 // Marquee leans with scroll velocity, easing back upright at rest.
 // Skew rides the .marquee container so it never fights the track's slide loop.
 function initMarqueeSkew(l: Lenis): void {

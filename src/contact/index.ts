@@ -1,5 +1,6 @@
 import { magnetize } from '../fx/magnet';
 import { onceInView, makeTermCursor, printLines } from '../fx/terminal';
+import { initSeanceCommands } from './seance';
 
 // Séance terminal: on scroll-in the channel manifest prints line by line, a
 // blood cursor resting at the end. Channel rows are real links; discord copies
@@ -9,12 +10,13 @@ export function initContact(): void {
   const body = document.getElementById('seanceBody');
   if (!term || !body) return;
 
-  const lines = Array.from(body.querySelectorAll<HTMLElement>('[data-line]'));
-  const last = body.querySelector<HTMLElement>('[data-last]');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   const cursor = makeTermCursor();
+  // the command prompt (and its "[ type help ]" line) joins the manifest before it prints
+  const seance = initSeanceCommands(body, cursor, reduce);
+  const lines = Array.from(body.querySelectorAll<HTMLElement>('[data-line]'));
 
   // discord channel copies its handle (the visible span is the single source)
   const discord = body.querySelector<HTMLElement>('#discordCopy');
@@ -76,11 +78,11 @@ export function initContact(): void {
     body.querySelectorAll<HTMLElement>('.chan').forEach(link => magnetize(link, 8, 0.3));
   }
 
-  if (reduce) { (last || lines[lines.length - 1])?.appendChild(cursor); return; }
+  if (reduce) { seance.open().appendChild(cursor); return; }
 
   term.classList.add('is-live');
   onceInView(term, () => printLines(lines, cursor, {
     delay: el => el.hasAttribute('data-last') ? 260 : 150,
-    done: () => last || lines[lines.length - 1],
+    done: () => seance.open(),
   }));
 }
