@@ -3,10 +3,11 @@ import { Draggable } from 'gsap/Draggable';
 import { CARDS, repoUrl, title } from './cards';
 import { raisedOn, isAlive } from '../raised';
 import { initFoil } from './foil';
+import { makeProof } from './proof';
 
 gsap.registerPlugin(Draggable);
 
-// front card full color, others greyscale. Flip to false for all-color.
+// front card in full colour, the rest as newsprint proofs. Flip to false for all-colour.
 const DESATURATE_SIBLINGS = true;
 
 export interface CarouselOptions {
@@ -60,6 +61,23 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   const total = images.length;
   const degree = 360 / total;
 
+  // Newsprint proofs for the dimmed cards: screened once each cover has loaded, in idle
+  // time. Until a card has one it keeps the plain grey (CSS: .is-dim:not(.has-proof)).
+  // (with a timeout: the page's animation loops keep frames busy enough that a bare
+  // requestIdleCallback never fires)
+  const idle = (fn: () => void): void => {
+    if ('requestIdleCallback' in window) window.requestIdleCallback(fn, { timeout: 500 }); else setTimeout(fn, 1);
+  };
+  images.forEach(item => {
+    const card = item.querySelector<HTMLElement>('.carousel__card')!;
+    const img = item.querySelector<HTMLImageElement>('.carousel__img')!;
+    const proofIt = (): void => idle(() => {
+      const proof = makeProof(img, card.clientWidth);
+      if (proof) { img.before(proof); item.classList.add('has-proof'); }
+    });
+    if (img.complete && img.naturalWidth) proofIt(); else img.addEventListener('load', proofIt, { once: true });
+  });
+
   // Prevent a click firing at the end of a drag.
   let dragged = false;
   images.forEach(item => {
@@ -103,24 +121,9 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     }, assembleAt);
   });
 
-  // Liquid materialize on the incoming front card: displace through the shared
-  // #liquid SVG filter for ~0.6s, then drop the inline filter so drag stays cheap.
   let prevBest = -1;
-  let revealImg: HTMLElement | null = null;
-  function liquidReveal(img: HTMLElement): void {
-    const disp = document.getElementById('liquidDisp');
-    if (!disp) return;
-    if (revealImg && revealImg !== img) revealImg.style.filter = ''; // interrupted reveal: unfilter the old card
-    revealImg = img;
-    gsap.killTweensOf(disp);
-    img.style.filter = 'url(#liquid)';
-    gsap.fromTo(disp, { attr: { scale: 26 } }, {
-      attr: { scale: 0 }, duration: 0.6, ease: 'power2.out',
-      onComplete() { img.style.filter = ''; if (revealImg === img) revealImg = null; },
-    });
-  }
 
-  // Desaturate all but the front-most card. Front = the item whose world
+  // Proof all but the front-most card; the one arriving comes into register (CSS). Front = the item whose world
   // rotation is closest to 0 (pointing up at the viewer).
   function updateFocus(): void {
     const wheelRot = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
@@ -145,10 +148,6 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       const active = document.activeElement;
       if (active && active !== wheel && wheel!.contains(active)) {
         images[best].querySelector<HTMLElement>('a')!.focus({ preventScroll: true });
-      }
-      if (!reduceMotion) {
-        const img = images[best].querySelector<HTMLElement>('.carousel__img');
-        if (img) liquidReveal(img);
       }
     }
   }
