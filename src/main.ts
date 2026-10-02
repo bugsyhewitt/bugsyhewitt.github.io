@@ -166,19 +166,23 @@ if (heroGL && window.innerWidth >= 768 && window.matchMedia('(hover: hover)').ma
 }
 
 markAlive();
-initCarousel({
-  scrollTo: el => (lenis ? lenis.scrollTo(el) : el.scrollIntoView({ block: 'center' })),
-});
-initUfo();
-if (FINE && !REDUCE) {
-  initCursor();
-  initScrambleHovers();
+// Each section boots on its own: one throwing must not take the rest down.
+function safe(name: string, init: () => void): void {
+  try { init(); } catch (e) { console.warn(`[${name}] init failed:`, e); }
 }
-if (!REDUCE) initVeil();
-if (lenis) initMarqueeSkew(lenis);
-initSpecialities();
-initLoadout();
-initContact();
+safe('carousel', () => initCarousel({
+  scrollTo: el => (lenis ? lenis.scrollTo(el) : el.scrollIntoView({ block: 'center' })),
+}));
+safe('ufo', initUfo);
+if (FINE && !REDUCE) {
+  safe('cursor', initCursor);
+  safe('scramble', initScrambleHovers);
+}
+if (!REDUCE) safe('veil', initVeil);
+if (lenis) safe('marquee', () => initMarqueeSkew(lenis));
+safe('specialities', initSpecialities);
+safe('loadout', initLoadout);
+safe('contact', initContact);
 
 // for whoever opens the devtools
 console.log('%cThe veil is thin here too.%c Type help in the séance.',
