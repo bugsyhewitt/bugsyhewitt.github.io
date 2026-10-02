@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { gsap } from 'gsap';
 import { initCarousel } from './index';
 
 // Minimal DOM required by initCarousel: #carousel (wheel) + #carouselItems.
@@ -17,17 +18,28 @@ function stubMatchMedia({ reduce = false, fine = false } = {}) {
   }));
 }
 
-function dispatchKey(key: string) {
-  window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+function keyOn(target: EventTarget, key: string): KeyboardEvent {
+  const e = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+  target.dispatchEvent(e);
+  return e;
 }
 
-describe('initCarousel — arrow key navigation (BUG-NEW-141, WCAG 2.1.1 Keyboard)', () => {
+const wheel = () => document.getElementById('carousel')!;
+const items = () => document.getElementById('carouselItems')!;
+// where the most recent wheel tween is headed
+const target = () => {
+  const tweens = gsap.getTweensOf(items());
+  return tweens.length ? (tweens[tweens.length - 1].vars.rotation as number) : null;
+};
+// lay the cards out where the entrance timeline leaves them (card i at i·18°, back half negative)
+const settle = () => document.querySelectorAll<HTMLElement>('.carousel__item').forEach((el, i) => {
+  gsap.set(el, { rotation: i > 10 ? -18 * (20 - i) : 18 * i });
+});
+
+describe('initCarousel — keyboard (BUG-NEW-141, WCAG 2.1.1), scoped to the wheel', () => {
   beforeEach(() => {
     buildDom();
     stubMatchMedia({ reduce: true, fine: false });
-    // IntersectionObserver is used for the scroll-triggered entrance; under
-    // reduceMotion the timeline jumps straight to its end so the test
-    // doesn't depend on scroll/observe semantics.
     vi.stubGlobal('IntersectionObserver', class {
       observe() {}
       unobserve() {}
@@ -36,47 +48,68 @@ describe('initCarousel — arrow key navigation (BUG-NEW-141, WCAG 2.1.1 Keyboar
   });
 
   afterEach(() => {
+    gsap.killTweensOf(items());
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
     document.body.innerHTML = '';
   });
 
-  it('attaches a keydown listener on window', () => {
-    const spy = vi.spyOn(window, 'addEventListener');
+  it('arrow keys elsewhere on the page are left alone', () => {
     initCarousel();
-    const types = spy.mock.calls.map(([type]) => type);
-    expect(types).toContain('keydown');
+    const e = keyOn(window, 'ArrowRight');
+    expect(e.defaultPrevented).toBe(false);
+    expect(target()).toBeNull();
   });
 
-  it('ArrowLeft marks the event defaultPrevented (handler called preventDefault)', () => {
+  it('→ on the wheel turns one card toward the next (negative turn) and claims the key', () => {
     initCarousel();
-    const event = new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
-    window.dispatchEvent(event);
-    expect(event.defaultPrevented).toBe(true);
+    const e = keyOn(wheel(), 'ArrowRight');
+    expect(e.defaultPrevented).toBe(true);
+    expect(target()).toBe(-18);
   });
 
-  it('ArrowRight marks the event defaultPrevented (handler called preventDefault)', () => {
+  it('← on the wheel turns one card back', () => {
     initCarousel();
-    const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
-    window.dispatchEvent(event);
-    expect(event.defaultPrevented).toBe(true);
+    keyOn(wheel(), 'ArrowLeft');
+    expect(target()).toBe(18);
   });
 
-  it('non-arrow keys do not call preventDefault', () => {
+  it('rapid presses chain off the running target instead of the mid-tween angle', () => {
     initCarousel();
-    const event = new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
-    window.dispatchEvent(event);
-    expect(event.defaultPrevented).toBe(false);
+    keyOn(wheel(), 'ArrowRight');
+    keyOn(wheel(), 'ArrowRight');
+    keyOn(wheel(), 'ArrowRight');
+    expect(target()).toBe(-54);
   });
 
-  it('repeated ArrowRight dispatches repeatedly (held key advances more than one step)', () => {
+  it('keys pressed on a card inside the wheel bubble to the handler', () => {
     initCarousel();
-    for (let i = 0; i < 3; i++) dispatchKey('ArrowRight');
-    // Sanity: each dispatch was a separate keydown event with no throw.
-    // (Real rotation math is exercised by the live site; here we lock in the
-    //  handler wiring — preventing a future regression to a no-op or a
-    //  once-only listener.)
-    expect(true).toBe(true);
+    const card = document.querySelector<HTMLElement>('.carousel__card')!;
+    const e = keyOn(card, 'ArrowLeft');
+    expect(e.defaultPrevented).toBe(true);
+    expect(target()).toBe(18);
+  });
+
+  it('End turns the short way to the last card, Home back to the first', () => {
+    initCarousel();
+    settle();
+    keyOn(wheel(), 'End');
+    expect(target()).toBe(18);
+    keyOn(wheel(), 'Home');
+    expect(target()).toBe(0);
+  });
+
+  it('other keys pass through untouched', () => {
+    initCarousel();
+    const e = keyOn(wheel(), 'a');
+    expect(e.defaultPrevented).toBe(false);
+    expect(target()).toBeNull();
+  });
+
+  it('only the first card is a tab stop before the wheel has settled', () => {
+    initCarousel();
+    const tabbable = [...document.querySelectorAll<HTMLElement>('.carousel__card')].filter(a => a.tabIndex === 0);
+    expect(tabbable).toHaveLength(1);
   });
 
   it('initCarousel is a no-op when #carousel is missing', () => {
