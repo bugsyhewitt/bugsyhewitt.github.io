@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-<link rel="preload" as="image" href="/hero.jpg" fetchpriority="high" />
+<link rel="preload" as="image" href="%HERO%" fetchpriority="high" />
 
 <style>
 :root{
@@ -124,7 +124,7 @@ img{display:block;max-width:100%;}
 .hero__photo{
   position:absolute;inset:0;z-index:1;
   --hero-focal:50% 32%; /* crop focal point — feeds background position AND the scroll-zoom pivot below */
-  background:var(--paper) url('/hero.jpg') var(--hero-focal)/cover no-repeat; /* SWAP: hero.jpg — path also in <head> preload + hero-fx imageSrc */
+  background:var(--paper) url('%HERO%') var(--hero-focal)/cover no-repeat; /* %HERO%: webp or jpg, chosen at build (scripts/hero.ts) */
   will-change:filter,opacity,transform;
   transform-origin:var(--hero-focal);
 }
