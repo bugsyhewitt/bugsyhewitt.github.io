@@ -308,7 +308,25 @@ img{display:block;max-width:100%;}
   /* DEFAULT: full color. Desaturate mode toggled via JS by adding .is-dim */
 }
 .carousel__item.is-dim .carousel__img { filter: grayscale(1) brightness(0.7); }
-.carousel__item:not(.is-dim) { z-index: 1; } /* front card above its neighbours where the ring overlaps (phones) */
+.carousel__item:not(.is-dim) { z-index: 1; }
+
+/* foil variant: front card only, driven by src/carousel/foil.ts (fine pointer + full motion) */
+.carousel__card {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .5s var(--ease);
+}
+.carousel__card::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  opacity: var(--foil, 0); transition: opacity .45s var(--ease);
+  mix-blend-mode: color-dodge;
+  background:
+    radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
+      rgba(233,230,221,.8), rgba(233,230,221,.22) 28%, transparent 64%),
+    repeating-linear-gradient(110deg,
+      transparent 0%, rgba(233,230,221,.2) 3%, transparent 6%, transparent 11%);
+  background-size: 100% 100%, 260% 260%;
+  background-position: center, var(--mx, 50%) var(--my, 50%);
+} /* front card above its neighbours where the ring overlaps (phones) */
 
 /* ---------- specialities: pinned horizontal showpiece ---------- */
 .specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;}

@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
 import { CARDS, repoUrl, title } from './cards';
 import { raisedOn, isAlive } from '../raised';
+import { initFoil } from './foil';
 
 gsap.registerPlugin(Draggable);
 
@@ -219,6 +220,8 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       setTimeout(() => { dragged = false; }, 0);
     },
   });
+
+  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) initFoil(wheel);
 
   let ready = false, pending = -1;   // set once the entrance has assembled the wheel
 
