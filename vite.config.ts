@@ -3,6 +3,7 @@ import glsl from 'vite-plugin-glsl';
 import { fetchRaised, raisedHtml } from './scripts/raised';
 import { deckNoscript } from './scripts/deck-noscript';
 import { heroSource, heroHtml } from './scripts/hero';
+import { cspMeta } from './scripts/csp';
 import { CARDS } from './src/carousel/cards';
 
 export default defineConfig(async ({ command }) => {
@@ -15,7 +16,7 @@ export default defineConfig(async ({ command }) => {
   return {
     base: '/',
     define: { __RAISED__: JSON.stringify(raised), __HERO__: JSON.stringify(hero) },
-    plugins: [glsl(), raisedHtml(raised), deckNoscript(), heroHtml(hero)],
+    plugins: [glsl(), raisedHtml(raised), deckNoscript(), heroHtml(hero), cspMeta()],
     build: {
       outDir: 'dist',
       assetsInlineLimit: 0
