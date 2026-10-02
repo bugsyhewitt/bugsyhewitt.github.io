@@ -17,4 +17,6 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
+        env:
+          RAISED_OFFLINE: '1'   # PR builds stay deterministic; no GitHub API calls
       - run: npm test

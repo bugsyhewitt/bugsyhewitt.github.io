@@ -1,4 +1,3 @@
-import { initHeroFX } from './hero-fx';
 import { initCarousel } from './carousel';
 import { initUfo } from './ufo';
 import { initLenis } from './scroll/lenis';
@@ -8,7 +7,10 @@ import { initScrambleHovers } from './fx/scramble';
 import { initSpecialities } from './specialities';
 import { initLoadout } from './loadout';
 import { initContact } from './contact';
+import { markAlive } from './raised';
 import type Lenis from 'lenis';
+
+declare const __HERO__: string;   // '/hero.webp' or '/hero.jpg', chosen at build (scripts/hero.ts)
 
 // Consolidated motion/pointer guards. Every FX init below is gated here;
 // lenis/cursor/veil ALSO self-guard internally (packet-mandated import safety).
@@ -145,40 +147,56 @@ const lenis = REDUCE ? null : initLenis();
           inView = e.isIntersecting;
           if (e.isIntersecting && !started) { started = true; typewriter(); }
         });
-      }, { threshold: 0.4 });
+      }, { threshold: 0.05 });   // start typing as soon as the manifesto peeks in: no empty screen
       mObs.observe(manifesto);
     }
   }
 })();
 
+// The scroll cue has done its job once the visitor scrolls: stop its loop.
+window.addEventListener('scroll', () => {
+  document.querySelector('.hero__cue-line')?.classList.add('stop');
+}, { once: true, passive: true });
+
+// The GPGPU hero only runs on wide, hover-capable, full-motion screens (hero-fx keeps
+// the same guards). Three.js is most of the JS, so only those visitors download it.
 const heroGL = document.getElementById('heroGL') as HTMLCanvasElement | null;
-if (heroGL) {
-  try {
-    initHeroFX(heroGL, { imageSrc: '/hero.jpg' });
-  } catch (e) {
-    console.warn('[hero-fx] init threw, ignoring:', e);
-  }
+if (heroGL && window.innerWidth >= 768 && window.matchMedia('(hover: hover)').matches && !REDUCE) {
+  import('./hero-fx')
+    .then(m => m.initHeroFX(heroGL, { imageSrc: __HERO__ }))   // same file the CSS photo and preload use
+    .catch(e => console.warn('[hero-fx] unavailable, keeping the photo:', e));
 }
 
-initCarousel();
-initUfo();
-if (FINE && !REDUCE) {
-  initCursor();
-  initScrambleHovers();
+markAlive();
+// Each section boots on its own: one throwing must not take the rest down.
+function safe(name: string, init: () => void): void {
+  try { init(); } catch (e) { console.warn(`[${name}] init failed:`, e); }
 }
-if (!REDUCE) initVeil();
-if (lenis) initMarqueeSkew(lenis);
-initSpecialities();
-initLoadout();
-initContact();
+safe('carousel', () => initCarousel({
+  scrollTo: el => (lenis ? lenis.scrollTo(el) : el.scrollIntoView({ block: 'center' })),
+}));
+safe('ufo', initUfo);
+if (FINE && !REDUCE) {
+  safe('cursor', initCursor);
+  safe('scramble', initScrambleHovers);
+}
+if (!REDUCE) safe('veil', initVeil);
+if (lenis) safe('marquee', () => initMarqueeSkew(lenis));
+safe('specialities', initSpecialities);
+safe('loadout', initLoadout);
+safe('contact', initContact);
+
+// for whoever opens the devtools
+console.log('%cThe veil is thin here too.%c Type help in the séance.',
+  'color:#9c3636;font:14px monospace', 'color:#8c8c85;font:12px monospace');
 
 // Marquee leans with scroll velocity, easing back upright at rest.
 // Skew rides the .marquee container so it never fights the track's slide loop.
 function initMarqueeSkew(l: Lenis): void {
   const marquee = document.querySelector<HTMLElement>('.marquee');
   if (!marquee) return;
-  let skew = 0;
-  (function tick() {
+  let skew = 0, raf = 0;
+  const tick = (): void => {
     const target = Math.max(-7, Math.min(7, (l.velocity || 0) * 0.35));
     skew += (target - skew) * 0.12;
     if (Math.abs(skew) < 0.02 && Math.abs(target) < 0.02) {
@@ -186,6 +204,11 @@ function initMarqueeSkew(l: Lenis): void {
     } else {
       marquee.style.transform = 'skewX(' + skew.toFixed(2) + 'deg)';
     }
-    requestAnimationFrame(tick);
-  })();
+    raf = requestAnimationFrame(tick);
+  };
+  // Only tick while the marquee is on screen.
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) { if (!raf) raf = requestAnimationFrame(tick); }
+    else { cancelAnimationFrame(raf); raf = 0; skew = 0; marquee.style.transform = ''; }
+  }).observe(marquee);
 }
