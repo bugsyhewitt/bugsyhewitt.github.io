@@ -1,11 +1,12 @@
 import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
+import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { CARDS, repoUrl, title } from './cards';
 import { raisedOn, isAlive } from '../raised';
 import { initFoil } from './foil';
 import { makeProof } from './proof';
 
-gsap.registerPlugin(Draggable);
+gsap.registerPlugin(Draggable, InertiaPlugin);
 
 // front card in full colour, the rest as newsprint proofs. Flip to false for all-colour.
 const DESATURATE_SIBLINGS = true;
@@ -124,6 +125,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   });
 
   let prevBest = -1;
+  const cardOf = (i: number): HTMLElement => images[i].querySelector<HTMLElement>('.carousel__card')!;
 
   // Proof all but the front-most card; the one arriving comes into register (CSS). Front = the item whose world
   // rotation is closest to 0 (pointing up at the viewer).
@@ -139,6 +141,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       if (d < bestDelta) { bestDelta = d; best = i; }
     });
     if (best !== prevBest) {
+      if (prevBest >= 0) cardOf(prevBest).style.removeProperty('--lean');   // only the front card leans
       prevBest = best;
       // runs per drag frame: touch the DOM only when the front card actually changes
       images.forEach((image, i) => {
@@ -210,17 +213,35 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     e.preventDefault();
   });
 
-  // Draggable rotation with snap + focus update.
+  // Weight: a flick carries on and settles exactly on a card (InertiaPlugin snap), and the
+  // front card leans into the turn with the wheel's speed. Reduced motion: a plain snap.
+  const notch = (v: number): number => Math.round(v / degree) * degree;
+  const lean = (): void => {
+    if (prevBest < 0) return;
+    const v = InertiaPlugin.getVelocity(itemsEl, 'rotation') || 0;   // deg/s
+    cardOf(prevBest).style.setProperty('--lean', `${Math.max(-4, Math.min(4, -v / 90)).toFixed(2)}deg`);
+  };
+  const moving = (): void => { updateFocus(); if (!reduceMotion) lean(); };
+  if (!reduceMotion) InertiaPlugin.track(itemsEl, 'rotation');
   Draggable.create(itemsEl, {
     type: 'rotation',
-    inertia: false,
+    inertia: !reduceMotion,
+    snap: notch,
+    minDuration: 0.3,
+    maxDuration: 1.4,
     onPress() { dragged = false; keyTarget = null; },
     onDragStart() { dragged = true; },
-    onDrag: updateFocus,
+    onDrag: moving,
+    onThrowUpdate: moving,
+    onThrowComplete() {
+      updateFocus();
+      if (prevBest >= 0) cardOf(prevBest).style.removeProperty('--lean');
+      settle(true);
+    },
     onDragEnd(this: Draggable) {
-      // land on the nearest card — a short drag moves one step, a fling moves several
-      const snapped = Math.round(this.rotation / degree) * degree;
-      gsap.to(itemsEl, { rotation: snapped, onUpdate: updateFocus, onComplete() { settle(true); } });
+      if (reduceMotion) {   // no throw: land on the nearest card straight away
+        gsap.to(itemsEl, { rotation: notch(this.rotation), duration: 0, onUpdate: updateFocus, onComplete() { settle(true); } });
+      }
       // clear the drag flag shortly after so genuine clicks work next time
       setTimeout(() => { dragged = false; }, 0);
     },

@@ -336,7 +336,7 @@ img{display:block;max-width:100%;}
 
 /* foil variant: front card only, driven by src/carousel/foil.ts (fine pointer + full motion) */
 .carousel__card {
-  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(calc(var(--ry, 0deg) + var(--lean, 0deg)));  /* --lean: throw velocity */
   transition: transform .5s var(--ease);
 }
 .carousel__card::after {          /* broad glare across the whole card: now only a faint wash */
