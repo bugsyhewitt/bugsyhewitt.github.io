@@ -313,9 +313,6 @@ img{display:block;max-width:100%;}
   display:flex;align-items:center;padding:clamp(26px,5vw,80px);
   border-right:1px solid var(--hair);}
 .spec-panel:last-child{border-right:none;}
-.spec-panel__ix{position:absolute;right:clamp(-10px,-1vw,-4px);bottom:-6vh;pointer-events:none;
-  font-family:var(--display);font-weight:400;font-size:min(46vh,42vw);line-height:.8;
-  color:var(--hair-bright);opacity:.35;letter-spacing:-.02em;z-index:0;}
 .spec-panel__body{position:relative;z-index:1;max-width:min(58ch,90%);}
 .spec-panel__name{font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,6vw,5rem);
   line-height:.94;letter-spacing:.012em;margin:14px 0 18px;}
@@ -337,9 +334,8 @@ img{display:block;max-width:100%;}
   .specs-track{flex-direction:column;width:100%;height:auto;transform:none!important;}
   .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);
     padding:clamp(30px,8vw,48px) 4vw;}
-  .spec-panel__ix{font-size:34vw;bottom:auto;top:4px;right:2px;opacity:.14;}
   .spec__list{grid-template-columns:1fr;}
-  .specs-progress{display:none;}
+  .specs-progress,.specs-hint{display:none;}
 }
 
 /* ---------- loadout ---------- */
@@ -604,7 +600,6 @@ img{display:block;max-width:100%;}
   <div class="specs-pin" id="specsPin">
     <div class="specs-track" id="specsTrack">
       <article class="spec-panel">
-        <span class="spec-panel__ix" aria-hidden="true">I</span>
         <div class="spec-panel__body">
           <div class="spec__tag">Discipline / I</div>
           <div class="spec-panel__name">Audio / Video / Media</div>
@@ -623,7 +618,6 @@ img{display:block;max-width:100%;}
         </div>
       </article>
       <article class="spec-panel">
-        <span class="spec-panel__ix" aria-hidden="true">II</span>
         <div class="spec-panel__body">
           <div class="spec__tag">Discipline / II</div>
           <div class="spec-panel__name">AI &amp; Automation</div>
@@ -642,7 +636,6 @@ img{display:block;max-width:100%;}
         </div>
       </article>
       <article class="spec-panel">
-        <span class="spec-panel__ix" aria-hidden="true">III</span>
         <div class="spec-panel__body">
           <div class="spec__tag">Discipline / III</div>
           <div class="spec-panel__name">Offensive Security</div>
