@@ -62,7 +62,8 @@ def foil_mask(rgb: np.ndarray, cfg: dict) -> np.ndarray:
     # hand exclusions (rubble, signage, caption box ...)
     for x0, y0, x1, y1 in cfg.get('exclude', []):
         m[int(y0 * h): int(y1 * h), int(x0 * w): int(x1 * w)] = 0
-    return m
+    # foil is stamped or it isn't: push the soft keys towards solid (edges stay soft after blur)
+    return clamp01((m - 0.12) / 0.3)
 
 
 def finish_mask(m: np.ndarray, width: int) -> Image.Image:

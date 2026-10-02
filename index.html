@@ -331,7 +331,7 @@ img{display:block;max-width:100%;}
 .carousel__item.is-dim .carousel__proof { opacity: 1; }
 .carousel__item.is-dim.has-proof .carousel__img { opacity: 0; transform: translate(2px, -1.5px); }
 .carousel__item.is-dim:not(.has-proof) .carousel__img { filter: grayscale(1) brightness(0.7); } /* until its proof is made */
-.carousel__item:not(.is-dim) { z-index: 1; }
+.carousel__item.is-front { z-index: 1; } /* front card above its neighbours where the ring overlaps (phones) */
 .carousel__card:focus-visible { outline-offset: -6px; }
 
 /* foil variant: front card only, driven by src/carousel/foil.ts (fine pointer + full motion) */
@@ -339,9 +339,9 @@ img{display:block;max-width:100%;}
   transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   transition: transform .5s var(--ease);
 }
-.carousel__card::after {
+.carousel__card::after {          /* broad glare across the whole card: now only a faint wash */
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  opacity: var(--foil, 0); transition: opacity .45s var(--ease);
+  opacity: calc(var(--foil, 0) * .35); transition: opacity .45s var(--ease);
   mix-blend-mode: color-dodge;
   background:
     radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
@@ -350,7 +350,24 @@ img{display:block;max-width:100%;}
       transparent 0%, rgba(233,230,221,.2) 3%, transparent 6%, transparent 11%);
   background-size: 100% 100%, 260% 260%;
   background-position: center, var(--mx, 50%) var(--my, 50%);
-} /* front card above its neighbours where the ring overlaps (phones) */
+}
+/* spot foil: the light only catches where this cover would be foil-stamped (its mask from
+   scripts/cards/build_fx.py), through fine etched lines. Front card only, so neighbours
+   never fetch a mask. */
+.carousel__item.is-front .carousel__card::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  opacity: calc(var(--foil, 0) * 1.2); transition: opacity .45s var(--ease);
+  mix-blend-mode: plus-lighter;   /* foil adds light; dodge barely lifts dark ink */
+  background:                    /* a glint band that sweeps with the angle, and the hot spot */
+    linear-gradient(115deg, transparent calc(var(--mx, 50%) - 22%), rgba(255,252,244,.85) var(--mx, 50%), transparent calc(var(--mx, 50%) + 22%)),
+    radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,252,244,.9), rgba(233,230,221,.3) 18%, transparent 38%);
+  -webkit-mask-image: var(--foil-mask), repeating-linear-gradient(115deg, #000 0 1.2px, rgba(0,0,0,.55) 1.2px 2.6px);
+          mask-image: var(--foil-mask), repeating-linear-gradient(115deg, #000 0 1.2px, rgba(0,0,0,.55) 1.2px 2.6px);
+  -webkit-mask-size: cover, auto; mask-size: cover, auto;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-repeat: no-repeat, repeat; mask-repeat: no-repeat, repeat;
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
 
 /* ---------- specialities: pinned horizontal showpiece ---------- */
 .specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;}

@@ -8,7 +8,7 @@ export function initFoil(wheel: HTMLElement): void {
   let raf = 0, x = 0, y = 0, held = false;
 
   const front = (): HTMLElement | null =>
-    wheel.querySelector<HTMLElement>('.carousel__item:not(.is-dim) .carousel__card');
+    wheel.querySelector<HTMLElement>('.carousel__item.is-front .carousel__card');
 
   function rest(c: HTMLElement | null): void {
     if (!c) return;
