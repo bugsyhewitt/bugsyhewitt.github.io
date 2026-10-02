@@ -189,6 +189,15 @@ describe('initCarousel — the card reading (caption, announcements, deep links)
     expect(meta()).toContain('16 / 20 · Reaper · resurrects race-the-web');
   });
 
+  it('a deep link skips the fly-in even with motion on: the wheel heads straight for the card', () => {
+    stubMatchMedia({ reduce: false });
+    history.replaceState(null, '', '/#card=reaper');
+    initCarousel();
+    // entrance jumped to its end synchronously; card 16 (index 15) sits at -90°, so the wheel turns +90
+    expect(target()).toBe(90);
+    expect(meta()).not.toBe('');
+  });
+
   it('summonCard turns to a card by name, and refuses unknown names', () => {
     const scrollTo = vi.fn();
     initCarousel({ scrollTo });

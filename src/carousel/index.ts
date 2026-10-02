@@ -133,12 +133,13 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       const d = Math.abs(ang);
       if (d < bestDelta) { bestDelta = d; best = i; }
     });
-    images.forEach((image, i) => {
-      if (DESATURATE_SIBLINGS) image.classList.toggle('is-dim', i !== best);
-      image.querySelector('a')!.tabIndex = i === best ? 0 : -1;   // only the front card is a tab stop
-    });
     if (best !== prevBest) {
       prevBest = best;
+      // runs per drag frame: touch the DOM only when the front card actually changes
+      images.forEach((image, i) => {
+        if (DESATURATE_SIBLINGS) image.classList.toggle('is-dim', i !== best);
+        image.querySelector('a')!.tabIndex = i === best ? 0 : -1;   // only the front card is a tab stop
+      });
       paintCaption(best);
       // keyboard user sitting on a card: follow the wheel to the new front card
       const active = document.activeElement;
@@ -233,7 +234,8 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     entries.forEach(entry => {
       if (entry.isIntersecting && !played) {
         played = true;
-        if (reduceMotion) { tl.progress(1); assembled(); }
+        // reduced motion, or arriving for a named card: skip the fly-in and show it now
+        if (reduceMotion || pending >= 0) { tl.progress(1); assembled(); }
         else { tl.play(); tl.eventCallback('onComplete', assembled); }
       }
     });
@@ -249,7 +251,8 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   function summon(i: number): void {
     if (opts.scrollTo) opts.scrollTo(wheel!);
     else wheel!.scrollIntoView?.({ block: 'center' });
-    if (ready) rotateToIndex(i); else pending = i;
+    if (ready) rotateToIndex(i);
+    else { pending = i; if (played) tl.progress(1); }   // entrance under way: finish it at once
   }
   summonByName = name => {
     const i = CARDS.findIndex(c => c.name === name.trim().toLowerCase());
