@@ -43,7 +43,8 @@
   --ink-soft:#56524b;
   --bone:#e9e6dd;
   --ash:#8c8c85;
-  --ash-dim:#5d5d58;
+  --ash-mid:#7c7c76; /* informational grey: 5.0:1 on void, 4.6:1 on coffin (AA) */
+  --ash-dim:#5d5d58; /* decorative marks only — 3.2:1, never for text a reader needs */
   --hair:#1f1f21;
   --hair-bright:#2e2e31;
   --blood:#9c3636;
@@ -86,7 +87,7 @@ img{display:block;max-width:100%;}
 .spine.show{transform:translateX(0);}
 .spine span{
   writing-mode:vertical-rl;transform:rotate(180deg);
-  font-size:11px;letter-spacing:4px;color:var(--ash-dim);text-transform:uppercase;
+  font-size:11px;letter-spacing:4px;color:var(--ash-mid);text-transform:uppercase;
 }
 .spine .sdot{width:5px;height:5px;border-radius:50%;background:var(--ash-dim);}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.15;}}
@@ -168,7 +169,7 @@ img{display:block;max-width:100%;}
 /* ---------- shared section frame ---------- */
 .section{padding:clamp(80px,13vh,170px) clamp(24px,6vw,96px);position:relative;}
 .eyebrow{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:3px;
-  text-transform:uppercase;color:var(--ash-dim);margin-bottom:22px;}
+  text-transform:uppercase;color:var(--ash-mid);margin-bottom:22px;}
 .eyebrow::before{content:"";width:30px;height:1px;background:var(--ash-dim);}
 .eyebrow--suite{margin-top:clamp(70px,11vh,140px);} /* breathes the Suite block off the project list */
 .heading{font-family:var(--display);font-weight:400;
@@ -317,7 +318,7 @@ img{display:block;max-width:100%;}
 .spec-panel__name{font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,6vw,5rem);
   line-height:.94;letter-spacing:.012em;margin:14px 0 18px;}
 .spec-panel__intro{color:var(--ash);font-size:clamp(.95rem,1.5vw,1.15rem);margin-bottom:26px;max-width:52ch;}
-.spec__tag{font-size:11px;letter-spacing:2.5px;color:var(--ash-dim);text-transform:uppercase;}
+.spec__tag{font-size:11px;letter-spacing:2.5px;color:var(--ash-mid);text-transform:uppercase;}
 .spec__list{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(20px,3vw,56px);}
 .spec__list li{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--hair);
   font-size:13px;color:var(--bone);transition:color .25s,transform .25s var(--ease);}
@@ -363,9 +364,9 @@ img{display:block;max-width:100%;}
 .loadout.is-terminal .printed{opacity:1;transition:opacity .2s var(--ease);}
 .term-cursor{display:inline-block;width:.5em;height:1.02em;background:var(--blood);
   margin-left:.16em;vertical-align:-.14em;animation:blink 1.05s steps(1) infinite;}
-.term-rest{font-family:'Share Tech Mono',var(--mono);color:var(--ash-dim);
+.term-rest{font-family:'Share Tech Mono',var(--mono);color:var(--ash-mid);
   margin-top:18px;font-size:13px;letter-spacing:.5px;}
-.term-rest .p{color:var(--blood);}
+.term-rest .p{color:var(--ash-mid);}
 
 /* ---------- contact / séance terminal ---------- */
 .contact .heading{font-size:clamp(3.2rem,11vw,8.5rem);}
@@ -379,7 +380,7 @@ img{display:block;max-width:100%;}
 .seance__body{padding:clamp(18px,3vw,30px);font-family:'Share Tech Mono',var(--mono);
   font-size:clamp(11.5px,1.5vw,14.5px);line-height:2;color:var(--bone);overflow-x:auto;}
 .sline{color:var(--ash);white-space:pre;}
-.sline--dim{color:var(--ash-dim);}
+.sline--dim{color:var(--ash-mid);}
 .chan{display:block;width:max-content;color:var(--bone);white-space:pre;
   transition:color .25s var(--ease);will-change:transform;}
 .chan__k{color:var(--blood);}
@@ -389,7 +390,7 @@ img{display:block;max-width:100%;}
 .seance.is-live .printed{opacity:1;transition:opacity .18s var(--ease);}
 .footbar{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-between;
   align-items:center;padding-top:clamp(34px,5vh,56px);font-size:11px;letter-spacing:1.5px;
-  text-transform:uppercase;color:var(--ash-dim);}
+  text-transform:uppercase;color:var(--ash-mid);}
 
 /* ---------- skeleton hand cursor — index finger out, folds to a fist on click (OS-rendered, zero lag) ---------- */
 *{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><g fill='%230d0d0f' stroke='%230d0d0f' stroke-width='3' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='7.8' y='8.6' width='4.6' height='8.8' rx='2.3'/><circle cx='10.1' cy='8.8' r='2.4'/><rect x='8.1' y='3.4' width='4.0' height='6.0' rx='2.0'/><circle cx='10.1' cy='3.8' r='2.1'/></g><g fill='%23e9e6dd' stroke='%230d0d0f' stroke-width='0.9' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='7.8' y='8.6' width='4.6' height='8.8' rx='2.3'/><circle cx='10.1' cy='8.8' r='2.4'/><rect x='8.1' y='3.4' width='4.0' height='6.0' rx='2.0'/><circle cx='10.1' cy='3.8' r='2.1'/></g></svg>") 16 15,auto;}
@@ -439,7 +440,7 @@ img{display:block;max-width:100%;}
 .carousel-hint .hint-touch{display:none;}
 @media (hover:none){.carousel-hint .hint-fine{display:none;}.carousel-hint .hint-touch{display:inline;}}
 .carousel-hint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ash-dim);text-align:center;padding:16px 0;}
+  color:var(--ash-mid);text-align:center;padding:16px 0;}
 </style>
 </head>
 <body>
