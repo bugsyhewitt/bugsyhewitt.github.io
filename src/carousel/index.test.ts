@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { gsap } from 'gsap';
+const initLight = vi.fn();
+vi.mock('./light', () => ({ initLight: (...a: unknown[]) => initLight(...a) }));
+
 import { initCarousel, summonCard } from './index';
 import { CARDS } from './cards';
 
@@ -206,5 +209,42 @@ describe('initCarousel — the card reading (caption, announcements, deep links)
     expect(meta()).toContain('20 / 20 · Wraith');
     expect(document.activeElement).toBe(wheel());   // the next key turns the deck, not the page
     expect(summonCard('lich')).toBe(false);
+  });
+});
+
+describe('initCarousel — the real-light gate', () => {
+  class SeenAtOnce {
+    constructor(private cb: IntersectionObserverCallback) {}
+    observe(el: Element) { this.cb([{ isIntersecting: true, target: el } as IntersectionObserverEntry], this as never); }
+    unobserve() {}
+    disconnect() {}
+  }
+  beforeEach(() => {
+    buildDom();
+    vi.stubGlobal('IntersectionObserver', SeenAtOnce);
+    initLight.mockClear();
+  });
+  afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ''; });
+  const settleImports = () => new Promise(r => setTimeout(r, 0));
+
+  it('loads on a desktop pointer with full motion, once the deck is up', async () => {
+    stubMatchMedia({ reduce: false, fine: true });
+    history.replaceState(null, '', '/#card=reaper');   // skips the fly-in, so the deck is up at once
+    initCarousel();
+    history.replaceState(null, '', '/');
+    await settleImports();
+    expect(initLight).toHaveBeenCalledTimes(1);
+  });
+  it('never loads on touch', async () => {
+    stubMatchMedia({ reduce: false, fine: false });
+    initCarousel();
+    await settleImports();
+    expect(initLight).not.toHaveBeenCalled();
+  });
+  it('never loads under reduced motion', async () => {
+    stubMatchMedia({ reduce: true, fine: true });
+    initCarousel();
+    await settleImports();
+    expect(initLight).not.toHaveBeenCalled();
   });
 });
