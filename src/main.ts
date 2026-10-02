@@ -165,7 +165,9 @@ if (heroGL) {
   }
 }
 
-initCarousel();
+initCarousel({
+  scrollTo: el => (lenis ? lenis.scrollTo(el) : el.scrollIntoView({ block: 'center' })),
+});
 initUfo();
 if (FINE && !REDUCE) {
   initCursor();

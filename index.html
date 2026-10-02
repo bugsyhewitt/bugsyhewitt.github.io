@@ -271,7 +271,8 @@ img{display:block;max-width:100%;}
   transform: translateX(-50%);
 }
 .carousel__items {
-  transform-origin: center 200vh; /* wheel pivot — must match transformOrigin in src/carousel/index.ts */
+  --pivot: 200vh;                  /* wheel pivot distance — src/carousel reads this for every card's orbit */
+  transform-origin: center var(--pivot);
   transform: rotate(0);
   display: flex;
 }
@@ -291,7 +292,8 @@ img{display:block;max-width:100%;}
   background: var(--coffin);
 }
 @media (max-width: 1000px) { .carousel { --card-h: 435px; } .carousel__card { width: 300px; } }
-@media (max-width: 700px)  { .carousel { --card-h: 348px; } .carousel__card { width: 240px; } }
+@media (max-width: 700px)  { .carousel { --card-h: 348px; } .carousel__card { width: 240px; }
+  .carousel__items { --pivot: 100vh; } /* tighter ring: the neighbours peek in at phone width */ }
 
 .carousel__img {
   height: 100%; width: 100%;
@@ -302,6 +304,7 @@ img{display:block;max-width:100%;}
   /* DEFAULT: full color. Desaturate mode toggled via JS by adding .is-dim */
 }
 .carousel__item.is-dim .carousel__img { filter: grayscale(1) brightness(0.7); }
+.carousel__item:not(.is-dim) { z-index: 1; } /* front card above its neighbours where the ring overlaps (phones) */
 
 /* ---------- specialities: pinned horizontal showpiece ---------- */
 .specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;}
@@ -443,6 +446,11 @@ img{display:block;max-width:100%;}
 .carousel:focus-visible{outline:2px solid var(--blood);outline-offset:-2px;}
 .carousel-hint .hint-touch{display:none;}
 @media (hover:none){.carousel-hint .hint-fine{display:none;}.carousel-hint .hint-touch{display:inline;}}
+.carousel-caption{display:flex;flex-direction:column;align-items:center;gap:8px;
+  min-height:5.4em;padding:20px clamp(0px,4vw,40px) 0;text-align:center;}
+.cc__meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash-mid);}
+.cc__meta b{font-weight:400;color:var(--bone);}
+.cc__line{font-size:14px;line-height:1.6;color:var(--bone);max-width:60ch;}
 .carousel-hint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--ash-mid);text-align:center;padding:16px 0;}
 </style>
@@ -596,6 +604,8 @@ img{display:block;max-width:100%;}
       <div class="carousel__items" id="carouselItems"><!-- cards injected by JS --></div>
     </div>
   </div>
+  <p class="carousel-caption" id="carouselCaption" aria-hidden="true"><span class="cc__meta"></span><span class="cc__line"></span></p>
+  <p class="sr-only" id="carouselLive" aria-live="polite" aria-atomic="true"></p>
   <div class="carousel-hint" id="carouselHint" aria-hidden="true"><span class="hint-fine">◀ drag &middot; arrow keys ▶</span><span class="hint-touch">◀ swipe ▶</span>&ensp;&ensp;<span id="carouselCount"></span></div>
   <p class="sr-only" id="carouselKeys">Left and right arrow keys turn the wheel. Home and End jump to the first and last card.</p>
 </section>
