@@ -66,9 +66,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--blood);outline-offs
    <button> also activates on Enter AND Space — fixes WCAG 2.1.1 Keyboard
    for the Discord copy without a manual keydown handler. */
 .seance__body button.chan{appearance:none;background:none;border:0;padding:0;
-  font:inherit;color:inherit;text-align:left;cursor:pointer;}
+  font:inherit;text-align:left;}
 ::selection{background:var(--blood);color:var(--bone);}
 img{display:block;max-width:100%;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
 
 /* ---------- atmosphere ---------- */
 .grain{position:fixed;inset:0;pointer-events:none;}
@@ -237,8 +238,8 @@ img{display:block;max-width:100%;}
 .ufo svg{display:block;width:100%;height:auto;
   filter:drop-shadow(0 0 9px rgba(74,255,110,.4));
   transition:transform .35s var(--ease),filter .35s var(--ease);}
-.ufo:hover,.ufo:focus-visible{opacity:1;}
-.ufo:hover svg,.ufo:focus-visible svg{transform:scale(1.15);
+.ufo:hover{opacity:1;}
+.ufo:hover svg{transform:scale(1.15);
   filter:drop-shadow(0 0 18px rgba(74,255,110,.8));}
 .ufo__hull{fill:var(--coffin);stroke:var(--hair-bright);}
 .ufo__light{fill:#4aff6e;animation:pulse 2.8s infinite;}
@@ -437,6 +438,9 @@ img{display:block;max-width:100%;}
   [class*="hero__"]{animation:none!important;opacity:1!important;}
 }
 .hero__cue-line.stop{animation:none;}
+.carousel:focus-visible{outline:2px solid var(--blood);outline-offset:-2px;}
+.carousel-hint .hint-touch{display:none;}
+@media (hover:none){.carousel-hint .hint-fine{display:none;}.carousel-hint .hint-touch{display:inline;}}
 .carousel-hint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--ash-dim);text-align:center;padding:16px 0;}
 </style>
@@ -538,8 +542,7 @@ img{display:block;max-width:100%;}
         </div>
       </div>
       <a class="ufo" id="ufo" href="https://github.com/bugsyhewitt/alienclaw" target="_blank" rel="noopener"
-         tabindex="-1" aria-hidden="true"
-         aria-label="AlienClaw — evolvable agent infrastructure. Unidentified craft, identified repo.">
+         tabindex="-1" aria-hidden="true">
         <svg viewBox="0 0 120 64" aria-hidden="true" focusable="false">
           <ellipse cx="60" cy="30" rx="34" ry="13" fill="rgba(74,255,110,.16)"/>
           <path d="M38 26 Q60 4 82 26 Z" fill="rgba(233,230,221,.16)" stroke="rgba(233,230,221,.35)" stroke-width="1.5"/>
@@ -582,12 +585,13 @@ img{display:block;max-width:100%;}
   <h2 class="heading reveal-blur">Necromancer Suite</h2>
   <p class="lede reveal-blur">Nineteen tools. Each one raised for a reason.</p>
 
-  <div class="carousel" id="carousel" role="region" aria-label="Necromancer tool carousel">
+  <div class="carousel" id="carousel" role="region" aria-label="Necromancer tool carousel" aria-describedby="carouselKeys" tabindex="0">
     <div class="carousel__center">
       <div class="carousel__items" id="carouselItems"><!-- cards injected by JS --></div>
     </div>
   </div>
-  <div class="carousel-hint" id="carouselHint" aria-hidden="true">◀ drag &middot; arrow keys ▶&ensp;&ensp;<span id="carouselCount"></span></div>
+  <div class="carousel-hint" id="carouselHint" aria-hidden="true"><span class="hint-fine">◀ drag &middot; arrow keys ▶</span><span class="hint-touch">◀ swipe ▶</span>&ensp;&ensp;<span id="carouselCount"></span></div>
+  <p class="sr-only" id="carouselKeys">Left and right arrow keys turn the wheel. Home and End jump to the first and last card.</p>
 </section>
 
 <!-- ============ SPECIALITIES ============ -->

@@ -23,11 +23,11 @@ export function initCarousel(): void {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // build cards
-  CARDS.forEach(card => {
+  CARDS.forEach((card, i) => {
     const item = document.createElement('div');
     item.className = 'carousel__item';
     item.innerHTML =
-      `<a class="carousel__card" href="${card.repo}" target="_blank" rel="noopener" draggable="false">
+      `<a class="carousel__card" href="${card.repo}" target="_blank" rel="noopener" draggable="false" tabindex="${i === 0 ? 0 : -1}">
          <img class="carousel__img" src="/cards/${card.name}.jpg"
               srcset="/cards/${card.name}-340.jpg 340w, /cards/${card.name}-480.jpg 480w, /cards/${card.name}-680.jpg 680w, /cards/${card.name}.jpg 848w"
               sizes="(max-width: 700px) 240px, (max-width: 1000px) 300px, 340px"
@@ -103,7 +103,6 @@ export function initCarousel(): void {
   // Desaturate all but the front-most card. Front = the item whose world
   // rotation is closest to 0 (pointing up at the viewer).
   function updateFocus(): void {
-    if (!DESATURATE_SIBLINGS) return;
     const wheelRot = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
     let best = 0, bestDelta = Infinity;
     images.forEach((image, i) => {
@@ -114,9 +113,17 @@ export function initCarousel(): void {
       const d = Math.abs(ang);
       if (d < bestDelta) { bestDelta = d; best = i; }
     });
-    images.forEach((image, i) => image.classList.toggle('is-dim', i !== best));
+    images.forEach((image, i) => {
+      if (DESATURATE_SIBLINGS) image.classList.toggle('is-dim', i !== best);
+      image.querySelector('a')!.tabIndex = i === best ? 0 : -1;   // only the front card is a tab stop
+    });
     if (best !== prevBest) {
       prevBest = best;
+      // keyboard user sitting on a card: follow the wheel to the new front card
+      const active = document.activeElement;
+      if (active && active !== wheel && wheel!.contains(active)) {
+        images[best].querySelector<HTMLElement>('a')!.focus({ preventScroll: true });
+      }
       if (!reduceMotion) {
         const img = images[best].querySelector<HTMLElement>('.carousel__img');
         if (img) liquidReveal(img);
@@ -124,24 +131,42 @@ export function initCarousel(): void {
     }
   }
 
-  // Keyboard support: ArrowLeft / ArrowRight advance one card. Hint text
-  // in index.html already advertises "drag · arrow keys", but the handler
-  // was missing — WCAG 2.1.1 Keyboard (BUG-NEW-141).
-  function stepBy(delta: number): void {
-    const current = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
-    const target = Math.round(current / degree) * degree + delta;
-    gsap.to(itemsEl, { rotation: target, duration: 0.4, ease: 'power2.out', onUpdate: updateFocus });
+  // Keyboard (WCAG 2.1.1): the wheel (#carousel, tabindex=0) is the stop, so
+  // arrows keep their normal meaning everywhere else on the page. Card i sits
+  // at its own rotation; turning the wheel by minus that brings it to the front,
+  // so → (next card, on the right) is a negative turn — same feel as dragging left.
+  let keyTarget: number | null = null;   // where a running key tween lands; rapid presses chain off it
+  function rotateTo(target: number): void {
+    keyTarget = target;
+    gsap.to(itemsEl, {
+      rotation: target, duration: 0.4, ease: 'power2.out', overwrite: true,
+      onUpdate: updateFocus, onComplete() { keyTarget = null; },
+    });
   }
-  window.addEventListener('keydown', (e: KeyboardEvent) => {
-    if (e.key === 'ArrowLeft')  { e.preventDefault(); stepBy(-degree); }
-    else if (e.key === 'ArrowRight') { e.preventDefault(); stepBy(degree);  }
+  function stepBy(delta: number): void {
+    const now = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
+    rotateTo((keyTarget ?? Math.round(now / degree) * degree) + delta);
+  }
+  function rotateToIndex(i: number): void {
+    const now = keyTarget ?? ((gsap.getProperty(itemsEl, 'rotation') as number) || 0);
+    const own = (gsap.getProperty(images[i], 'rotation') as number) || 0;
+    const delta = ((((-own - now) % 360) + 540) % 360) - 180;   // shortest way round
+    rotateTo(now + delta);
+  }
+  wheel.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'ArrowRight') stepBy(-degree);
+    else if (e.key === 'ArrowLeft') stepBy(degree);
+    else if (e.key === 'Home') rotateToIndex(0);
+    else if (e.key === 'End') rotateToIndex(total - 1);
+    else return;
+    e.preventDefault();
   });
 
   // Draggable rotation with snap + focus update.
   Draggable.create(itemsEl, {
     type: 'rotation',
     inertia: false,
-    onPress() { dragged = false; },
+    onPress() { dragged = false; keyTarget = null; },
     onDragStart() { dragged = true; },
     onDrag: updateFocus,
     onDragEnd(this: Draggable) {
