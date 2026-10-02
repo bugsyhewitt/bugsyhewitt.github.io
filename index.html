@@ -484,6 +484,94 @@ img{display:block;max-width:100%;}
 .cc__line{font-size:14px;line-height:1.6;color:var(--bone);max-width:60ch;}
 .carousel-hint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--ash-mid);text-align:center;padding:16px 0;}
+
+/* ---------- print: the Coroner's Record on paper ---------- */
+@page{margin:14mm 14mm 16mm;}
+@media print{
+  html,body{background:#fff!important;color:var(--ink);font-size:10.5pt;line-height:1.5;overflow:visible!important;}
+  .grimoire-carousel,.hero__inner{overflow:visible!important;}  /* clipped boxes don't paginate */
+  *{cursor:auto!important;}
+  .grain,.spine,.nav,.hero__gl,.hero__photo,.hero__scrim,.hero__cue,.veil,canvas,.marquee,.ufo,
+  .carousel-hint,.carousel-caption,.specs-hint,.specs-progress,.term-cursor,.seance__bar,
+  .seance__prompt,.seance__out,.sline--dim,.cur{display:none!important;}
+  .reveal,.reveal-blur,.project__name{opacity:1!important;filter:none!important;transform:none!important;}
+  /* one section per sheet; never strand a heading */
+  .eyebrow--suite,#specialities,#loadout,#contact{break-before:page;}
+  .heading,.lede,.eyebrow{break-after:avoid;}
+  /* ScrollTrigger's pin spacer carries the whole horizontal scroll as padding */
+  .pin-spacer{padding:0!important;height:auto!important;width:auto!important;max-width:none!important;
+    margin:0!important;inset:auto!important;}
+  /* fixed units only: vw/vh and width queries would follow the screen, not the sheet */
+  .hero__title{margin-top:2mm;}
+  .lede,.spec-panel__intro{font-size:10.5pt;}
+  .project{grid-template-columns:16mm 1fr;}
+  .project__num{font-size:20pt;}
+  .inspect{margin-left:auto;margin-top:0;}
+  .specs-pin,.loadout,.seance{margin-top:3mm;}
+  .spec__list{grid-template-columns:1fr 1fr;gap:0 6mm;}
+  .loadout{grid-template-columns:1fr 1fr;}
+  .seance__body{padding:4mm 5mm;font-size:9.5pt;}
+  /* hero: name block only */
+  .hero,.hero__inner{height:auto!important;position:static!important;background:none!important;overflow:visible;}
+  .hero__content{opacity:1!important;transform:none!important;padding:0 0 4mm;}
+  .hero__eyebrow,.hero__name,.hero__title,.hero__role{animation:none!important;opacity:1!important;color:var(--ink);}
+  .hero__name{font-size:46pt;}
+  .hero__title{font-size:15pt;color:var(--ink-soft);}
+  .hero__role{font-size:10pt;color:var(--ink-soft);}
+  /* manifesto as plain lines */
+  .intro{background:none!important;padding:0 0 3mm;}
+  .iline{font-size:11pt;line-height:1.4;color:var(--ink)!important;white-space:normal;min-height:0;}
+  .section{padding:4mm 0 0;}
+  .eyebrow--suite{margin-top:0;}
+  .lede{margin-top:2mm;}
+  .eyebrow{color:var(--ink-soft);margin-bottom:2mm;}
+  .eyebrow::before{background:var(--ink-soft);}
+  .heading{font-size:26pt;color:var(--ink);}
+  .contact .heading{font-size:26pt;}
+  .lede,.project__blurb,.spec-panel__intro,.tcol li,.raised{color:var(--ink-soft)!important;}
+  .project__blurb .accent{color:var(--ink);}
+  .project{margin:0;padding:3mm 0;gap:4mm;border-top:1px solid #d9d6cf;break-inside:avoid;}
+  .project__blurb{margin-top:1mm;}
+  .project__meta{margin-top:2mm;}
+  .project__num{color:#c9c5bb;}
+  .project__name{font-size:18pt;color:var(--ink);}
+  .tag{color:var(--ink-soft);border-color:#d9d6cf;}
+  .inspect{color:var(--ink);border:none;}
+  .inspect::after{content:" " attr(href);letter-spacing:0;text-transform:none;color:var(--ink-soft);}
+  /* the deck: a 5 × 4 contact sheet of the twenty covers */
+  .carousel{height:auto!important;overflow:visible!important;border:none;margin-top:3mm;}
+  .carousel__center{position:static!important;transform:none!important;}
+  .carousel__items{display:grid!important;grid-template-columns:repeat(5,1fr);gap:3mm;transform:none!important;break-inside:avoid;}
+  .carousel__item{position:static!important;transform:none!important;break-inside:avoid;}
+  .carousel__card{width:auto!important;height:auto!important;aspect-ratio:848/1264;border:none;border-radius:2mm;box-shadow:none;transform:none!important;}
+  .carousel__card::after{display:none;}
+  .carousel__img{filter:none!important;}
+  /* disciplines stacked, as on a phone */
+  .specs-pin{height:auto!important;min-height:0;overflow:visible;border:none;background:none;
+    width:auto!important;max-width:none!important;max-height:none!important; /* ScrollTrigger pins with inline max-height */
+    margin-left:0;position:static!important;transform:none!important;inset:auto!important;}
+  .specs-track{flex-direction:column;width:100%!important;height:auto;transform:none!important;}
+  .spec-panel{flex:0 0 auto;height:auto;padding:3mm 0;border:none;border-top:1px solid #d9d6cf;break-inside:avoid;}
+  .spec-panel__intro{margin-bottom:2mm;}
+  .spec-panel__name{font-size:18pt;color:var(--ink);margin:1mm 0 2mm;}
+  .spec__tag{color:var(--ink-soft);}
+  .spec__list li{color:var(--ink);border-color:#e4e1da;padding:.8mm 0;}
+  .loadout{background:none;border:none;gap:0 6mm;}
+  .tcol{background:none;padding:2mm 0;break-inside:avoid;}
+  .tcol__head{border-color:#d9d6cf;}
+  .tcol li{border-color:#e4e1da;padding:1.4mm 0;}
+  .tcol__head h3,.loadout.is-terminal .tcol__head h3{color:var(--ink);}
+  .loadout.is-terminal .tcol .pending,.loadout.is-terminal .tcol__head.pending{opacity:1;}
+  .term-rest{display:none;}
+  /* contact: the channels as a plain list with their addresses */
+  .seance{border:1px solid #d9d6cf;background:none;max-width:none;break-inside:avoid;}
+  .seance__body{color:var(--ink);overflow:visible;}
+  .seance.is-live .sline,.seance.is-live .chan{opacity:1!important;}
+  .sline,.chan,.chan__k{color:var(--ink-soft)!important;}
+  .chan__v{color:var(--ink);}
+  .chan[href^="http"]::after{content:"   " attr(href);color:var(--ink-soft);}
+  .footbar{color:var(--ink-soft);padding-top:5mm;}
+}
 </style>
 </head>
 <body>
