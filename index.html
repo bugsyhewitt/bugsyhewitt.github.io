@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>document.documentElement.className='js'</script><!-- before CSS: hidden-until-revealed states only apply when scripts run -->
 <title>Bugsy Hewitt — Digital Necromancer</title>
 <meta name="description" content="Bugsy Hewitt — Digital Necromancer. Bug bounty hunter and offensive security researcher." />
 <meta name="theme-color" content="#000000" />
@@ -362,6 +363,15 @@ img{display:block;max-width:100%;}
   .spec__list{grid-template-columns:1fr;}
   .specs-progress,.specs-hint{display:none;}
 }
+/* without scripts nothing pins, reveals or turns: stack, show, and list the deck (<noscript>) */
+.no-js .specs-pin{height:auto;min-height:0;overflow:visible;border:none;background:transparent;width:auto;margin-left:0;}
+.no-js .specs-track{flex-direction:column;width:100%;height:auto;}
+.no-js .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);padding:clamp(30px,8vw,48px) 4vw;}
+.no-js .specs-progress,.no-js .specs-hint,.no-js .carousel,.no-js .carousel-caption,.no-js .carousel-hint{display:none;}
+.no-js .nav{transform:none;visibility:visible;border-color:var(--hair);}
+.deck-list{list-style:none;columns:2 18rem;column-gap:clamp(20px,3vw,56px);margin-top:clamp(30px,5vh,56px);}
+.deck-list li{break-inside:avoid;padding:11px 0;border-top:1px solid var(--hair);font-size:13px;color:var(--ash);}
+.deck-list a{color:var(--bone);}
 
 /* ---------- loadout ---------- */
 .loadout{margin-top:clamp(46px,7vh,86px);display:grid;grid-template-columns:repeat(4,1fr);
@@ -434,12 +444,12 @@ img{display:block;max-width:100%;}
 .intro>:not(.veil),.contact>:not(.veil),#grimoire>:not(.veil){position:relative;z-index:1;}
 
 /* ---------- reveal ---------- */
-.reveal{opacity:0;transform:translateY(30px);
+.js .reveal{opacity:0;transform:translateY(30px);
   transition:opacity 1s var(--ease),transform 1s var(--ease);}
-.reveal.in{opacity:1;transform:none;}
-.reveal-blur{opacity:0;filter:blur(14px);transform:translateY(24px);
+.js .reveal.in{opacity:1;transform:none;}
+.js .reveal-blur{opacity:0;filter:blur(14px);transform:translateY(24px);
   transition:opacity 1s var(--ease),filter 1.1s var(--ease),transform 1s var(--ease);}
-.reveal-blur.in{opacity:1;filter:blur(0);transform:none;}
+.js .reveal-blur.in{opacity:1;filter:blur(0);transform:none;}
 
 /* ---------- responsive ---------- */
 @media (hover:hover){
@@ -465,8 +475,8 @@ img{display:block;max-width:100%;}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
-  .reveal{opacity:1;transform:none;transition:none;}
-  .reveal-blur{opacity:1;filter:none;transform:none;transition:none;}
+  .js .reveal{opacity:1;transform:none;transition:none;}
+  .js .reveal-blur{opacity:1;filter:none;transform:none;transition:none;}
   .veil{display:none;}
   .marquee__track,.hero__cue-line,.ufo{animation:none;}
   .ufo__light,.iline .cur,.term-cursor{animation:none;}
@@ -723,6 +733,7 @@ img{display:block;max-width:100%;}
       <div class="carousel__items" id="carouselItems"><!-- cards injected by JS --></div>
     </div>
   </div>
+  <!--deck-noscript-->
   <p class="carousel-caption" id="carouselCaption" aria-hidden="true"><span class="cc__meta"></span><span class="cc__line"></span></p>
   <p class="sr-only" id="carouselLive" aria-live="polite" aria-atomic="true"></p>
   <div class="carousel-hint" id="carouselHint" aria-hidden="true"><span class="hint-fine">◀ drag &middot; arrow keys ▶</span><span class="hint-touch">◀ swipe ▶</span>&ensp;&ensp;<span id="carouselCount"></span></div>
