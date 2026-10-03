@@ -377,9 +377,15 @@ img{display:block;max-width:100%;}
 .carousel__item .carousel__card.has-light::after { opacity: 0; }
 
 /* ---------- specialities: pinned horizontal showpiece ---------- */
-.specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;}
-.specs-pin{margin-top:clamp(40px,6vh,72px);position:relative;height:calc(100vh - var(--nav-h,70px));height:calc(100svh - var(--nav-h,70px));min-height:520px;overflow:hidden;
-  width:100vw;margin-left:calc(50% - 50vw); /* full-bleed so each panel is a full viewport width */
+/* Three layouts, picked in src/specialities/index.ts. Title stage (wide, tall desktops; .is-stage
+   below): the whole section pins, the title stays and the disciplines slide in a band beneath it.
+   Band (other desktops; these base rules): the band alone pins, a screen tall. Stack (phones,
+   reduced motion, no-JS, print): nothing pins. */
+#specialities{--gutter:clamp(24px,6vw,96px);} /* = .section's side padding: one left edge */
+#specialities .lede{max-width:none;} /* "Scroll —" stays on the sentence's line */
+.specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;white-space:nowrap;}
+.specs-pin{position:relative;height:calc(100vh - var(--nav-h,70px));height:calc(100svh - var(--nav-h,70px));min-height:520px;overflow:hidden;
+  margin-inline:calc(-1*var(--gutter)); /* full-bleed past the gutter (100vw would also count the scrollbar) */
   background:linear-gradient(var(--coffin) calc(100% - 24vh),var(--void));} /* sinks into the black, as the deck's fog does */
 /* Specialities is one grey room: it fades in over the space just above the heading (the section's
    top padding) and the panel fades it out. Pinned layout only; the stacked fallbacks stay on black. */
@@ -387,7 +393,7 @@ img{display:block;max-width:100%;}
   var(--coffin) calc(100% - clamp(80px,13vh,170px)),var(--void) calc(100% - clamp(80px,13vh,170px)));}
 .specs-track{display:flex;height:100%;width:calc(var(--n,3)*100%);will-change:transform;}
 .spec-panel{position:relative;flex:0 0 calc(100%/var(--n,3));height:100%;overflow:hidden;
-  display:flex;align-items:center;padding:clamp(26px,5vw,80px);}
+  display:flex;align-items:flex-start;padding:clamp(48px,7vh,76px) var(--gutter) 0;} /* one rhythm step under the lede */
 .spec-panel::after{content:"";position:absolute;top:0;right:0;bottom:0;width:1px;pointer-events:none;
   background:linear-gradient(transparent,var(--hair) 24vh,var(--hair) calc(100% - 24vh),transparent);} /* divider fades with the panel */
 .spec-panel:last-child::after{content:none;}
@@ -404,11 +410,30 @@ img{display:block;max-width:100%;}
 .specs-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hair);z-index:2;}
 .specs-progress i{display:block;height:100%;width:calc(100%/var(--n,3));background:var(--blood);
   transform-origin:left;transition:transform .1s linear;}
+/* title stage: one screen, the header on top and a content-height band that slides beneath it */
+@media screen{
+  #specialities.is-stage{min-height:calc(100vh - var(--nav-h,70px));min-height:calc(100svh - var(--nav-h,70px));
+    display:flex;flex-direction:column;justify-content:center;padding-block:clamp(24px,5vh,64px);
+    background:linear-gradient(var(--void),var(--coffin) 12vh,var(--coffin) calc(100% - 12vh),var(--void));}
+  .is-stage .heading{font-size:clamp(3rem,min(8.5vw,11vh),6.6rem);}
+  .is-stage .specs-pin{height:auto;min-height:0;margin-top:clamp(32px,6vh,64px);background:none;}
+  .is-stage .specs-track{height:auto;}
+  .is-stage .spec-panel{height:auto;padding:clamp(20px,3.5vh,40px) var(--gutter) clamp(28px,4.5vh,52px);}
+  .is-stage .spec-panel::after{background:linear-gradient(transparent,var(--hair) 25%,var(--hair) 75%,transparent);}
+  .is-stage .spec-panel__body{max-width:none;width:100%;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr);
+    column-gap:clamp(40px,4.5vw,96px);align-items:start;} /* the list gets the room: one line per item from 1440 */
+  .is-stage .spec__tag,.is-stage .spec-panel__name,.is-stage .spec-panel__intro{grid-column:1;}
+  .is-stage .spec-panel__name{font-size:clamp(2.4rem,min(6vw,8vh),5rem);}
+  .is-stage .spec-panel__intro{margin-bottom:0;}
+  .is-stage .spec__list{grid-column:2;grid-row:2 / span 2;align-self:start;margin-top:.55em;} /* opens level with the name */
+  .is-stage .spec__list li{padding-block:8px;}
+}
+@media screen and (max-width:1439px){ .is-stage .spec__list{grid-template-columns:1fr;} } /* two columns would wrap the items */
 /* no-pin fallback (mobile OR reduced-motion — JS pins only on the complement,
    query mirrored in src/specialities/index.ts): stack panels, scroll normally */
 @media (max-width:767px),(prefers-reduced-motion:reduce){
   .specs-pin{height:auto;min-height:0;overflow:visible;border:none;background:transparent;
-    width:auto;margin-left:0;}
+    width:auto;margin-inline:0;margin-top:clamp(40px,6vh,72px);}
   .specs-track{flex-direction:column;width:100%;height:auto;transform:none!important;}
   .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);
     padding:clamp(30px,8vw,48px) 0;}
@@ -418,7 +443,7 @@ img{display:block;max-width:100%;}
   .specs-progress,.specs-hint{display:none;}
 }
 /* without scripts nothing pins, reveals or turns: stack, show, and list the deck (<noscript>) */
-.no-js .specs-pin{height:auto;min-height:0;overflow:visible;border:none;background:transparent;width:auto;margin-left:0;}
+.no-js .specs-pin{height:auto;min-height:0;overflow:visible;border:none;background:transparent;width:auto;margin-inline:0;margin-top:clamp(40px,6vh,72px);}
 .no-js .specs-track{flex-direction:column;width:100%;height:auto;}
 .no-js .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);padding:clamp(30px,8vw,48px) 0;}
 .no-js .spec-panel::after{content:none;}
@@ -577,7 +602,7 @@ img{display:block;max-width:100%;}
   .heading,.lede,.eyebrow{break-after:avoid;}
   /* ScrollTrigger's pin spacer carries the whole horizontal scroll as padding */
   .pin-spacer{padding:0!important;height:auto!important;width:auto!important;max-width:none!important;
-    margin:0!important;inset:auto!important;}
+    margin:0!important;inset:auto!important;display:block!important;}
   /* fixed units only: vw/vh and width queries would follow the screen, not the sheet */
   .hero__title{margin-top:2mm;}
   .lede,.spec-panel__intro{font-size:10.5pt;}
@@ -626,11 +651,12 @@ img{display:block;max-width:100%;}
   /* disciplines stacked, as on a phone */
   .specs-pin{height:auto!important;min-height:0;overflow:visible;border:none;background:none;
     width:auto!important;max-width:none!important;max-height:none!important; /* ScrollTrigger pins with inline max-height */
-    margin-left:0;position:static!important;transform:none!important;inset:auto!important;}
+    margin-inline:0;position:static!important;transform:none!important;inset:auto!important;}
   .specs-track{flex-direction:column;width:100%!important;height:auto;transform:none!important;}
   .spec-panel{flex:0 0 auto;height:auto;padding:3mm 0;border:none;border-top:1px solid #d9d6cf;break-inside:avoid;}
   .spec-panel::after{content:none;}
-  #specialities{background:none;}
+  #specialities{background:none;display:block!important;min-height:0!important;height:auto!important;max-height:none!important;
+    width:auto!important;max-width:none!important;position:static!important;transform:none!important;inset:auto!important;}
   .spec-panel__intro{margin-bottom:2mm;}
   .spec-panel__name{font-size:18pt;color:var(--ink);margin:1mm 0 2mm;}
   .spec__tag{color:var(--ink-soft);}

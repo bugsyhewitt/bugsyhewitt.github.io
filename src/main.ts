@@ -184,7 +184,7 @@ if (FINE && !REDUCE) {
 }
 if (!REDUCE) safe('veil', initVeil);
 if (lenis) safe('marquee', () => initMarqueeSkew(lenis));
-safe('specialities', initSpecialities);
+safe('specialities', () => initSpecialities(lenis));
 safe('loadout', initLoadout);
 safe('contact', initContact);
 // heading line-rise (SplitText) loads on its own, after first paint
