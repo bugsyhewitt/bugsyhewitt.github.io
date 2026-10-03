@@ -1,12 +1,16 @@
 import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
+import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { CARDS, repoUrl, title } from './cards';
 import { raisedOn, isAlive } from '../raised';
-import { initFoil } from './foil';
+import { initFoil, initTilt } from './foil';
+import { makeProof } from './proof';
+import { RITE, DUR } from '../fx/motion';
+import { tick } from '../fx/sound';
 
-gsap.registerPlugin(Draggable);
+gsap.registerPlugin(Draggable, InertiaPlugin);
 
-// front card full color, others greyscale. Flip to false for all-color.
+// front card in full colour, the rest as newsprint proofs. Flip to false for all-colour.
 const DESATURATE_SIBLINGS = true;
 
 export interface CarouselOptions {
@@ -50,6 +54,8 @@ export function initCarousel(opts: CarouselOptions = {}): void {
        </a>`;
     // the cover's printed text, so the card reads the same to a screen reader or a crawler
     item.querySelector('img')!.alt = `${title(card)}, resurrects ${card.raises}: ${card.tagline}`;
+    // where this cover would be foil-stamped (CSSOM, not a style attribute: keeps the CSP tight)
+    item.querySelector<HTMLElement>('.carousel__card')!.style.setProperty('--foil-mask', `url(/cards/fx/${card.name}-foil.webp)`);
     itemsEl.appendChild(item);
   });
 
@@ -59,6 +65,23 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   const images = gsap.utils.toArray<HTMLElement>('.carousel__item');
   const total = images.length;
   const degree = 360 / total;
+
+  // Newsprint proofs for the dimmed cards: screened once each cover has loaded, in idle
+  // time. Until a card has one it keeps the plain grey (CSS: .is-dim:not(.has-proof)).
+  // (with a timeout: the page's animation loops keep frames busy enough that a bare
+  // requestIdleCallback never fires)
+  const idle = (fn: () => void): void => {
+    if ('requestIdleCallback' in window) window.requestIdleCallback(fn, { timeout: 500 }); else setTimeout(fn, 1);
+  };
+  images.forEach(item => {
+    const card = item.querySelector<HTMLElement>('.carousel__card')!;
+    const img = item.querySelector<HTMLImageElement>('.carousel__img')!;
+    const proofIt = (): void => idle(() => {
+      const proof = makeProof(img, card.clientWidth);
+      if (proof) { img.before(proof); item.classList.add('has-proof'); }
+    });
+    if (img.complete && img.naturalWidth) proofIt(); else img.addEventListener('load', proofIt, { once: true });
+  });
 
   // Prevent a click firing at the end of a drag.
   let dragged = false;
@@ -88,7 +111,7 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       rotation: index % 2 ? 200 : -200,
       scale: 4,
       opacity: 1,
-      ease: 'power4.out',
+      ease: RITE,
       duration: 1,
       delay: 0.15 * Math.floor(index / 2),
     }, 0);
@@ -99,28 +122,14 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       transformOrigin: `center ${pivot}`, // same pivot as .carousel__items (CSS --pivot)
       rotation: index > total / 2 ? -degree * (total - index) : rotationAngle,
       duration: 1,
-      ease: 'power1.out',
+      ease: RITE,
     }, assembleAt);
   });
 
-  // Liquid materialize on the incoming front card: displace through the shared
-  // #liquid SVG filter for ~0.6s, then drop the inline filter so drag stays cheap.
   let prevBest = -1;
-  let revealImg: HTMLElement | null = null;
-  function liquidReveal(img: HTMLElement): void {
-    const disp = document.getElementById('liquidDisp');
-    if (!disp) return;
-    if (revealImg && revealImg !== img) revealImg.style.filter = ''; // interrupted reveal: unfilter the old card
-    revealImg = img;
-    gsap.killTweensOf(disp);
-    img.style.filter = 'url(#liquid)';
-    gsap.fromTo(disp, { attr: { scale: 26 } }, {
-      attr: { scale: 0 }, duration: 0.6, ease: 'power2.out',
-      onComplete() { img.style.filter = ''; if (revealImg === img) revealImg = null; },
-    });
-  }
+  const cardOf = (i: number): HTMLElement => images[i].querySelector<HTMLElement>('.carousel__card')!;
 
-  // Desaturate all but the front-most card. Front = the item whose world
+  // Proof all but the front-most card; the one arriving comes into register (CSS). Front = the item whose world
   // rotation is closest to 0 (pointing up at the viewer).
   function updateFocus(): void {
     const wheelRot = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
@@ -133,21 +142,21 @@ export function initCarousel(opts: CarouselOptions = {}): void {
       const d = Math.abs(ang);
       if (d < bestDelta) { bestDelta = d; best = i; }
     });
-    images.forEach((image, i) => {
-      if (DESATURATE_SIBLINGS) image.classList.toggle('is-dim', i !== best);
-      image.querySelector('a')!.tabIndex = i === best ? 0 : -1;   // only the front card is a tab stop
-    });
     if (best !== prevBest) {
+      if (prevBest >= 0) cardOf(prevBest).style.removeProperty('--lean');   // only the front card leans
       prevBest = best;
+      // runs per drag frame: touch the DOM only when the front card actually changes
+      images.forEach((image, i) => {
+        image.classList.toggle('is-front', i === best);   // explicit: before the first pass no card is dim
+        if (DESATURATE_SIBLINGS) image.classList.toggle('is-dim', i !== best);
+        image.querySelector('a')!.tabIndex = i === best ? 0 : -1;   // only the front card is a tab stop
+      });
       paintCaption(best);
+      tick(reduceMotion ? 0 : InertiaPlugin.getVelocity(itemsEl!, 'rotation') || 0);   // opt-in: silent unless enabled
       // keyboard user sitting on a card: follow the wheel to the new front card
       const active = document.activeElement;
       if (active && active !== wheel && wheel!.contains(active)) {
         images[best].querySelector<HTMLElement>('a')!.focus({ preventScroll: true });
-      }
-      if (!reduceMotion) {
-        const img = images[best].querySelector<HTMLElement>('.carousel__img');
-        if (img) liquidReveal(img);
       }
     }
   }
@@ -181,10 +190,12 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   // at its own rotation; turning the wheel by minus that brings it to the front,
   // so → (next card, on the right) is a negative turn — same feel as dragging left.
   let keyTarget: number | null = null;   // where a running key tween lands; rapid presses chain off it
+  let proxy: HTMLElement | null = null;  // touch only: the stand-in a sideways drag throws (below)
   function rotateTo(target: number): void {
     keyTarget = target;
+    if (proxy) gsap.killTweensOf(proxy);   // a flick still coasting would fight the turn
     gsap.to(itemsEl, {
-      rotation: target, duration: reduceMotion ? 0 : 0.4, ease: 'power2.out', overwrite: true,
+      rotation: target, duration: reduceMotion ? 0 : DUR.short, ease: RITE, overwrite: true,
       onUpdate: updateFocus, onComplete() { keyTarget = null; updateFocus(); settle(true); },
     });
   }
@@ -198,7 +209,11 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     const delta = ((((-own - now) % 360) + 540) % 360) - 180;   // shortest way round
     rotateTo(now + delta);
   }
+  // the visitor took the wheel while the cards are still flying in: land them first,
+  // or the front card is judged against a fan that's still moving
+  const finishEntrance = (): void => { if (!ready && played) tl.progress(1); };
   wheel.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) finishEntrance();
     if (e.key === 'ArrowRight') stepBy(-degree);
     else if (e.key === 'ArrowLeft') stepBy(degree);
     else if (e.key === 'Home') rotateToIndex(0);
@@ -207,23 +222,74 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     e.preventDefault();
   });
 
-  // Draggable rotation with snap + focus update.
-  Draggable.create(itemsEl, {
-    type: 'rotation',
-    inertia: false,
-    onPress() { dragged = false; keyTarget = null; },
+  // Weight: a flick carries on and settles exactly on a card (InertiaPlugin snap), and the
+  // front card leans into the turn with the wheel's speed. Reduced motion: a plain snap.
+  const notch = (v: number): number => Math.round(v / degree) * degree;
+  const lean = (): void => {
+    if (prevBest < 0) return;
+    const v = InertiaPlugin.getVelocity(itemsEl, 'rotation') || 0;   // deg/s
+    cardOf(prevBest).style.setProperty('--lean', `${Math.max(-4, Math.min(4, -v / 90)).toFixed(2)}deg`);
+  };
+  const moving = (): void => { updateFocus(); if (!reduceMotion) lean(); };
+  if (!reduceMotion) InertiaPlugin.track(itemsEl, 'rotation');
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const turning = {
+    inertia: !reduceMotion,
+    minDuration: 0.3,
+    maxDuration: 1.4,
+    onPress() { dragged = false; keyTarget = null; finishEntrance(); },
     onDragStart() { dragged = true; },
-    onDrag: updateFocus,
-    onDragEnd(this: Draggable) {
-      // land on the nearest card — a short drag moves one step, a fling moves several
-      const snapped = Math.round(this.rotation / degree) * degree;
-      gsap.to(itemsEl, { rotation: snapped, onUpdate: updateFocus, onComplete() { settle(true); } });
+    onThrowComplete() {
+      updateFocus();
+      if (prevBest >= 0) cardOf(prevBest).style.removeProperty('--lean');
+      settle(true);
+    },
+    onDragEnd() {
+      if (reduceMotion) {   // no throw: land on the nearest card straight away
+        const at = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
+        gsap.to(itemsEl, { rotation: notch(at), duration: 0, onUpdate: updateFocus, onComplete() { settle(true); } });
+      }
       // clear the drag flag shortly after so genuine clicks work next time
       setTimeout(() => { dragged = false; }, 0);
     },
-  });
+  };
+  if (fine) {
+    Draggable.create(itemsEl, { ...turning, type: 'rotation', snap: notch, onDrag: moving, onThrowUpdate: moving });
+  } else {
+    // Touch: a rotation drag claims every gesture (touch-action: none), so a phone could
+    // not scroll past the deck. Here a sideways drag of a stand-in turns the wheel instead,
+    // and an up/down swipe on the cards still scrolls the page (touch-action: pan-y).
+    proxy = document.createElement('div');
+    let rot0 = 0, x0 = 0, perPx = 0.1;   // wheel angle and stand-in x at the press; degrees per px
+    const turn = function (this: Draggable): void {
+      gsap.set(itemsEl, { rotation: rot0 + (this.x - x0) * perPx });
+      moving();
+    };
+    Draggable.create(proxy, {
+      ...turning,
+      type: 'x',
+      trigger: itemsEl,
+      // the notch nearest where the wheel would stop, as a stand-in x
+      snap: (x: number) => x0 + (notch(rot0 + (x - x0) * perPx) - rot0) / perPx,
+      onPress(this: Draggable) {
+        gsap.killTweensOf(itemsEl, 'rotation');   // a key turn in flight
+        rot0 = (gsap.getProperty(itemsEl, 'rotation') as number) || 0;
+        x0 = this.x;
+        // the card under the finger follows it: its orbit radius is the pivot less half a card
+        const orbit = parseFloat(getComputedStyle(itemsEl).transformOrigin.split(' ')[1]) - cardOf(0).offsetHeight / 2;
+        if (orbit > 0) perPx = 180 / (Math.PI * orbit);
+        this.vars.throwResistance = 100 / perPx;   // a flick carries as far as the desktop wheel's
+        turning.onPress();
+      },
+      onDrag: turn,
+      onThrowUpdate: turn,
+    });
+  }
 
-  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) initFoil(wheel);
+  if (!reduceMotion) {
+    if (fine) initFoil(wheel);
+    else if (window.matchMedia('(hover: none)').matches) initTilt(wheel, document.getElementById('deckTilt') as HTMLButtonElement | null);
+  }
 
   let ready = false, pending = -1;   // set once the entrance has assembled the wheel
 
@@ -233,7 +299,8 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     entries.forEach(entry => {
       if (entry.isIntersecting && !played) {
         played = true;
-        if (reduceMotion) { tl.progress(1); assembled(); }
+        // reduced motion, or arriving for a named card: skip the fly-in and show it now
+        if (reduceMotion || pending >= 0) { tl.progress(1); assembled(); }
         else { tl.play(); tl.eventCallback('onComplete', assembled); }
       }
     });
@@ -242,6 +309,12 @@ export function initCarousel(opts: CarouselOptions = {}): void {
 
   // Summoning: deep links (#card=reaper), hash edits, and the séance's `summon`.
   function assembled(): void {
+    if (!ready && !reduceMotion && fine && window.innerWidth >= 768) {
+      // real light on the front card: desktop only, loaded once the deck is up
+      import('./light')
+        .then(m => m.initLight(wheel!, () => gsap.isTweening(itemsEl)))
+        .catch(() => { /* no WebGL / chunk failed: the CSS foil carries on */ });
+    }
     ready = true;
     updateFocus();
     if (pending >= 0) { rotateToIndex(pending); pending = -1; }
@@ -249,7 +322,8 @@ export function initCarousel(opts: CarouselOptions = {}): void {
   function summon(i: number): void {
     if (opts.scrollTo) opts.scrollTo(wheel!);
     else wheel!.scrollIntoView?.({ block: 'center' });
-    if (ready) rotateToIndex(i); else pending = i;
+    if (ready) rotateToIndex(i);
+    else { pending = i; finishEntrance(); }   // entrance under way: finish it at once
   }
   summonByName = name => {
     const i = CARDS.findIndex(c => c.name === name.trim().toLowerCase());
