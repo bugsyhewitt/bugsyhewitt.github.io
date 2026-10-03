@@ -27,7 +27,9 @@ export function initLenis(): Lenis | null {
       const target = document.querySelector(href);
       if (!target) return;
       e.preventDefault();
-      lenis.scrollTo(target as HTMLElement);
+      // a pinned section is measured where the pin holds it; its spacer is where it really sits
+      const spacer = target.parentElement?.classList.contains('pin-spacer') ? target.parentElement : null;
+      lenis.scrollTo((spacer ?? target) as HTMLElement);
     });
   });
 
