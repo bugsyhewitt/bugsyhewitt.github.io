@@ -8,7 +8,6 @@ import { initSpecialities } from './specialities';
 import { initLoadout } from './loadout';
 import { initContact } from './contact';
 import { markAlive } from './raised';
-import { initSound } from './fx/sound';
 import type Lenis from 'lenis';
 
 declare const __HERO__: string;   // '/hero.webp' or '/hero.jpg', chosen at build (scripts/hero.ts)
@@ -169,7 +168,6 @@ if (heroGL && window.innerWidth >= 768 && window.matchMedia('(hover: hover)').ma
 }
 
 markAlive();
-safe('sound', () => initSound(document.getElementById('soundToggle') as HTMLButtonElement | null));
 // Each section boots on its own: one throwing must not take the rest down.
 function safe(name: string, init: () => void): void {
   try { init(); } catch (e) { console.warn(`[${name}] init failed:`, e); }

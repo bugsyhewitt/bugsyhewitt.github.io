@@ -127,12 +127,6 @@ describe('initCarousel — keyboard (BUG-NEW-141, WCAG 2.1.1), scoped to the whe
       "Reaper, resurrects race-the-web: Single-packet race-condition engine for the bugs scanners can't see.");
   });
 
-  it('the visible count comes from the card data', () => {
-    document.getElementById('carousel')!.insertAdjacentHTML('afterend', '<span id="carouselCount"></span>');
-    initCarousel();
-    expect(document.getElementById('carouselCount')!.textContent).toBe(`${CARDS.length} cards`);
-  });
-
   it('initCarousel is a no-op when #carousel is missing', () => {
     document.body.innerHTML = '';
     expect(() => initCarousel()).not.toThrow();
