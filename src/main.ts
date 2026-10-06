@@ -182,9 +182,11 @@ if (FINE && !REDUCE) {
 }
 if (!REDUCE) safe('veil', initVeil);
 if (lenis) safe('marquee', () => initMarqueeSkew(lenis));
-safe('specialities', initSpecialities);
+safe('specialities', () => initSpecialities(lenis));
 safe('loadout', initLoadout);
 safe('contact', initContact);
+// heading line-rise (SplitText) loads on its own, after first paint
+if (!REDUCE) import('./fx/headings').then(m => m.initHeadings()).catch(e => console.warn('[headings] skipped:', e));
 
 // for whoever opens the devtools
 console.log('%cThe veil is thin here too.%c Type help in the séance.',

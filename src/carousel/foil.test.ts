@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { initFoil } from './foil';
+import { initFoil, initTilt } from './foil';
 
 const move = (el: EventTarget, x: number, y: number) =>
   el.dispatchEvent(Object.assign(new Event('pointermove'), { clientX: x, clientY: y }));
@@ -12,7 +12,7 @@ describe('initFoil — monochrome sheen on the front card only', () => {
     document.body.innerHTML = `
       <div id="carousel">
         <div class="carousel__item is-dim"><a class="carousel__card" id="dim"></a></div>
-        <div class="carousel__item"><a class="carousel__card" id="front"></a></div>
+        <div class="carousel__item is-front"><a class="carousel__card" id="front"></a></div>
       </div>`;
     wheel = document.getElementById('carousel')!;
     front = document.getElementById('front')!;
@@ -48,5 +48,46 @@ describe('initFoil — monochrome sheen on the front card only', () => {
     expect(prop(front, '--foil')).toBe('');
     move(wheel, 210, 250);                 // held: no sheen mid-drag
     expect(prop(front, '--foil')).toBe('');
+  });
+});
+
+describe('initTilt — the gyroscope moves the light on phones', () => {
+  let wheel: HTMLElement, front: HTMLElement;
+  const tilt = (beta: number, gamma: number) =>
+    window.dispatchEvent(Object.assign(new Event('deviceorientation'), { beta, gamma }));
+
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <div id="carousel"><div class="carousel__item is-front"><a class="carousel__card" id="front"></a></div></div>
+      <button id="deckTilt" hidden></button>`;
+    wheel = document.getElementById('carousel')!;
+    front = document.getElementById('front')!;
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => { cb(0); return 0; });
+  });
+  afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ''; });
+
+  it('the first reading is neutral; tilting right and toward you moves the light', () => {
+    initTilt(wheel, document.getElementById('deckTilt') as HTMLButtonElement);
+    tilt(40, 0);                                    // how the phone is held: centre
+    expect(prop(front, '--mx')).toBe('50.0%');
+    tilt(40, 16);                                   // full tilt right
+    expect(parseFloat(prop(front, '--mx'))).toBeGreaterThan(95);
+    expect(parseFloat(prop(front, '--ry'))).toBeGreaterThan(4);
+  });
+
+  it('on iOS it waits for a tap that grants motion access', async () => {
+    const requestPermission = vi.fn(() => Promise.resolve('granted' as const));
+    vi.stubGlobal('DeviceOrientationEvent', { requestPermission });
+    const btn = document.getElementById('deckTilt') as HTMLButtonElement;
+    initTilt(wheel, btn);
+    expect(btn.hidden).toBe(false);
+    tilt(40, 16);
+    expect(prop(front, '--mx')).toBe('');           // nothing before permission
+    btn.click();
+    await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+    expect(requestPermission).toHaveBeenCalled();
+    expect(btn.hidden).toBe(true);
+    tilt(40, 0); tilt(40, 16);
+    expect(parseFloat(prop(front, '--mx'))).toBeGreaterThan(95);
   });
 });
