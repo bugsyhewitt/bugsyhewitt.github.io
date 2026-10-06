@@ -450,7 +450,7 @@ img{display:block;max-width:100%;}
 .no-js .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);padding:clamp(30px,8vw,48px) 0;}
 .no-js .spec-panel::after{content:none;}
 .no-js #specialities,.no-js #grimoire{background:none;}
-.no-js .specs-progress,.no-js .specs-hint,.no-js .carousel,.no-js .carousel-caption,.no-js .carousel-hint{display:none;}
+.no-js .specs-progress,.no-js .specs-hint,.no-js .carousel,.no-js .carousel-caption{display:none;}
 .no-js .nav{transform:none;visibility:visible;border-color:var(--hair);}
 .deck-list{list-style:none;columns:2 18rem;column-gap:clamp(20px,3vw,56px);margin-top:clamp(30px,5vh,56px);}
 .deck-list li{break-inside:avoid;padding:11px 0;border-top:1px solid var(--hair);font-size:13px;color:var(--ash);}
@@ -573,21 +573,17 @@ img{display:block;max-width:100%;}
 }
 .hero__cue-line.stop{animation:none;}
 .carousel:focus-visible{outline:2px solid var(--blood);outline-offset:-2px;}
-.carousel-hint .hint-touch{display:none;}
-@media (hover:none){.carousel-hint .hint-fine{display:none;}.carousel-hint .hint-touch{display:inline;}}
 .carousel-caption{display:flex;flex-direction:column;align-items:center;gap:8px;
-  min-height:6.6em;padding:20px clamp(0px,4vw,40px) 0;text-align:center;} /* room for a two-line tagline: the hint never jumps */
+  min-height:6.6em;padding:20px clamp(0px,4vw,40px) 0;text-align:center;} /* room for a two-line tagline: what follows never jumps */
 .cc__seg{white-space:nowrap;}
 .cc__meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash-mid);}
 .cc__meta b{font-weight:400;color:var(--bone);}
-.cc__line{font-size:14px;line-height:1.6;color:var(--bone);max-width:60ch;}
+.cc__line{font-size:14px;line-height:1.6;color:var(--bone);max-width:80ch;} /* the longest tagline is 75ch: one line where it fits */
 .deck-controls{display:flex;justify-content:center;gap:22px;margin-top:-6px;}
 .deck-ctl{appearance:none;background:none;border:0;padding:6px 0;font:inherit;font-size:11px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--ash-mid);border-bottom:1px solid var(--hair-bright);}
 .deck-ctl:hover,.deck-ctl[aria-pressed="true"]{color:var(--bone);}
 .deck-ctl[hidden]{display:none;}
-.carousel-hint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ash-mid);text-align:center;padding:16px 0;}
 
 /* ---------- print: the Coroner's Record on paper ---------- */
 @page{margin:14mm 14mm 16mm;}
@@ -596,7 +592,7 @@ img{display:block;max-width:100%;}
   .grimoire-carousel,.hero__inner{overflow:visible!important;}  /* clipped boxes don't paginate */
   *{cursor:auto!important;}
   .grain,.spine,.nav,.hero__gl,.hero__photo,.hero__scrim,.hero__cue,.veil,canvas,.marquee,.ufo,
-  .carousel-hint,.carousel-caption,.specs-hint,.specs-progress,.term-cursor,.seance__bar,
+  .carousel-caption,.specs-hint,.specs-progress,.term-cursor,.seance__bar,
   .seance__prompt,.seance__out,.sline--dim,.cur{display:none!important;}
   .reveal,.project__name,.heading *{opacity:1!important;filter:none!important;transform:none!important;}
   /* one section per sheet; never strand a heading */
@@ -828,8 +824,7 @@ img{display:block;max-width:100%;}
   <!--deck-noscript-->
   <p class="carousel-caption" id="carouselCaption" aria-hidden="true"><span class="cc__meta"></span><span class="cc__line"></span></p>
   <p class="sr-only" id="carouselLive" aria-live="polite" aria-atomic="true"></p>
-  <div class="carousel-hint" id="carouselHint" aria-hidden="true"><span class="hint-fine">◀ drag &middot; arrow keys ▶</span><span class="hint-touch">◀ swipe ▶</span>&ensp;&ensp;<span id="carouselCount"></span></div>
-  <div class="deck-controls"><button class="deck-ctl" id="deckTilt" type="button" hidden>&#9680; tilt to catch the foil</button><button class="deck-ctl" id="soundToggle" type="button" aria-pressed="false" hidden>&#9834; sound off</button></div>
+  <div class="deck-controls"><button class="deck-ctl" id="deckTilt" type="button" hidden>&#9680; tilt to catch the foil</button></div>
   <p class="sr-only" id="carouselKeys">Left and right arrow keys turn the wheel. Home and End jump to the first and last card.</p>
 </section>
 

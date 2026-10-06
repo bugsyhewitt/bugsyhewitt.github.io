@@ -59,8 +59,6 @@ export function initCarousel(opts: CarouselOptions = {}): void {
     itemsEl.appendChild(item);
   });
 
-  const count = document.getElementById('carouselCount');
-  if (count) count.textContent = `${CARDS.length} cards`;
 
   const images = gsap.utils.toArray<HTMLElement>('.carousel__item');
   const total = images.length;

@@ -145,7 +145,8 @@ export function initLight(wheel: HTMLElement, turning: () => boolean): void {
     hide();
     card = next; ready = false;
     const img = next.querySelector<HTMLImageElement>('.carousel__img');
-    const name = /\/cards\/([\w-]+?)(?:-\d+)?\.jpg/.exec(img?.currentSrc || img?.src || '')?.[1];
+    const src = img?.currentSrc || img?.src || '';
+    const name = /\/cards\/([\w-]+?)(?:-\d+)?\.jpg/.exec(src)?.[1];
     if (!img || !name || !boot()) return;
     next.appendChild(canvas);
     const w = next.clientWidth, h = next.clientHeight;
@@ -154,17 +155,22 @@ export function initLight(wheel: HTMLElement, turning: () => boolean): void {
     material!.uniforms.uAspect.value = boxAspect;
     material!.uniforms.uCoverScale.value.set(
       Math.min(1, boxAspect / COVER_ASPECT), Math.min(1, COVER_ASPECT / boxAspect));
-    cover?.dispose();
-    cover = tex(new THREE.Texture(img));
-    material!.uniforms.uCover.value = cover;
+    cover?.dispose(); cover = null;
+    material!.uniforms.uCover.value = null;
     const forCard = next;
-    mapsFor(name).then(m => {
-      if (card !== forCard || !material) return;
+    // The cover is loaded afresh (same URL, so from the browser's cache) rather than wrapped
+    // from the DOM image: three sizes a rendered <img>'s texture by its on-screen box and then
+    // uploads the full srcset bitmap, which overflows and samples black. A loader's image is
+    // never rendered, so it reports its bitmap size — as the maps already do.
+    Promise.all([load(src), mapsFor(name)]).then(([c, m]) => {
+      if (card !== forCard || !material) { c.dispose(); return; }
+      cover = c;
+      material.uniforms.uCover.value = c;
       material.uniforms.uDepth.value = m.depth;
       material.uniforms.uFoil.value = m.foil;
       ready = true;
       schedule();
-    }).catch(() => { /* maps missing: stay on CSS foil for this card */ });
+    }).catch(() => { /* cover or maps missing: stay on CSS foil for this card */ });
   }
 
   function frame(): void {
