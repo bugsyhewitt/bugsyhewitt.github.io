@@ -16,6 +16,11 @@ gsap.registerPlugin(ScrollTrigger);
 // ~60px before panel 3 is flush). quickTo supplies the eased follow.
 const STAGE = '(min-width: 1100px) and (min-height: 740px) and (prefers-reduced-motion: no-preference)';
 const BAND = '(min-width: 768px) and (prefers-reduced-motion: no-preference)';
+// Which pinned layout roomy desktops get. 'stage' is the compact title stage: the panels say
+// what they have in one screen. 'expanded' is the earlier layout, every discipline a full
+// screen with room to grow — switch to it when the panels have more to say.
+const LAYOUT: 'stage' | 'expanded' = 'stage';
+const stageWanted = (): boolean => LAYOUT === 'stage' && window.matchMedia(STAGE).matches;
 
 export function initSpecialities(lenis: Lenis | null = null): void {
   const section = document.getElementById('specialities');
@@ -55,7 +60,7 @@ export function initSpecialities(lenis: Lenis | null = null): void {
   };
   const setup = (): void => {
     mm.add(BAND, () => {
-      const roomy = window.matchMedia(STAGE).matches;
+      const roomy = stageWanted();
       // the stage only if the whole section fits under the nav; otherwise the band
       if (roomy) section.classList.add('is-stage');
       const stage = roomy && section.offsetHeight <= window.innerHeight - navH() + 1;
@@ -102,14 +107,14 @@ export function initSpecialities(lenis: Lenis | null = null): void {
     resized = window.setTimeout(() => {
       const at = heldAt ?? null;
       heldAt = undefined;
-      if (window.matchMedia(STAGE).matches || mode === 'stage') rebuild(at);
+      if (stageWanted() || mode === 'stage') rebuild(at);
     }, 250);
   });
 
   // Pin math depends on final layout — recompute once fonts/images settle (and, where the
   // stage is possible, measure its fit again in the real face).
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => (window.matchMedia(STAGE).matches ? rebuild() : ScrollTrigger.refresh()));
+    document.fonts.ready.then(() => (stageWanted() ? rebuild() : ScrollTrigger.refresh()));
   }
   window.addEventListener('load', () => ScrollTrigger.refresh());
 }

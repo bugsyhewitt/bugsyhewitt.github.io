@@ -271,7 +271,9 @@ img{display:block;max-width:100%;}
 @media (max-width:700px){.ufo{width:56px;top:-6px;}}
 
 /* ---------- carousel / the deck ---------- */
-.grimoire-carousel { overflow: hidden; }
+.grimoire-carousel{overflow:hidden;
+  /* the deck's last 24vh ramps into the Specialities grey while the fog thins (same 24vh as .veil's mask): fog to grey, no black trough between */
+  background:linear-gradient(to bottom,transparent calc(100% - 24vh),var(--coffin));}
 
 .carousel {
   --card-h: 493px;   /* 2:3 ratio of the 848x1264 art — drives card height AND ring anchor below */
@@ -389,7 +391,7 @@ img{display:block;max-width:100%;}
   background:linear-gradient(var(--coffin) calc(100% - 24vh),var(--void));} /* sinks into the black, as the deck's fog does */
 /* Specialities is one grey room: it fades in over the space just above the heading (the section's
    top padding) and the panel fades it out. Pinned layout only; the stacked fallbacks stay on black. */
-#specialities{background:linear-gradient(var(--void),var(--coffin) clamp(80px,13vh,170px),
+#specialities{background:linear-gradient(var(--coffin), /* opens on the grey the deck ramped into */
   var(--coffin) calc(100% - clamp(80px,13vh,170px)),var(--void) calc(100% - clamp(80px,13vh,170px)));}
 .specs-track{display:flex;height:100%;width:calc(var(--n,3)*100%);will-change:transform;}
 .spec-panel{position:relative;flex:0 0 calc(100%/var(--n,3));height:100%;overflow:hidden;
@@ -414,7 +416,7 @@ img{display:block;max-width:100%;}
 @media screen{
   #specialities.is-stage{min-height:calc(100vh - var(--nav-h,70px));min-height:calc(100svh - var(--nav-h,70px));
     display:flex;flex-direction:column;justify-content:center;padding-block:clamp(24px,5vh,64px);
-    background:linear-gradient(var(--void),var(--coffin) 12vh,var(--coffin) calc(100% - 12vh),var(--void));}
+    background:linear-gradient(var(--coffin),var(--coffin) calc(100% - 12vh),var(--void));} /* opens on the grey the deck ramped into; sinks to black at the foot */
   .is-stage .heading{font-size:clamp(3rem,min(8.5vw,11vh),6.6rem);}
   .is-stage .specs-pin{height:auto;min-height:0;margin-top:clamp(32px,6vh,64px);background:none;}
   .is-stage .specs-track{height:auto;}
@@ -438,7 +440,7 @@ img{display:block;max-width:100%;}
   .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);
     padding:clamp(30px,8vw,48px) 0;}
   .spec-panel::after{content:none;}
-  #specialities{background:none;}
+  #specialities,#grimoire{background:none;}
   .spec__list{grid-template-columns:1fr;}
   .specs-progress,.specs-hint{display:none;}
 }
@@ -447,7 +449,7 @@ img{display:block;max-width:100%;}
 .no-js .specs-track{flex-direction:column;width:100%;height:auto;}
 .no-js .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);padding:clamp(30px,8vw,48px) 0;}
 .no-js .spec-panel::after{content:none;}
-.no-js #specialities{background:none;}
+.no-js #specialities,.no-js #grimoire{background:none;}
 .no-js .specs-progress,.no-js .specs-hint,.no-js .carousel,.no-js .carousel-caption,.no-js .carousel-hint{display:none;}
 .no-js .nav{transform:none;visibility:visible;border-color:var(--hair);}
 .deck-list{list-style:none;columns:2 18rem;column-gap:clamp(20px,3vw,56px);margin-top:clamp(30px,5vh,56px);}
@@ -520,7 +522,7 @@ img{display:block;max-width:100%;}
 *:active{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><g fill='%230d0d0f' stroke='%230d0d0f' stroke-width='3' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='8.0' y='15.5' width='4.0' height='7.6' rx='2.0' transform='rotate(12 10 19)'/></g><g fill='%23e9e6dd' stroke='%230d0d0f' stroke-width='0.9' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='8.0' y='15.5' width='4.0' height='7.6' rx='2.0' transform='rotate(12 10 19)'/></g></svg>") 10 2,auto;}
 
 /* ---------- premium fx: veil ---------- */
-.veil{position:absolute;inset:0;z-index:0;pointer-events:none;
+.veil{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none; /* a canvas is a replaced element: inset alone leaves it at its pixel size (section × DPR), so it overflowed and the fade below was clipped */
   /* the fog thins to nothing before the section ends: no straight edge where the black resumes */
   -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 24vh,#000 calc(100% - 24vh),transparent 100%);
   mask-image:linear-gradient(to bottom,transparent 0,#000 24vh,#000 calc(100% - 24vh),transparent 100%);}
@@ -655,6 +657,7 @@ img{display:block;max-width:100%;}
   .specs-track{flex-direction:column;width:100%!important;height:auto;transform:none!important;}
   .spec-panel{flex:0 0 auto;height:auto;padding:3mm 0;border:none;border-top:1px solid #d9d6cf;break-inside:avoid;}
   .spec-panel::after{content:none;}
+  #grimoire{background:none;}
   #specialities{background:none;display:block!important;min-height:0!important;height:auto!important;max-height:none!important;
     width:auto!important;max-width:none!important;position:static!important;transform:none!important;inset:auto!important;}
   .spec-panel__intro{margin-bottom:2mm;}
