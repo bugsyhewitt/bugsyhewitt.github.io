@@ -272,6 +272,7 @@ img{display:block;max-width:100%;}
 
 /* ---------- carousel / the deck ---------- */
 .grimoire-carousel{overflow:hidden;
+  padding-bottom:70px; /* = the nav's height: the caption clears the top of the page just as Specialities locks under the nav */
   /* the deck's last 24vh ramps into the Specialities grey while the fog thins (same 24vh as .veil's mask): fog to grey, no black trough between */
   background:linear-gradient(to bottom,transparent calc(100% - 24vh),var(--coffin));}
 
@@ -415,7 +416,7 @@ img{display:block;max-width:100%;}
 /* title stage: one screen, the header on top and a content-height band that slides beneath it */
 @media screen{
   #specialities.is-stage{min-height:calc(100vh - var(--nav-h,70px));min-height:calc(100svh - var(--nav-h,70px));
-    display:flex;flex-direction:column;justify-content:center;padding-block:clamp(24px,5vh,64px);
+    display:flex;flex-direction:column;justify-content:flex-start;padding-block:clamp(10px,1.5vh,16px) clamp(24px,5vh,64px); /* the eyebrow sits right under the nav as the section locks; the slack goes under the panel */
     background:linear-gradient(var(--coffin),var(--coffin) calc(100% - 12vh),var(--void));} /* opens on the grey the deck ramped into; sinks to black at the foot */
   .is-stage .heading{font-size:clamp(3rem,min(8.5vw,11vh),6.6rem);}
   .is-stage .specs-pin{height:auto;min-height:0;margin-top:clamp(32px,6vh,64px);background:none;}
@@ -574,7 +575,7 @@ img{display:block;max-width:100%;}
 .hero__cue-line.stop{animation:none;}
 .carousel:focus-visible{outline:2px solid var(--blood);outline-offset:-2px;}
 .carousel-caption{display:flex;flex-direction:column;align-items:center;gap:8px;
-  min-height:6.6em;padding:20px clamp(0px,4vw,40px) 0;text-align:center;} /* room for a two-line tagline: what follows never jumps */
+  padding:20px clamp(0px,4vw,40px) 0;text-align:center;} /* no reserve on desktop: at 80ch every tagline is one line (phones reserve 9.4em below) */
 .cc__seg{white-space:nowrap;}
 .cc__meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash-mid);}
 .cc__meta b{font-weight:400;color:var(--bone);}
