@@ -416,10 +416,10 @@ img{display:block;max-width:100%;}
 /* title stage: one screen, the header on top and a content-height band that slides beneath it */
 @media screen{
   #specialities.is-stage{min-height:calc(100vh - var(--nav-h,70px));min-height:calc(100svh - var(--nav-h,70px));
-    display:flex;flex-direction:column;justify-content:flex-start;padding-block:clamp(10px,1.5vh,16px) clamp(24px,5vh,64px); /* the eyebrow sits right under the nav as the section locks; the slack goes under the panel */
+    display:flex;flex-direction:column;justify-content:flex-start;padding-block:clamp(10px,1.5vh,16px) 0; /* the eyebrow sits right under the nav as the section locks; the band takes the slack and its bar meets the page's foot */
     background:linear-gradient(var(--coffin),var(--coffin) calc(100% - 12vh),var(--void));} /* opens on the grey the deck ramped into; sinks to black at the foot */
   .is-stage .heading{font-size:clamp(3rem,min(8.5vw,11vh),6.6rem);}
-  .is-stage .specs-pin{height:auto;min-height:0;margin-top:clamp(32px,6vh,64px);background:none;}
+  .is-stage .specs-pin{height:auto;min-height:0;flex:1 1 auto;margin-top:clamp(32px,6vh,64px);background:none;} /* fills to the section's foot: the progress bar sits on the bottom edge */
   .is-stage .specs-track{height:auto;}
   .is-stage .spec-panel{height:auto;padding:clamp(20px,3.5vh,40px) var(--gutter) clamp(28px,4.5vh,52px);}
   .is-stage .spec-panel::after{background:linear-gradient(transparent,var(--hair) 25%,var(--hair) 75%,transparent);}
