@@ -1,0 +1,72 @@
+{
+  "names": [
+    "autopsy",
+    "covenant",
+    "doppelganger",
+    "embalmer",
+    "enshroud",
+    "exhumed",
+    "ferryman",
+    "graverobber",
+    "hellhound",
+    "mangle",
+    "omen",
+    "oracle",
+    "ossuary",
+    "ouija",
+    "possession",
+    "reaper",
+    "seance",
+    "tombstone",
+    "unearth",
+    "wraith"
+  ],
+  "default": {
+    "green_t": 0.06,
+    "green_gate": 0.5,
+    "red_t": 0.1,
+    "silver_l": 0.72,
+    "silver_s": 0.18,
+    "band": 0.2,
+    "frame": 0.035,
+    "exclude": [
+      [
+        0.0,
+        0.84,
+        1.0,
+        1.0
+      ]
+    ]
+  },
+  "cards": {
+    "mangle": {
+      "exclude": [
+        [
+          0.0,
+          0.84,
+          1.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.6,
+          0.42,
+          0.84
+        ],
+        [
+          0.78,
+          0.5,
+          1.0,
+          0.84
+        ]
+      ]
+    },
+    "doppelganger": {
+      "green_gate": 0.64
+    }
+  },
+  "depth_flat": [
+    "mangle",
+    "unearth"
+  ]
+}

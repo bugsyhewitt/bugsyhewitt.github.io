@@ -43,6 +43,10 @@
 @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/jetbrains-mono-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;}
 @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/jetbrains-mono-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
 @font-face{font-family:'Share Tech Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/share-tech-mono-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+/* width-matched fallbacks: until Bebas arrives the name keeps Bebas's width, so it never
+   re-wraps on swap (that re-wrap was the hero's whole CLS). Bebas sets caps at ~57% of Arial. */
+@font-face{font-family:'Bebas Fallback N';src:local('Arial Narrow'),local('ArialNarrow');size-adjust:66%;}
+@font-face{font-family:'Bebas Fallback';src:local('Arial'),local('Liberation Sans'),local('Helvetica Neue'),local('Helvetica');size-adjust:56%;}
 :root{
   --void:#000;
   --coffin:#0e0e10;
@@ -56,7 +60,7 @@
   --hair:#1f1f21;
   --hair-bright:#2e2e31;
   --blood:#9c3636;
-  --display:'Bebas Neue','Arial Narrow',Impact,sans-serif;
+  --display:'Bebas Neue','Bebas Fallback N','Bebas Fallback',Impact,sans-serif;
   --mono:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;
   --ease:cubic-bezier(.16,1,.3,1);
 }
@@ -184,6 +188,7 @@ img{display:block;max-width:100%;}
 .eyebrow--suite{margin-top:clamp(70px,11vh,140px);} /* breathes the Suite block off the project list */
 .heading{font-family:var(--display);font-weight:400;
   font-size:clamp(3rem,8.5vw,6.6rem);line-height:.92;letter-spacing:.012em;}
+.rise-mask{padding-top:.2em;margin-top:-.2em;} /* src/fx/headings.ts: the É's accent stands above the .92 line box */
 .lede{color:var(--ash);max-width:60ch;margin-top:20px;font-size:clamp(.95rem,1.6vw,1.05rem);}
 
 /* ---------- intro band ---------- */
@@ -230,7 +235,7 @@ img{display:block;max-width:100%;}
 .project:hover{background:var(--coffin);}
 .project__num{font-family:var(--display);font-size:clamp(2.4rem,5vw,3.8rem);
   color:var(--hair-bright);line-height:1;transition:color .4s var(--ease);}
-.project:hover .project__num{color:var(--bone);}
+.project:hover .project__num{color:var(--blood);}
 .project__name{font-family:var(--display);font-weight:400;
   font-size:clamp(2.2rem,6vw,4rem);line-height:1;letter-spacing:.01em;
   transition:transform .4s var(--ease);}
@@ -266,7 +271,10 @@ img{display:block;max-width:100%;}
 @media (max-width:700px){.ufo{width:56px;top:-6px;}}
 
 /* ---------- carousel / the deck ---------- */
-.grimoire-carousel { overflow: hidden; }
+.grimoire-carousel{overflow:hidden;
+  padding-bottom:70px; /* = the nav's height: the caption clears the top of the page just as Specialities locks under the nav */
+  /* the deck's last 24vh ramps into the Specialities grey while the fog thins (same 24vh as .veil's mask): fog to grey, no black trough between */
+  background:linear-gradient(to bottom,transparent calc(100% - 24vh),var(--coffin));}
 
 .carousel {
   --card-h: 493px;   /* 2:3 ratio of the 848x1264 art — drives card height AND ring anchor below */
@@ -314,26 +322,30 @@ img{display:block;max-width:100%;}
   .cc__sep { display: none; }  /* one group per line instead of orphaned dots */
   .carousel-caption { min-height: 9.4em; } }
 
-.carousel__img {
+.carousel__img, .carousel__proof {
   height: 100%; width: 100%;
   object-fit: cover;
   position: absolute; inset: 0;
   pointer-events: none;
-  transition: filter .45s ease;
-  /* DEFAULT: full color. Desaturate mode toggled via JS by adding .is-dim */
 }
-.carousel__item.is-dim .carousel__img { filter: grayscale(1) brightness(0.7); }
-.carousel__item:not(.is-dim) { z-index: 1; }
+/* front card in colour; the rest are newsprint proofs (src/carousel/proof.ts). The card
+   arriving at the front comes into register: its colour plate fades in 2px off and settles. */
+.carousel__img { transition: opacity .35s var(--ease), transform .5s var(--ease), filter .45s ease; }
+.carousel__proof { opacity: 0; transition: opacity .35s var(--ease); }
+.carousel__item.is-dim .carousel__proof { opacity: 1; }
+.carousel__item.is-dim.has-proof .carousel__img { opacity: 0; transform: translate(2px, -1.5px); }
+.carousel__item.is-dim:not(.has-proof) .carousel__img { filter: grayscale(1) brightness(0.7); } /* until its proof is made */
+.carousel__item.is-front { z-index: 1; } /* front card above its neighbours where the ring overlaps (phones) */
 .carousel__card:focus-visible { outline-offset: -6px; }
 
 /* foil variant: front card only, driven by src/carousel/foil.ts (fine pointer + full motion) */
 .carousel__card {
-  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(calc(var(--ry, 0deg) + var(--lean, 0deg)));  /* --lean: throw velocity */
   transition: transform .5s var(--ease);
 }
-.carousel__card::after {
+.carousel__card::after {          /* broad glare across the whole card: now only a faint wash */
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  opacity: var(--foil, 0); transition: opacity .45s var(--ease);
+  opacity: calc(var(--foil, 0) * .35); transition: opacity .45s var(--ease);
   mix-blend-mode: color-dodge;
   background:
     radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
@@ -342,18 +354,52 @@ img{display:block;max-width:100%;}
       transparent 0%, rgba(233,230,221,.2) 3%, transparent 6%, transparent 11%);
   background-size: 100% 100%, 260% 260%;
   background-position: center, var(--mx, 50%) var(--my, 50%);
-} /* front card above its neighbours where the ring overlaps (phones) */
+}
+/* real light (src/carousel/light.ts, desktop WebGL2): while it's lit the CSS foil steps aside */
+.carousel__light { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none;
+  opacity: 0; transition: opacity .3s var(--ease); }
+.carousel__light.is-lit { opacity: 1; }
+/* spot foil: the light only catches where this cover would be foil-stamped (its mask from
+   scripts/cards/build_fx.py), through fine etched lines. Front card only, so neighbours
+   never fetch a mask. */
+.carousel__item.is-front .carousel__card::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  opacity: calc(var(--foil, 0) * 1.2); transition: opacity .45s var(--ease);
+  mix-blend-mode: plus-lighter;   /* foil adds light; dodge barely lifts dark ink */
+  background:                    /* a glint band that sweeps with the angle, and the hot spot */
+    linear-gradient(115deg, transparent calc(var(--mx, 50%) - 22%), rgba(255,252,244,.85) var(--mx, 50%), transparent calc(var(--mx, 50%) + 22%)),
+    radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,252,244,.9), rgba(233,230,221,.3) 18%, transparent 38%);
+  -webkit-mask-image: var(--foil-mask), repeating-linear-gradient(115deg, #000 0 1.2px, rgba(0,0,0,.55) 1.2px 2.6px);
+          mask-image: var(--foil-mask), repeating-linear-gradient(115deg, #000 0 1.2px, rgba(0,0,0,.55) 1.2px 2.6px);
+  -webkit-mask-size: cover, auto; mask-size: cover, auto;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-repeat: no-repeat, repeat; mask-repeat: no-repeat, repeat;
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+.carousel__item .carousel__card.has-light::before,
+.carousel__item .carousel__card.has-light::after { opacity: 0; }
 
 /* ---------- specialities: pinned horizontal showpiece ---------- */
-.specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;}
-.specs-pin{margin-top:clamp(40px,6vh,72px);position:relative;height:calc(100vh - var(--nav-h,70px));height:calc(100svh - var(--nav-h,70px));min-height:520px;overflow:hidden;
-  width:100vw;margin-left:calc(50% - 50vw); /* full-bleed so each panel is a full viewport width */
-  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);background:var(--coffin);}
+/* Three layouts, picked in src/specialities/index.ts. Title stage (wide, tall desktops; .is-stage
+   below): the whole section pins, the title stays and the disciplines slide in a band beneath it.
+   Band (other desktops; these base rules): the band alone pins, a screen tall. Stack (phones,
+   reduced motion, no-JS, print): nothing pins. */
+#specialities{--gutter:clamp(24px,6vw,96px);} /* = .section's side padding: one left edge */
+#specialities .lede{max-width:none;} /* "Scroll —" stays on the sentence's line */
+.specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;white-space:nowrap;}
+.specs-pin{position:relative;height:calc(100vh - var(--nav-h,70px));height:calc(100svh - var(--nav-h,70px));min-height:520px;overflow:hidden;
+  margin-inline:calc(-1*var(--gutter)); /* full-bleed past the gutter (100vw would also count the scrollbar) */
+  background:linear-gradient(var(--coffin) calc(100% - 24vh),var(--void));} /* sinks into the black, as the deck's fog does */
+/* Specialities is one grey room: it fades in over the space just above the heading (the section's
+   top padding) and the panel fades it out. Pinned layout only; the stacked fallbacks stay on black. */
+#specialities{background:linear-gradient(var(--coffin), /* opens on the grey the deck ramped into */
+  var(--coffin) calc(100% - clamp(80px,13vh,170px)),var(--void) calc(100% - clamp(80px,13vh,170px)));}
 .specs-track{display:flex;height:100%;width:calc(var(--n,3)*100%);will-change:transform;}
 .spec-panel{position:relative;flex:0 0 calc(100%/var(--n,3));height:100%;overflow:hidden;
-  display:flex;align-items:center;padding:clamp(26px,5vw,80px);
-  border-right:1px solid var(--hair);}
-.spec-panel:last-child{border-right:none;}
+  display:flex;align-items:flex-start;padding:clamp(48px,7vh,76px) var(--gutter) 0;} /* one rhythm step under the lede */
+.spec-panel::after{content:"";position:absolute;top:0;right:0;bottom:0;width:1px;pointer-events:none;
+  background:linear-gradient(transparent,var(--hair) 24vh,var(--hair) calc(100% - 24vh),transparent);} /* divider fades with the panel */
+.spec-panel:last-child::after{content:none;}
 .spec-panel__body{position:relative;z-index:1;max-width:min(58ch,90%);}
 .spec-panel__name{font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,6vw,5rem);
   line-height:.94;letter-spacing:.012em;margin:14px 0 18px;}
@@ -367,22 +413,45 @@ img{display:block;max-width:100%;}
 .specs-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hair);z-index:2;}
 .specs-progress i{display:block;height:100%;width:calc(100%/var(--n,3));background:var(--blood);
   transform-origin:left;transition:transform .1s linear;}
+/* title stage: one screen, the header on top and a content-height band that slides beneath it */
+@media screen{
+  #specialities.is-stage{min-height:calc(100vh - var(--nav-h,70px));min-height:calc(100svh - var(--nav-h,70px));
+    display:flex;flex-direction:column;justify-content:flex-start;padding-block:clamp(10px,1.5vh,16px) 0; /* the eyebrow sits right under the nav as the section locks; the band takes the slack and its bar meets the page's foot */
+    background:linear-gradient(var(--coffin),var(--coffin) calc(100% - 12vh),var(--void));} /* opens on the grey the deck ramped into; sinks to black at the foot */
+  .is-stage .heading{font-size:clamp(3rem,min(8.5vw,11vh),6.6rem);}
+  .is-stage .specs-pin{height:auto;min-height:0;flex:1 1 auto;margin-top:clamp(32px,6vh,64px);background:none;} /* fills to the section's foot: the progress bar sits on the bottom edge */
+  .is-stage .specs-track{height:auto;}
+  .is-stage .spec-panel{height:auto;padding:clamp(20px,3.5vh,40px) var(--gutter) clamp(28px,4.5vh,52px);}
+  .is-stage .spec-panel::after{background:linear-gradient(transparent,var(--hair) 25%,var(--hair) 75%,transparent);}
+  .is-stage .spec-panel__body{max-width:none;width:100%;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr);
+    column-gap:clamp(40px,4.5vw,96px);align-items:start;} /* the list gets the room: one line per item from 1440 */
+  .is-stage .spec__tag,.is-stage .spec-panel__name,.is-stage .spec-panel__intro{grid-column:1;}
+  .is-stage .spec-panel__name{font-size:clamp(2.4rem,min(6vw,8vh),5rem);}
+  .is-stage .spec-panel__intro{margin-bottom:0;}
+  .is-stage .spec__list{grid-column:2;grid-row:2 / span 2;align-self:start;margin-top:.55em;} /* opens level with the name */
+  .is-stage .spec__list li{padding-block:8px;}
+}
+@media screen and (max-width:1439px){ .is-stage .spec__list{grid-template-columns:1fr;} } /* two columns would wrap the items */
 /* no-pin fallback (mobile OR reduced-motion — JS pins only on the complement,
    query mirrored in src/specialities/index.ts): stack panels, scroll normally */
 @media (max-width:767px),(prefers-reduced-motion:reduce){
   .specs-pin{height:auto;min-height:0;overflow:visible;border:none;background:transparent;
-    width:auto;margin-left:0;}
+    width:auto;margin-inline:0;margin-top:clamp(40px,6vh,72px);}
   .specs-track{flex-direction:column;width:100%;height:auto;transform:none!important;}
   .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);
     padding:clamp(30px,8vw,48px) 0;}
+  .spec-panel::after{content:none;}
+  #specialities,#grimoire{background:none;}
   .spec__list{grid-template-columns:1fr;}
   .specs-progress,.specs-hint{display:none;}
 }
 /* without scripts nothing pins, reveals or turns: stack, show, and list the deck (<noscript>) */
-.no-js .specs-pin{height:auto;min-height:0;overflow:visible;border:none;background:transparent;width:auto;margin-left:0;}
+.no-js .specs-pin{height:auto;min-height:0;overflow:visible;border:none;background:transparent;width:auto;margin-inline:0;margin-top:clamp(40px,6vh,72px);}
 .no-js .specs-track{flex-direction:column;width:100%;height:auto;}
 .no-js .spec-panel{flex:0 0 auto;height:auto;border-right:none;border-top:1px solid var(--hair);padding:clamp(30px,8vw,48px) 0;}
-.no-js .specs-progress,.no-js .specs-hint,.no-js .carousel,.no-js .carousel-caption,.no-js .carousel-hint{display:none;}
+.no-js .spec-panel::after{content:none;}
+.no-js #specialities,.no-js #grimoire{background:none;}
+.no-js .specs-progress,.no-js .specs-hint,.no-js .carousel,.no-js .carousel-caption{display:none;}
 .no-js .nav{transform:none;visibility:visible;border-color:var(--hair);}
 .deck-list{list-style:none;columns:2 18rem;column-gap:clamp(20px,3vw,56px);margin-top:clamp(30px,5vh,56px);}
 .deck-list li{break-inside:avoid;padding:11px 0;border-top:1px solid var(--hair);font-size:13px;color:var(--ash);}
@@ -450,11 +519,14 @@ img{display:block;max-width:100%;}
   text-transform:uppercase;color:var(--ash-mid);}
 
 /* ---------- skeleton hand cursor — index finger out, folds to a fist on click (OS-rendered, zero lag) ---------- */
-*{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><g fill='%230d0d0f' stroke='%230d0d0f' stroke-width='3' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='7.8' y='8.6' width='4.6' height='8.8' rx='2.3'/><circle cx='10.1' cy='8.8' r='2.4'/><rect x='8.1' y='3.4' width='4.0' height='6.0' rx='2.0'/><circle cx='10.1' cy='3.8' r='2.1'/></g><g fill='%23e9e6dd' stroke='%230d0d0f' stroke-width='0.9' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='7.8' y='8.6' width='4.6' height='8.8' rx='2.3'/><circle cx='10.1' cy='8.8' r='2.4'/><rect x='8.1' y='3.4' width='4.0' height='6.0' rx='2.0'/><circle cx='10.1' cy='3.8' r='2.1'/></g></svg>") 16 15,auto;}
-*:active{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><g fill='%230d0d0f' stroke='%230d0d0f' stroke-width='3' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='8.0' y='15.5' width='4.0' height='7.6' rx='2.0' transform='rotate(12 10 19)'/></g><g fill='%23e9e6dd' stroke='%230d0d0f' stroke-width='0.9' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='8.0' y='15.5' width='4.0' height='7.6' rx='2.0' transform='rotate(12 10 19)'/></g></svg>") 16 15,auto;}
+*{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><g fill='%230d0d0f' stroke='%230d0d0f' stroke-width='3' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='7.8' y='8.6' width='4.6' height='8.8' rx='2.3'/><circle cx='10.1' cy='8.8' r='2.4'/><rect x='8.1' y='3.4' width='4.0' height='6.0' rx='2.0'/><circle cx='10.1' cy='3.8' r='2.1'/></g><g fill='%23e9e6dd' stroke='%230d0d0f' stroke-width='0.9' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='7.8' y='8.6' width='4.6' height='8.8' rx='2.3'/><circle cx='10.1' cy='8.8' r='2.4'/><rect x='8.1' y='3.4' width='4.0' height='6.0' rx='2.0'/><circle cx='10.1' cy='3.8' r='2.1'/></g></svg>") 10 2,auto;}
+*:active{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><g fill='%230d0d0f' stroke='%230d0d0f' stroke-width='3' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='8.0' y='15.5' width='4.0' height='7.6' rx='2.0' transform='rotate(12 10 19)'/></g><g fill='%23e9e6dd' stroke='%230d0d0f' stroke-width='0.9' stroke-linejoin='round'><rect x='7.5' y='16.5' width='16.5' height='9.5' rx='5'/><circle cx='11.5' cy='26.5' r='2.9'/><circle cx='16' cy='27.6' r='3.1'/><circle cx='20' cy='26.4' r='2.7'/><circle cx='10' cy='16.8' r='2.7'/><circle cx='14.6' cy='16.2' r='3.0'/><circle cx='18.7' cy='16.8' r='2.7'/><circle cx='22.2' cy='18.0' r='2.3'/><rect x='12.5' y='15.7' width='4.1' height='7.8' rx='2.05' transform='rotate(2 14.5 19)'/><rect x='18.3' y='15.6' width='4.0' height='7.4' rx='2.0' transform='rotate(-10 20.3 19)'/><rect x='22.0' y='17.6' width='3.4' height='6.2' rx='1.7' transform='rotate(-20 23.7 20)'/><rect x='3.2' y='19.8' width='3.6' height='7.4' rx='1.8' transform='rotate(-34 5.0 23)'/><rect x='8.0' y='15.5' width='4.0' height='7.6' rx='2.0' transform='rotate(12 10 19)'/></g></svg>") 10 2,auto;}
 
 /* ---------- premium fx: veil ---------- */
-.veil{position:absolute;inset:0;z-index:0;pointer-events:none;}
+.veil{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none; /* a canvas is a replaced element: inset alone leaves it at its pixel size (section × DPR), so it overflowed and the fade below was clipped */
+  /* the fog thins to nothing before the section ends: no straight edge where the black resumes */
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 24vh,#000 calc(100% - 24vh),transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 24vh,#000 calc(100% - 24vh),transparent 100%);}
 .intro,.contact{position:relative;}
 .intro>:not(.veil),.contact>:not(.veil),#grimoire>:not(.veil){position:relative;z-index:1;}
 
@@ -462,9 +534,6 @@ img{display:block;max-width:100%;}
 .js .reveal{opacity:0;transform:translateY(30px);
   transition:opacity 1s var(--ease),transform 1s var(--ease);}
 .js .reveal.in{opacity:1;transform:none;}
-.js .reveal-blur{opacity:0;filter:blur(14px);transform:translateY(24px);
-  transition:opacity 1s var(--ease),filter 1.1s var(--ease),transform 1s var(--ease);}
-.js .reveal-blur.in{opacity:1;filter:blur(0);transform:none;}
 
 /* ---------- responsive ---------- */
 @media (pointer:coarse){
@@ -496,25 +565,26 @@ img{display:block;max-width:100%;}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
   .js .reveal{opacity:1;transform:none;transition:none;}
-  .js .reveal-blur{opacity:1;filter:none;transform:none;transition:none;}
   .veil{display:none;}
   .marquee__track,.hero__cue-line,.ufo{animation:none;}
   .ufo__light,.iline .cur,.term-cursor{animation:none;}
+  .carousel__img,.carousel__proof{transition:none;} /* proofs swap instantly: no register snap */
   .hero__eyebrow,.hero__name,.hero__title,.hero__role{animation:none;opacity:1;}
   .hero__cue{animation:none;}
 }
 .hero__cue-line.stop{animation:none;}
 .carousel:focus-visible{outline:2px solid var(--blood);outline-offset:-2px;}
-.carousel-hint .hint-touch{display:none;}
-@media (hover:none){.carousel-hint .hint-fine{display:none;}.carousel-hint .hint-touch{display:inline;}}
 .carousel-caption{display:flex;flex-direction:column;align-items:center;gap:8px;
-  min-height:6.6em;padding:20px clamp(0px,4vw,40px) 0;text-align:center;} /* room for a two-line tagline: the hint never jumps */
+  padding:20px clamp(0px,4vw,40px) 0;text-align:center;} /* no reserve on desktop: at 80ch every tagline is one line (phones reserve 9.4em below) */
 .cc__seg{white-space:nowrap;}
 .cc__meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash-mid);}
 .cc__meta b{font-weight:400;color:var(--bone);}
-.cc__line{font-size:14px;line-height:1.6;color:var(--bone);max-width:60ch;}
-.carousel-hint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ash-mid);text-align:center;padding:16px 0;}
+.cc__line{font-size:14px;line-height:1.6;color:var(--bone);max-width:80ch;} /* the longest tagline is 75ch: one line where it fits */
+.deck-controls{display:flex;justify-content:center;gap:22px;margin-top:-6px;}
+.deck-ctl{appearance:none;background:none;border:0;padding:6px 0;font:inherit;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ash-mid);border-bottom:1px solid var(--hair-bright);}
+.deck-ctl:hover,.deck-ctl[aria-pressed="true"]{color:var(--bone);}
+.deck-ctl[hidden]{display:none;}
 
 /* ---------- print: the Coroner's Record on paper ---------- */
 @page{margin:14mm 14mm 16mm;}
@@ -523,15 +593,15 @@ img{display:block;max-width:100%;}
   .grimoire-carousel,.hero__inner{overflow:visible!important;}  /* clipped boxes don't paginate */
   *{cursor:auto!important;}
   .grain,.spine,.nav,.hero__gl,.hero__photo,.hero__scrim,.hero__cue,.veil,canvas,.marquee,.ufo,
-  .carousel-hint,.carousel-caption,.specs-hint,.specs-progress,.term-cursor,.seance__bar,
+  .carousel-caption,.specs-hint,.specs-progress,.term-cursor,.seance__bar,
   .seance__prompt,.seance__out,.sline--dim,.cur{display:none!important;}
-  .reveal,.reveal-blur,.project__name{opacity:1!important;filter:none!important;transform:none!important;}
+  .reveal,.project__name,.heading *{opacity:1!important;filter:none!important;transform:none!important;}
   /* one section per sheet; never strand a heading */
   .eyebrow--suite,#specialities,#loadout,#contact{break-before:page;}
   .heading,.lede,.eyebrow{break-after:avoid;}
   /* ScrollTrigger's pin spacer carries the whole horizontal scroll as padding */
   .pin-spacer{padding:0!important;height:auto!important;width:auto!important;max-width:none!important;
-    margin:0!important;inset:auto!important;}
+    margin:0!important;inset:auto!important;display:block!important;}
   /* fixed units only: vw/vh and width queries would follow the screen, not the sheet */
   .hero__title{margin-top:2mm;}
   .lede,.spec-panel__intro{font-size:10.5pt;}
@@ -575,14 +645,18 @@ img{display:block;max-width:100%;}
   .carousel__items{display:grid!important;grid-template-columns:repeat(5,1fr);gap:3mm;transform:none!important;break-inside:avoid;}
   .carousel__item{position:static!important;transform:none!important;break-inside:avoid;}
   .carousel__card{width:auto!important;height:auto!important;aspect-ratio:848/1264;border:none;border-radius:2mm;box-shadow:none;transform:none!important;}
-  .carousel__card::after{display:none;}
-  .carousel__img{filter:none!important;}
+  .carousel__card::after,.carousel__card::before,.carousel__proof,.carousel__light,.deck-controls{display:none!important;}
+  .carousel__img{filter:none!important;opacity:1!important;transform:none!important;}
   /* disciplines stacked, as on a phone */
   .specs-pin{height:auto!important;min-height:0;overflow:visible;border:none;background:none;
     width:auto!important;max-width:none!important;max-height:none!important; /* ScrollTrigger pins with inline max-height */
-    margin-left:0;position:static!important;transform:none!important;inset:auto!important;}
+    margin-inline:0;position:static!important;transform:none!important;inset:auto!important;}
   .specs-track{flex-direction:column;width:100%!important;height:auto;transform:none!important;}
   .spec-panel{flex:0 0 auto;height:auto;padding:3mm 0;border:none;border-top:1px solid #d9d6cf;break-inside:avoid;}
+  .spec-panel::after{content:none;}
+  #grimoire{background:none;}
+  #specialities{background:none;display:block!important;min-height:0!important;height:auto!important;max-height:none!important;
+    width:auto!important;max-width:none!important;position:static!important;transform:none!important;inset:auto!important;}
   .spec-panel__intro{margin-bottom:2mm;}
   .spec-panel__name{font-size:18pt;color:var(--ink);margin:1mm 0 2mm;}
   .spec__tag{color:var(--ink-soft);}
@@ -608,13 +682,6 @@ img{display:block;max-width:100%;}
 <body>
 <a class="skip" href="#grimoire">Skip to the work</a>
 
-<!-- #liquid / #liquidDisp drive the deck's focus reveal — consumed by src/carousel/index.ts -->
-<svg width="0" height="0" aria-hidden="true" style="position:absolute">
-  <filter id="liquid" x="-20%" y="-20%" width="140%" height="140%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="2" seed="7" result="n"/>
-    <feDisplacementMap id="liquidDisp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
-</svg>
 
 <div class="grain"></div>
 
@@ -624,7 +691,7 @@ img{display:block;max-width:100%;}
 </aside>
 
 <nav class="nav" id="nav">
-  <a href="#hero" class="nav__mark">B<b>H</b><img class="nav__logo" src="/logo-nav.png" width="26" height="26" alt="" /></a>
+  <a href="#hero" class="nav__mark">B<b>H</b><img class="nav__logo" src="/logo.png" width="26" height="26" alt="" /></a>
   <div class="nav__links">
     <a href="#grimoire">Grimoire</a>
     <a href="#specialities">Specialities</a>
@@ -691,7 +758,7 @@ img{display:block;max-width:100%;}
 <!-- ============ THE DECK / GRIMOIRE ============ -->
 <section class="section grimoire-carousel" id="grimoire">
   <div class="eyebrow reveal">01 — currently raising</div>
-  <h2 class="heading reveal-blur">Grimoire</h2>
+  <h2 class="heading" data-rise>Grimoire</h2>
   <p class="lede">Animating what was meant to stay still.</p>
 
   <div class="projects">
@@ -747,7 +814,7 @@ img{display:block;max-width:100%;}
   </div>
 
   <div class="eyebrow eyebrow--suite reveal">02 — necromancer suite</div>
-  <h2 class="heading reveal-blur">Necromancer Suite</h2>
+  <h2 class="heading" data-rise>Necromancer Suite</h2>
   <p class="lede">Twenty abandoned open-source tools, dug up and rebuilt for current targets. Each card names the one it raises.</p>
 
   <div class="carousel" id="carousel" role="region" aria-label="Necromancer tool carousel" aria-describedby="carouselKeys" tabindex="0">
@@ -758,14 +825,14 @@ img{display:block;max-width:100%;}
   <!--deck-noscript-->
   <p class="carousel-caption" id="carouselCaption" aria-hidden="true"><span class="cc__meta"></span><span class="cc__line"></span></p>
   <p class="sr-only" id="carouselLive" aria-live="polite" aria-atomic="true"></p>
-  <div class="carousel-hint" id="carouselHint" aria-hidden="true"><span class="hint-fine">◀ drag &middot; arrow keys ▶</span><span class="hint-touch">◀ swipe ▶</span>&ensp;&ensp;<span id="carouselCount"></span></div>
+  <div class="deck-controls"><button class="deck-ctl" id="deckTilt" type="button" hidden>&#9680; tilt to catch the foil</button></div>
   <p class="sr-only" id="carouselKeys">Left and right arrow keys turn the wheel. Home and End jump to the first and last card.</p>
 </section>
 
 <!-- ============ SPECIALITIES ============ -->
 <section class="section" id="specialities">
   <div class="eyebrow reveal">03 — disciplines</div>
-  <h2 class="heading reveal-blur">Specialities</h2>
+  <h2 class="heading" data-rise>Specialities</h2>
   <p class="lede">Hunting comes first. The tooling and the studio follow. <span class="specs-hint">Scroll —</span></p>
 
   <div class="specs-pin" id="specsPin">
@@ -832,7 +899,7 @@ img{display:block;max-width:100%;}
 <!-- ============ LOADOUT ============ -->
 <section class="section" id="loadout">
   <div class="eyebrow reveal">04 — the rig</div>
-  <h2 class="heading reveal-blur">The Loadout</h2>
+  <h2 class="heading" data-rise>The Loadout</h2>
   <p class="lede">The offensive stack that finds the bugs, and the B-side that scores
     everything else. Mostly hand-built.</p>
 
@@ -884,7 +951,7 @@ img{display:block;max-width:100%;}
 <!-- ============ CONTACT ============ -->
 <section class="section contact" id="contact">
   <div class="eyebrow reveal">05 — the s&eacute;ance</div>
-  <h2 class="heading reveal-blur">The S&eacute;ance</h2>
+  <h2 class="heading" data-rise>The S&eacute;ance</h2>
   <p class="lede">Found something I should see? A target, a collaboration, a contract.
     The veil is thin. Reach through.</p>
 
