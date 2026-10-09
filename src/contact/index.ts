@@ -81,6 +81,23 @@ export function initContact(): void {
   if (reduce) { seance.open().appendChild(cursor); return; }
 
   term.classList.add('is-live');
+
+  // B1 spotlight + B3 mesh-pause — both keyed on the parent .contact section
+  const section = term.closest<HTMLElement>('.contact');
+  if (section) {
+    // B1: ignite beam on first scroll-into-view, then stop observing
+    const beamObs = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) { section.classList.add('is-lit'); beamObs.disconnect(); }
+    }, { threshold: 0.35 });
+    beamObs.observe(section);
+
+    // B3: pause mesh orb animations when the section is off-screen
+    section.style.setProperty('--mesh-play', 'paused'); // start paused; IO enables on view
+    new IntersectionObserver(entries => {
+      section.style.setProperty('--mesh-play', entries[0].isIntersecting ? 'running' : 'paused');
+    }, { rootMargin: '200px' }).observe(section);
+  }
+
   onceInView(term, () => printLines(lines, cursor, {
     delay: el => el.hasAttribute('data-last') ? 260 : 150,
     done: () => seance.open(),
