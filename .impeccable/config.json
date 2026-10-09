@@ -1,0 +1,98 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "hero-eyebrow-chip",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.124Z",
+        "reason": "intentional: Bugsy's numbered section label system ('01 — currently raising') is core grimoire identity, not AI SaaS boilerplate"
+      },
+      {
+        "rule": "buried-raster",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.136Z",
+        "reason": "intentional: SVG feTurbulence grain at 0.045 opacity IS the effect — film grain texture, not a buried content image"
+      },
+      {
+        "rule": "kicker-above-heading",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.146Z",
+        "reason": "intentional: site-wide numbered chapter eyebrows ('01 — currently raising' etc.) are established Necromancer Suite design vocabulary"
+      },
+      {
+        "rule": "tight-leading",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.156Z",
+        "reason": "intentional: all tight-leading instances are on Bebas Neue DISPLAY headings (hero 13rem, section heads) — editorial display type, not body text"
+      },
+      {
+        "rule": "all-caps-body",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.169Z",
+        "reason": "intentional: all-caps instances are short uppercase labels/eyebrows (<=35 chars), not body text passages"
+      },
+      {
+        "rule": "wide-tracking",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.184Z",
+        "reason": "intentional: wide tracking is on short uppercase labels, not body text"
+      },
+      {
+        "rule": "tiny-text",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.199Z",
+        "reason": "intentional: 11px instances are uppercase eyebrow labels, not body content"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.216Z",
+        "reason": "intentional: loadout flush-child ruled-ledger is the coroner's-ledger design — user approved this vs bento today"
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.231Z",
+        "reason": "intentional: grain div (position:fixed) and contact__mesh (decorative gradient orbs) are both designed to clip to their containers"
+      },
+      {
+        "rule": "repeating-stripes-gradient",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-09T01:27:17.247Z",
+        "reason": "intentional: foil etched-lines pattern in the carousel is the spot-foil texture effect"
+      }
+    ]
+  }
+}
