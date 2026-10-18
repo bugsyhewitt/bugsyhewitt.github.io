@@ -131,6 +131,15 @@ export function initSeanceCommands(body: HTMLElement, cursor: HTMLElement, reduc
   });
 
   return {
-    open() { prompt.hidden = false; return prompt; },
+    open() {
+      prompt.hidden = false;
+      // Focus the input on reveal so the keyboard goes straight to the prompt
+      // (users currently have to click into the séa nce before they can type).
+      // preventScroll: true stops the browser from yanking the page to wherever
+      // the input is mid-scroll-in — the séa nce is revealed by IO when it
+      // enters the viewport, not by the user's intent.
+      input.focus({ preventScroll: true });
+      return prompt;
+    },
   };
 }
