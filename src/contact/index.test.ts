@@ -220,3 +220,62 @@ describe('initContact — Discord button is a native <button> (BUG-NEW-460)', ()
     );
   });
 });
+
+// Regression guard for F-CYCLE268-SOUND-TOGGLE-NOT-WIRED:
+// src/fx/sound.ts exports initSound(toggle) but the toggle was never wired
+// anywhere. Without a wiring call the sound feature is dead code: the user's
+// remembered "on" state produces zero audio and the séa nce never makes a
+// keystroke/thump sound. initContact is the natural wiring point because the
+// séa nce is the only place sound is meaningful (keystroke + thump).
+//
+// This test locks in that initContact DOES create and reveal a sound toggle
+// and DOES wire initSound. If anyone removes the wiring again, the toggle
+// disappears and the unit test fails.
+describe('initContact — wires opt-in sound (F-CYCLE268-SOUND-TOGGLE-NOT-WIRED)', () => {
+  beforeEach(() => {
+    buildDom();
+    stubMatchMedia({ reduce: true, fine: false });   // reduce skips IO setup
+    vi.useFakeTimers();
+    setClipboard(() => Promise.resolve());
+    // Defensive: not every jsdom invocation has localStorage on globals
+    // (Node 23+ setupVM-via-pool-details edge case). initSound reads it
+    // inside a try/catch already, so a missing localStorage degrades to
+    // "muted by default" — which is what we want to verify.
+    try { localStorage.clear(); } catch { /* not installed; safe to skip */ }
+    vi.stubGlobal('AudioContext', class {
+      state = 'running'; currentTime = 1; sampleRate = 8000; destination = {};
+      resume() { return Promise.resolve(); }
+      createBuffer() { return { getChannelData: () => new Float32Array(10) }; }
+      createBufferSource() { return { connect: () => ({}), start() {}, stop() {}, buffer: null }; }
+      createBiquadFilter() { return { frequency: { value: 0 }, Q: { value: 0 }, type: '', connect: () => ({}) }; }
+      createGain() { return { gain: { setValueAtTime() {}, linearRampToValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect: () => ({}) }; }
+      createOscillator() { return { frequency: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect: () => ({}), start() {}, stop() {} }; }
+    });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    document.body.innerHTML = '';
+    try { localStorage.clear(); } catch { /* not installed */ }
+  });
+
+  it('creates a sound toggle button when initContact runs', () => {
+    // The toggle must exist somewhere in the DOM AND have been revealed
+    // (initSound sets toggle.hidden=false). The wiring lives in initContact
+    // because the séa nce is where the audio is meaningful.
+    initContact();
+    const toggles = document.querySelectorAll<HTMLButtonElement>(
+      'button[aria-pressed], button.seance__sound, button#soundToggle'
+    );
+    // The discordCopy button is also <button> but has no aria-pressed. The
+    // find narrows to the wired sound toggle only.
+    const soundToggle = Array.from(toggles).find(b => b.hasAttribute('aria-pressed'));
+    expect(soundToggle, 'expected a sound toggle with aria-pressed, found none').toBeDefined();
+    expect(soundToggle!.hidden).toBe(false);
+    // Default state is muted: aria-pressed=false, label mentions off.
+    expect(soundToggle!.getAttribute('aria-pressed')).toBe('false');
+    expect((soundToggle!.textContent || '').toLowerCase()).toContain('off');
+  });
+});
