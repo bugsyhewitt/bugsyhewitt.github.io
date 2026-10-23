@@ -30,6 +30,12 @@ export function initLenis(): Lenis | null {
       // a pinned section is measured where the pin holds it; its spacer is where it really sits
       const spacer = target.parentElement?.classList.contains('pin-spacer') ? target.parentElement : null;
       lenis.scrollTo((spacer ?? target) as HTMLElement);
+      // Keep the URL hash + history in sync with the smooth-scroll target.
+      // preventDefault above swallows the browser's native fragment navigation,
+      // so without this the back button + hash deep-links + screen-reader
+      // location announcements all stay stuck at '/'. Skip the push when the
+      // target is already current to avoid piling up duplicate entries.
+      if (location.hash !== href) history.pushState(null, '', href);
     });
   });
 
