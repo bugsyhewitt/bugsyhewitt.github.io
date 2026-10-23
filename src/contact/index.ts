@@ -1,5 +1,6 @@
 import { magnetize } from '../fx/magnet';
 import { onceInView, makeTermCursor, printLines } from '../fx/terminal';
+import { initSound } from '../fx/sound';
 import { initSeanceCommands } from './seance';
 
 // Séance terminal: on scroll-in the channel manifest prints line by line, a
@@ -16,6 +17,22 @@ export function initContact(): void {
   const cursor = makeTermCursor();
   // the command prompt (and its "[ type help ]" line) joins the manifest before it prints
   const seance = initSeanceCommands(body, cursor, reduce);
+
+  // Opt-in sound: src/fx/sound.ts exports initSound(toggle) but no-one was
+  // ever calling it (cycle 268 carry-forward — F-CYCLE268-SOUND-TOGGLE-NOT-WIRED).
+  // The séa nce is the only place where sound is meaningful (keystrokes +
+  // thump on `summon`), so this is where the toggle lives. We mount the
+  // button into body to keep initContact's footprint on #seanceBody untouched
+  // (the séa nce terminal's print-in wouldn't wrap the toggle as a channel
+  // row). initSound restores the remembered choice and reveals the button.
+  const soundToggle = document.createElement('button');
+  soundToggle.type = 'button';
+  soundToggle.id = 'soundToggle';
+  soundToggle.className = 'seance__sound';
+  soundToggle.hidden = true;
+  document.body.appendChild(soundToggle);
+  initSound(soundToggle);
+
   const lines = Array.from(body.querySelectorAll<HTMLElement>('[data-line]'));
 
   // discord channel copies its handle (the visible span is the single source)
