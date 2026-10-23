@@ -29,7 +29,7 @@ export function respond(input: string): Reply {
       return arg ? unknown(said) : { lines: ['help · whoami · ls relics · summon <relic> · cat dossier · clear'] };
     case 'whoami':
       return arg ? unknown(said) : {
-        lines: ['bugsy hewitt. offensive security researcher and bug bounty hunter. builds autonomous hunting tools at REDACTED.'],
+        lines: ['bugsy hewitt. offensive security researcher and bug bounty hunter. builds autonomous hunting tools.'],
       };
     case 'ls':
       return arg === '' || arg === 'relics' ? { lines: [CARDS.map(c => c.name).join('  ')] } : unknown(said);
