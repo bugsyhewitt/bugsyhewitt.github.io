@@ -185,6 +185,10 @@ if (lenis) safe('marquee', () => initMarqueeSkew(lenis));
 safe('specialities', () => initSpecialities(lenis));
 safe('loadout', initLoadout);
 safe('contact', initContact);
+// Agents get read-only tools where the browser speaks WebMCP; everyone else skips the download.
+if (typeof (document.modelContext ?? navigator.modelContext)?.registerTool === 'function') {
+  import('./webmcp').then(m => m.initWebMCP()).catch(e => console.warn('[webmcp] skipped:', e));
+}
 // heading line-rise (SplitText) loads on its own, after first paint
 if (!REDUCE) import('./fx/headings').then(m => m.initHeadings()).catch(e => console.warn('[headings] skipped:', e));
 

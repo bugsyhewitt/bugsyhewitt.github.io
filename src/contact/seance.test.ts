@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 const summonCard = vi.fn(() => true);
 vi.mock('../carousel', () => ({ summonCard: (n: string) => summonCard(n) }));
 
-import { respond, initSeanceCommands } from './seance';
+import { respond, initSeanceCommands, stir } from './seance';
 import { CARDS } from '../carousel/cards';
 
 describe('respond — the séance answers', () => {
@@ -31,6 +31,14 @@ describe('respond — the séance answers', () => {
   it('cat dossier prints the subject file', () => {
     expect(respond('cat dossier').lines).toHaveLength(4);
     expect(respond('cat dossier').lines[0]).toBe('subject ....... bugsy hewitt');
+  });
+  it('cat dossier keeps its dot leaders aligned', () => {
+    expect(respond('cat dossier').lines).toEqual([
+      'subject ....... bugsy hewitt',
+      'practice ...... web, web3 and api targets, by hand and with agents',
+      'platforms ..... hackerone, immunefi',
+      'paper copy .... print this page',
+    ]);
   });
   it('anything else gets the in-voice refusal, echoing what was said', () => {
     expect(respond('sudo shutdown now').lines).toEqual(["the dead don't answer to 'sudo shutdown now'. try help"]);
@@ -83,6 +91,36 @@ describe('initSeanceCommands — the prompt', () => {
     expect(summonCard).toHaveBeenCalledWith('wraith');
     submit('clear');
     expect(out()).toEqual([]);
+  });
+
+  it('an agent notice waits for the prompt, then prints as text', () => {
+    const s = initSeanceCommands(body, document.createElement('span'), true);
+    stir('[agent] read the dossier');
+    expect(out()).toEqual([]);
+    s.open();
+    expect(out()).toEqual(['~ a presence stirs… [agent] read the dossier']);
+  });
+
+  it('under reduced motion an agent notice is printed at once', () => {
+    initSeanceCommands(body, document.createElement('span'), true).open();
+    stir('[agent] counted the relics');
+    expect(document.querySelector('.seance__out .sline')!.classList.contains('printed')).toBe(true);
+  });
+
+  it('with motion, agent notices print one after another', () => {
+    vi.useFakeTimers();
+    try {
+      initSeanceCommands(body, document.createElement('span'), false).open();
+      stir('[agent] counted the relics');
+      stir('[agent] summoned reaper');
+      const lines = () => [...document.querySelectorAll('.seance__out .sline')];
+      expect(lines().map(e => e.classList.contains('printed'))).toEqual([true]);
+      vi.runAllTimers();
+      expect(lines().map(e => e.classList.contains('printed'))).toEqual([true, true]);
+      expect(out()).toEqual(['~ a presence stirs… [agent] counted the relics', '~ a presence stirs… [agent] summoned reaper']);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('↑ recalls the last command', () => {
