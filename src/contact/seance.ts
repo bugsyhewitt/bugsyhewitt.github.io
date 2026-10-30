@@ -1,13 +1,32 @@
 // The séance takes commands. After the channel manifest prints, a prompt opens
 // under it: help · whoami · ls relics · summon <relic> · cat dossier · clear.
 // `summon` turns the deck to that card. Typed input only ever reaches the page
-// through textContent.
+// through textContent. Agents calling the WebMCP tools (src/webmcp) leave a
+// notice here too, via stir().
 import { CARDS } from '../carousel/cards';
 import { summonCard } from '../carousel';
 import { printLines } from '../fx/terminal';
 import { keystroke, thump } from '../fx/sound';
 
 const PS = 'necromancer@localhost ~ %';
+const KEEP = 60;   // lines of scrollback
+
+// whoami and the dossier, shared with the agent tools
+export const WHOAMI = 'bugsy hewitt. offensive security researcher and bug bounty hunter. builds autonomous hunting tools.';
+export const DOSSIER: [string, string][] = [
+  ['subject', 'bugsy hewitt'],
+  ['practice', 'web, web3 and api targets, by hand and with agents'],
+  ['platforms', 'hackerone, immunefi'],
+  ['paper copy', 'print this page'],
+];
+
+// Set by initSeanceCommands; lets the agent tools speak in the séance.
+let stirLine: ((text: string) => void) | null = null;
+
+/** Leave an agent's notice in the séance. Held until the prompt opens. */
+export function stir(text: string): void {
+  stirLine?.(text);
+}
 
 export interface Reply {
   lines: string[];
@@ -28,9 +47,7 @@ export function respond(input: string): Reply {
     case 'help':
       return arg ? unknown(said) : { lines: ['help · whoami · ls relics · summon <relic> · cat dossier · clear'] };
     case 'whoami':
-      return arg ? unknown(said) : {
-        lines: ['bugsy hewitt. offensive security researcher and bug bounty hunter. builds autonomous hunting tools.'],
-      };
+      return arg ? unknown(said) : { lines: [WHOAMI] };
     case 'ls':
       return arg === '' || arg === 'relics' ? { lines: [CARDS.map(c => c.name).join('  ')] } : unknown(said);
     case 'summon': {
@@ -39,14 +56,9 @@ export function respond(input: string): Reply {
       return { lines: [`raising ${card.name}…`], then: () => { thump(); summonCard(card.name); } };
     }
     case 'cat':
-      return arg === 'dossier' ? {
-        lines: [
-          'subject ....... bugsy hewitt',
-          'practice ...... web, web3 and api targets, by hand and with agents',
-          'platforms ..... hackerone, immunefi',
-          'paper copy .... print this page',
-        ],
-      } : unknown(said);
+      return arg === 'dossier'
+        ? { lines: DOSSIER.map(([k, v]) => `${k} ${'.'.repeat(14 - k.length)} ${v}`) }
+        : unknown(said);
     case 'clear':
       return arg ? unknown(said) : { lines: [], clear: true };
     default:
@@ -107,6 +119,35 @@ export function initSeanceCommands(body: HTMLElement, cursor: HTMLElement, reduc
     fit();
   });
 
+  const line = (text: string): HTMLElement => {
+    const el = document.createElement('div');
+    el.className = 'sline';
+    el.textContent = text;
+    return el;
+  };
+  const trim = (): void => { while (out.childElementCount > KEEP) out.firstElementChild!.remove(); };
+
+  // agent notices print one at a time, never over a reply that is still printing
+  const pending: string[] = [];
+  let opened = false, printing = 0;
+  const flush = (): void => {
+    if (!opened || printing || !pending.length) return;
+    const el = line(`~ a presence stirs… ${pending.shift()}`);   // ~ not ⟡: the mono subsets lack U+27E1
+    out.append(el);
+    trim();
+    if (reduce) { el.classList.add('printed'); flush(); return; }
+    printing++;
+    printLines([el], cursor, {
+      delay: () => 40,
+      done: () => { printing--; window.setTimeout(flush); return prompt; },
+    });
+  };
+  stirLine = text => {
+    pending.push(text);
+    if (pending.length > KEEP) pending.shift();
+    flush();
+  };
+
   prompt.addEventListener('submit', e => {
     e.preventDefault();
     const said = input.value;
@@ -114,23 +155,19 @@ export function initSeanceCommands(body: HTMLElement, cursor: HTMLElement, reduc
     if (said.trim()) history.push(said.trim());
     const reply = respond(said);
     if (reply.clear) { out.replaceChildren(); return; }
-    const lines = [`${PS} ${said}`, ...reply.lines].map(text => {
-      const el = document.createElement('div');
-      el.className = 'sline';
-      el.textContent = text;
-      return el;
-    });
+    const lines = [`${PS} ${said}`, ...reply.lines].map(line);
     lines[0].classList.add('sline--echo');
     out.append(...lines);
-    while (out.childElementCount > 60) out.firstElementChild!.remove();
+    trim();
     if (reduce) { lines.forEach(el => el.classList.add('printed')); reply.then?.(); return; }
+    printing++;
     printLines(lines, cursor, {
       delay: () => 40,
-      done: () => { reply.then?.(); return prompt; },
+      done: () => { printing--; reply.then?.(); window.setTimeout(flush); return prompt; },
     });
   });
 
   return {
-    open() { prompt.hidden = false; return prompt; },
+    open() { prompt.hidden = false; opened = true; flush(); return prompt; },
   };
 }
