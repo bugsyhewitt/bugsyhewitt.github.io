@@ -20,3 +20,4 @@ jobs:
         env:
           RAISED_OFFLINE: '1'   # PR builds stay deterministic; no GitHub API calls
       - run: npm test
+# ci probe
