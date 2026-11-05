@@ -93,3 +93,25 @@ describe('initSeanceCommands — the prompt', () => {
     expect(input.value).toBe('whoami');
   });
 });
+
+// Regression guard for F-CYCLE265-SEANCE-NO-AUTOFOCUS: the séa nce prompt is
+// revealed by scroll-in, but on origin/main open() only flips `hidden` and
+// leaves activeElement on <body>. Users have to click into the prompt before
+// the keyboard goes anywhere. The fix is one LOC in seance.ts: open() calls
+// input.focus({preventScroll:true}). preventScroll is important because the
+// prompt reveals during IO-driven scroll, and a raw .focus() would yank the
+// page toward the input mid-animation.
+describe('initSeanceCommands — open() focuses the input (F-CYCLE265-SEANCE-NO-AUTOFOCUS)', () => {
+  beforeEach(() => {
+    document.body.innerHTML = `<div id="seanceBody"><div class="sline" data-line data-last>[ four channels open ]</div></div>`;
+  });
+  afterEach(() => { document.body.innerHTML = ''; });
+
+  it('moves activeElement to #seanceCmd the moment the prompt reveals', () => {
+    const body = document.getElementById('seanceBody')!;
+    initSeanceCommands(body, document.createElement('span'), true).open();
+    const ae = document.activeElement as HTMLElement | null;
+    expect(ae, 'expected the séa nce input to be focused on open()').not.toBeNull();
+    expect(ae!.id).toBe('seanceCmd');
+  });
+});
