@@ -51,10 +51,10 @@ export function initSpecialities(lenis: Lenis | null = null): void {
   let mode: 'stage' | 'band' | null = null;
   let active: ScrollTrigger | null = null;
   const progressNow = (): number | null => (active && active.isActive ? active.progress : null);
-  const rebuild = (at = progressNow()): void => {
+  const rebuild = (at = progressNow(), fallback = window.scrollY): void => {
     // removing the pin's spacer shortens the page for a moment and the browser clamps the
     // scroll: put it back after. Mid-pin, come back to the same point of the slide instead.
-    const y = window.scrollY;
+    const y = fallback;
     mm.revert(); mm = gsap.matchMedia(); setup();
     window.scrollTo(0, at !== null && active ? active.start + at * (active.end - active.start) : y);
   };
@@ -100,16 +100,44 @@ export function initSpecialities(lenis: Lenis | null = null): void {
   // resize that could change either, rebuild from an unpinned layout and measure again.
   let resized = 0;
   let heldAt: number | null | undefined;   // slide progress when the resize began
+  // The page's scroll offset, tracked as it moves. Crossing the band's breakpoint makes
+  // ScrollTrigger drop the pin on the spot: the page gets shorter and the browser clamps the
+  // scroll to the top, and by the time the resize handler runs the offset has ALREADY been
+  // moved (measured: the handler sees the clamped value, not the one the visitor was on).
+  // So the offset has to be remembered from before the clamp — this is that memory.
+  let lastY = window.scrollY;
+  const trackY = (): void => { lastY = window.scrollY; };
+  window.addEventListener('scroll', trackY, { passive: true });
+
   window.addEventListener('resize', () => {
     // read it now: ScrollTrigger re-measures (and moves the page) before the timer fires
     if (heldAt === undefined) heldAt = progressNow();
+    const heldY = lastY;                   // the offset BEFORE the clamp, not the clamped one
+    // Put the visitor back straight away. The clamp to the top happens between the browser's
+    // resize and this handler, and it lasts until the pin is rebuilt — so waiting for the
+    // debounce would leave the page sitting at the top for a quarter of a second, in plain
+    // sight. The scroll is restored here, and the rebuild below only re-measures the pin.
+    if (window.scrollY !== heldY) window.scrollTo(0, heldY);
     window.clearTimeout(resized);
     resized = window.setTimeout(() => {
       const at = heldAt ?? null;
       heldAt = undefined;
-      if (stageWanted() || mode === 'stage') rebuild(at);
+      if (stageWanted() || mode === 'stage') rebuild(at, heldY);
+      // The band lost the pin outright (no progress to return to): put the visitor back by
+      // the offset they had, once the layout has settled.
+      else if (window.scrollY !== heldY) window.scrollTo(0, heldY);
     }, 250);
   });
+
+  // ScrollTrigger's own refresh is what throws the page to the top: when the band's pin is
+  // dropped, the refresh re-measures the (now shorter) page and scrolls to the top of it.
+  // That happens inside ScrollTrigger, after this module's resize handler has run, so the
+  // restore above is undone by it. The 'refresh' event fires once the refresh has finished,
+  // so the offset is put back here — the visitor never sees the top of the page.
+  const onRefresh = (): void => {
+    if (window.scrollY !== lastY) window.scrollTo(0, lastY);
+  };
+  ScrollTrigger.addEventListener('refresh', onRefresh);
 
   // Pin math depends on final layout — recompute once fonts/images settle (and, where the
   // stage is possible, measure its fit again in the real face).

@@ -389,6 +389,13 @@ img{display:block;max-width:100%;}
 .specs-hint{color:var(--ash);letter-spacing:2px;font-size:.8em;white-space:nowrap;}
 .specs-pin{position:relative;height:calc(100vh - var(--nav-h,70px));height:calc(100svh - var(--nav-h,70px));min-height:520px;overflow:hidden;
   margin-inline:calc(-1*var(--gutter)); /* full-bleed past the gutter (100vw would also count the scrollbar) */
+  width:calc(100% + 2*var(--gutter)); /* the bleed needs a WIDTH too: the band layout pins this
+    element, and ScrollTrigger locks a pinned element's width to the width it measured before the
+    pin — the section's content box, gutter included — so a negative margin alone never reaches
+    the pinned band: the band stopped at the gutter, the progress bar on its foot stopped short of
+    the screen edge and the last panel never landed flush. With the width already overhanging,
+    ScrollTrigger measures the full bleed and keeps it. (100% of the content box + both gutters
+    = the viewport's width, no scrollbar counted.) */
   background:linear-gradient(var(--coffin) calc(100% - 24vh),var(--void));} /* sinks into the black, as the deck's fog does */
 /* Specialities is one grey room: it fades in over the space just above the heading (the section's
    top padding) and the panel fades it out. Pinned layout only; the stacked fallbacks stay on black. */
